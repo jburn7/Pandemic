@@ -1,0 +1,118 @@
+{
+  "cities": [
+    {
+			"name": "Atlanta",
+			"posX": 500,
+			"posY": 700,
+			"type": 0,
+			"neighbors": [
+				1,
+				2,
+				3
+			]
+    },
+    {
+      "name": "Chicago",
+      "posX": 300,
+			"posY": 500,
+			"type": 0,
+      "neighbors": [
+        0,
+        2
+      ]
+    },
+		{
+			"name": "Detroit",
+			"posX": 900,
+			"posY": 200,
+			"type": 0,
+			"neighbors": [
+				1,
+				0
+			]
+		},
+		{
+			"name": "Lagos",
+			"posX": 900,
+			"posY": 900,
+			"type": 0,
+			"neighbors": [
+				0
+			]
+		}
+  ],
+  "city": {
+    "initialCubes": 0,
+    "fontSize": 16,
+    "infoBackgroundImg": "menu_tile_simple.png",
+    "outbreakThreshold": 3,
+    "radius": 75
+  },
+	"game":{
+		"width":1920,
+		"height":1080,
+		"title":"Pandemic",
+		"movesPerTurn": 4,
+		"numPlayerCardsToDraw": 2,
+		"playerDiscardLocation": [
+			1820,
+			980
+		],
+		"playerDrawLocation": [
+			0,
+			300
+		],
+		"initNumCitiesCubes": [
+			1,
+			1,
+			1
+		],
+    "assetsPath": "assets/",
+    "uiFont": "cour.ttf",
+    "fontSize": 20,
+    "graphicsBuffers": [
+      "blank.png",
+      "city.png",
+      "city_card.png",
+      "graph_edge.png",
+      "menu_tile.png",
+      "menu_tile_simple.png",
+      "pawn.png"
+    ],
+    "animations": []
+  },
+  "pawn": {
+    "pawnSprite": "pawn.png",
+    "colors": [
+      {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      },
+      {
+        "r": 0,
+        "g": 255,
+        "b": 255
+      },
+      {
+        "r": 255,
+        "g": 0,
+        "b": 255
+      },
+      {
+        "r": 255,
+        "g": 255,
+        "b": 0
+      }
+    ]
+  },
+  "ui": {
+    "rColor": 255,
+    "gColor": 255,
+    "bColor": 255,
+    "startString": "",
+    "failedString": "",
+    "completeString": "",
+    "replayString": ""
+  }
+}

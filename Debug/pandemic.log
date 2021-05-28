@@ -1,0 +1,7 @@
+﻿  Board.cpp
+c:\users\jordan\documents\visual studio 2015\projects\pandemic\board.cpp(42): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\jordan\documents\visual studio 2015\projects\pandemic\board.cpp(91): warning C4018: '<': signed/unsigned mismatch
+c:\users\jordan\documents\visual studio 2015\projects\pandemic\board.cpp(99): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\jordan\documents\visual studio 2015\projects\pandemic\board.cpp(159): warning C4018: '<': signed/unsigned mismatch
+  pandemic.vcxproj -> C:\Users\jordan\Documents\Visual Studio 2015\Projects\pandemic\Debug\pandemic.exe
+  pandemic.vcxproj -> C:\Users\jordan\Documents\Visual Studio 2015\Projects\pandemic\Debug\pandemic.pdb (Partial PDB)
