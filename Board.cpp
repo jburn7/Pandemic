@@ -312,6 +312,48 @@ void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 	mInfectDraw.insert(mInfectDraw.begin(), card);
 }
 
+bool Board::checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener)
+{
+	// Hacky, but we'll just ask the top card in each stack for its position
+	if(deck.size() > 0)
+	{
+		if(deck[0]->contains(pos))
+		{
+			std::cout << opener << std::endl;
+
+			for(auto &a : deck)
+			{
+				std::cout << a->debugDescription() << std::endl;
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Board::checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D pos, const std::string &opener)
+{
+	// Hacky, but we'll just ask the top card in each stack for its position
+	if(deck.size() > 0)
+	{
+		if(deck[0]->contains(pos))
+		{
+			std::cout << opener << std::endl;
+
+			for(auto &a : deck)
+			{
+				std::cout << a->debugDescription() << std::endl;
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Board::shuffleDrawPiles()
 {
 	std::random_shuffle(playerDraw.begin(), playerDraw.end());
@@ -323,6 +365,7 @@ void Board::handleEvent(const Event &theEvent)
 	if(theEvent.getType() == MOUSE_CLICK_EVENT)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
+		Vector2D pos = ev.getPosition();
 		/*
 		if click landed on city adjacent to active pawn, move that pawn
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
@@ -334,20 +377,28 @@ void Board::handleEvent(const Event &theEvent)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
-				// Hacky, but we'll just ask the top card in each stack for its position
-				if(playerDiscard.size > 0)
+				if(checkDeckForClick(playerDraw, pos, "Player Draw contents:"))
 				{
-					if(playerDiscard[0]->contains(ev.getPosition()))
-					{
-
-					}
+					return;
+				}
+				if(checkDeckForClick(playerDiscard, pos, "Player Discard contents:"))
+				{
+					return;
+				}
+				if(checkDeckForClick(mInfectDraw, pos, "Infection Draw contents:"))
+				{
+					return;
+				}
+				if(checkDeckForClick(infectDiscard, pos, "Infection Discard contents:"))
+				{
+					return;
 				}
 
 				//if no active card
 				if(mpActiveCard == nullptr)
 				{
 				    //  if pawn's current city was clicked
-					if(mpActivePawn->getCurrentCity()->contains(ev.getPosition()))
+					if(mpActivePawn->getCurrentCity()->contains(pos))
 					{
 						//reduce disease cubes
 						if(decrementDiseaseCubes(mpActivePawn->getCurrentCity()))
@@ -374,7 +425,7 @@ void Board::handleEvent(const Event &theEvent)
 						{
 							if(v->contains(ev.getPosition()))
 							{
-								// TODO: move this to its own method and highlight the card
+								// TODO: move this to its own method
 								mpActiveCard = v;
 								mpActiveCard->setColor(Color(100, 255, 255));
 								return;
@@ -415,7 +466,7 @@ void Board::handleEvent(const Event &theEvent)
 					if(v->contains(ev.getPosition()))
 					{
 						v->incrementDiseaseCubes(1);
-						break;
+						return;
 					}
 				}
 			}

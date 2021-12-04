@@ -41,5 +41,6 @@ public:
 protected:
 	int mWidth, mHeight;
 
+	// TODO: add camera position so screen can scroll. Look at Untitled Final Project for example (or just straight copy/paste, that system is really simple)
 	sf::RenderWindow mDisplay;
 };

@@ -24,6 +24,8 @@ public:
 
 	virtual void update(double timeElapsed);
 
+	virtual std::string debugDescription() { return ""; }
+
 	//collision functions
 	bool contains(Vector2D &loc);
 

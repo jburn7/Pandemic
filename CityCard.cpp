@@ -24,6 +24,14 @@ void CityCard::draw()
 	mText->draw(Game::getInstance()->getDefaultFont(), Color(0, 0, 0));
 }
 
+std::string CityCard::debugDescription()
+{
+	if(mpCity)
+	{
+		return mpCity->getName();
+	}
+}
+
 void CityCard::setPosition(Vector2D pos)
 {
 	Unit::setPosition(pos);

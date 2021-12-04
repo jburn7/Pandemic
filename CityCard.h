@@ -12,6 +12,8 @@ public:
 
 	virtual void draw();
 
+	virtual std::string debugDescription();
+
 	//setters
 	void setPosition(Vector2D pos);
 

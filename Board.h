@@ -33,6 +33,8 @@ private:
 	void endGameAndRestart();
 	void endTurn();
 	void placeInfectionCardOntoDeck(InfectionCard *card);
+	bool checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener);
+	bool checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D pos, const std::string &opener); // Sure would be cool if C++ could cast from vec<Derived*> to vec<Base*>...
 	void shuffleDrawPiles();
 
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
