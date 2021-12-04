@@ -111,6 +111,9 @@
     <ClInclude Include="DiseaseStages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CityCard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -192,6 +195,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayerCard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InfectionCard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CityCard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

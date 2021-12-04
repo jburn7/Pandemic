@@ -10,11 +10,13 @@ class Player : public Unit
 public:
 	Player(City *city, std::vector<PlayerCard*> cards, Sprite *s);
 
-	~Player() {}
+	virtual ~Player();
 
 	void dealCard(PlayerCard *pc);
 
 	void discardCard(PlayerCard* pc);
+
+	void replaceHandIntoDeck(std::vector<PlayerCard*> &deck, const Vector2D &position);
 
 	bool isInCity(City* city);
 

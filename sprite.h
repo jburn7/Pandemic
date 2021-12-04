@@ -13,6 +13,7 @@ public:
 
 	//setters
 	void setHeight(int h);
+	void setColor(const Color &c);
 	void setRotation(double theta);
 	void setOrigin(Vector2D o);
 	void setWidth(int w);

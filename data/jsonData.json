@@ -62,10 +62,18 @@
 			0,
 			300
 		],
+		"infectionDiscardLocation": [
+			1820,
+			0
+		],
+		"infectionDrawLocation": [
+			1520,
+			0
+		],
 		"initNumCitiesCubes": [
-			1,
-			1,
-			1
+			3,
+			0,
+			0
 		],
     "assetsPath": "assets/",
     "uiFont": "cour.ttf",

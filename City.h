@@ -24,6 +24,7 @@ public:
 	void loadNeighbors(const std::vector<City*> &cities, const std::vector<int> &neighbors);
 
 	bool decrementDiseaseCubes(const int decrement); //return true if cubes were above 0 beforehand
+	void clearAllCubes();
 	void incrementDiseaseCubes(const int increment);
 
 	//getters

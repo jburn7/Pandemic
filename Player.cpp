@@ -27,6 +27,11 @@ Player::Player(City *city, std::vector<PlayerCard*> cards, Sprite *s) : Unit(Vec
 	moveCity(city);
 }
 
+Player::~Player()
+{
+	Unit::~Unit();
+}
+
 void Player::dealCard(PlayerCard *pc)
 {
 	positionCard(mHand.size(), pc);
@@ -47,6 +52,17 @@ void Player::discardCard(PlayerCard *pc)
 			break;
 		}
 	}
+}
+
+void Player::replaceHandIntoDeck(std::vector<PlayerCard*>& deck, const Vector2D &position)
+{
+	for(auto &v : mHand)
+	{
+		v->setPosition(position);
+		deck.push_back(v);
+	}
+
+	mHand.clear();
 }
 
 bool Player::isInCity(City *city)

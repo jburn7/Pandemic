@@ -76,6 +76,18 @@ void Unit::setAnimating(bool torf)
 	mAnimating = torf;
 }
 
+void Unit::setColor(const Color &color)
+{
+	if(mConstantFrame)
+	{
+		mConstantFrame->setColor(color);
+	}
+	else
+	{
+		mAnimation->setColors(color);
+	}
+}
+
 void Unit::setPosition(Vector2D pos)
 {
 	mPosition = pos;

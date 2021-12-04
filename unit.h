@@ -29,6 +29,7 @@ public:
 
 	//setters
 	void setAnimating(bool torf);
+	void setColor(const Color &color);
 	void setPosition(Vector2D pos);
 	void setSprite(Sprite *s);
 	void setRotation(double theta);
@@ -55,6 +56,7 @@ protected:
 
 	int mZLayer; // UnitManager.draw reads this and decides how to position units on top of one another. 0 is farthest "back" and all units default to most front layer
 
+	Color mColor;
 	Vector2D mScale;
 	Vector2D mPosition;
 	Animation *mAnimation;

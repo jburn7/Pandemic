@@ -16,6 +16,7 @@ public:
 	void changeSpeed(double deltaSpeed);
 
 	//setters
+	void setColors(const Color &color);
 	void setSpeed(int newMs);
 	void setWidths(int w); //adjust width of each sprite
 	void setHeights(int h);

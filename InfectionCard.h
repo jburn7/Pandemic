@@ -1,16 +1,12 @@
 #pragma once
-#include "Unit.h"
+#include "CityCard.h"
 
-class InfectionCard : public Unit
+class City;
+
+class InfectionCard : public CityCard
 {
 public:
-	InfectionCard(int cid)
-	{
-		cityID = cid;
-	}
+	InfectionCard(Vector2D &pos, Sprite *sprite, City *city);
 
-	~InfectionCard() {}
-
-private:
-	int cityID; //map of cityID to city maintained by Board
+	virtual ~InfectionCard();
 };

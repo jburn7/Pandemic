@@ -119,6 +119,7 @@
     <ClInclude Include="animation.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="City.h" />
+    <ClInclude Include="CityCard.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="DiseaseStages.h" />
     <ClInclude Include="event.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="City.cpp" />
+    <ClCompile Include="CityCard.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="EventListener.cpp" />
@@ -162,6 +164,7 @@
     <ClCompile Include="graphicsBuffer.cpp" />
     <ClCompile Include="graphicsBufferManager.cpp" />
     <ClCompile Include="graphicsSystem.cpp" />
+    <ClCompile Include="InfectionCard.cpp" />
     <ClCompile Include="inputSystem.cpp" />
     <ClCompile Include="jsonData.cpp" />
     <ClCompile Include="level.cpp" />

@@ -51,6 +51,14 @@ void Animation::changeSpeed(double deltaSpeed)
 	}
 }
 
+void Animation::setColors(const Color & color)
+{
+	for(auto &v : mFrames)
+	{
+		v->setColor(color);
+	}
+}
+
 void Animation::setSpeed(int newMs)
 {
 	mMsPerFrame = newMs;

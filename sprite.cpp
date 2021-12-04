@@ -31,6 +31,11 @@ void Sprite::setHeight(int h)
 	mHeight = h;
 }
 
+void Sprite::setColor(const Color &c)
+{
+	mColor = c;
+}
+
 void Sprite::setRotation(double theta)
 {
 	mTheta = theta;

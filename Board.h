@@ -23,10 +23,17 @@ public:
 
 private:
 	void cleanup();
+	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player);
 	bool decrementDiseaseCubes(City *city);
 	void discardPlayerCard(Player* player, PlayerCard* card);
+	void discardInfectionCard(InfectionCard *card);
+	void drawInfectionCard(int numCubesToAdd);
+	void doleInitialDiseaseCubes();
+	void endGameAndRestart();
 	void endTurn();
+	void placeInfectionCardOntoDeck(InfectionCard *card);
+	void shuffleDrawPiles();
 
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
@@ -34,16 +41,17 @@ private:
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
 
-	Vector2D mPlayerDiscardLocation, mPlayerDrawLocation;
+	Vector2D mPlayerDiscardLocation, mPlayerDrawLocation, mInfectionDrawLocation, mInfectionDiscardLocation;
 
 	std::vector<EnumDiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
 	std::vector<int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
+	std::vector<int> mInitNumCitiesCubes; // stores ratio of disease cubes to dole out for each infection card draw in setup phase
 
 	std::vector<City*> mCities;
 	std::vector<Player*> mPlayers;
 
 	std::vector<PlayerCard*> playerDraw;
 	std::vector<PlayerCard*> playerDiscard;
-	std::vector<InfectionCard*> infectDraw;
+	std::vector<InfectionCard*> mInfectDraw;
 	std::vector<InfectionCard*> infectDiscard;
 };

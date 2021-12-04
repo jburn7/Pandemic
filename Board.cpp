@@ -17,7 +17,9 @@ void Board::init(int numPlayers)
 	//load cities
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["cities"];
-	//build array of neighbors for each city
+	//build array of neighbors for each city, as well as infection card deck and city cards for player card deck
+	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetInt(), doc["game"]["playerDrawLocation"].GetArray()[1].GetInt());
+	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetInt(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetInt());
 	std::vector<std::vector<int>> neighborMap;
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
 	for(auto &v : c.GetArray())
@@ -35,6 +37,19 @@ void Board::init(int numPlayers)
 		{
 			neighborMap.back().push_back(n.GetInt());
 		}
+
+		// Also generate city card deck here since each card is tied to a city
+		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
+		PlayerCard *pc = new PlayerCard(mPlayerDrawLocation, cityCardBackground, city);
+		playerDraw.push_back(pc);
+		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
+
+		// Also generate infection card deck here since each card is tied to a city
+		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
+		InfectionCard *infectionCard = new InfectionCard(mInfectionDrawLocation, infectionCardBackground, city);
+		mInfectDraw.push_back(infectionCard);
+		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, infectionCard));
+
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, city));
 	}
 
@@ -52,19 +67,8 @@ void Board::init(int numPlayers)
 		mCities[i]->loadNeighbors(mCities, neighborMap[i]);
 	}
 
-	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetInt(), doc["game"]["playerDrawLocation"].GetArray()[1].GetInt());
-
-	//generate all cards and then shuffle
-	for(unsigned int i = 0; i < mCities.size(); i++)
-	{
-		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
-		//for each city, generate a card by placing text onto the city card sprite
-
-		PlayerCard *pc = new PlayerCard(mPlayerDrawLocation, cityCardBackground, mCities[i]);
-		playerDraw.push_back(pc);
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
-	}
-	//std::random_shuffle(playerDraw.begin(), playerDraw.end());
+	// TODO: add event cards to player deck
+	shuffleDrawPiles();
 
 	//load in players. they should all start at Atlanta according to rules, which should always be first city in array
 	for(int i = 0; i < numPlayers; i++)
@@ -79,6 +83,67 @@ void Board::init(int numPlayers)
 	mActivePawnIndex = 0;
 	mpActivePawn = mPlayers[mActivePawnIndex];
 
+	dealInitialPlayerCards();
+
+	// TODO: find a way to make these positions more intuitive (based on screen width and card size rather than hardcoded)
+	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetInt(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetInt());
+	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetInt(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetInt());
+
+	// Initialize disease cubes on cities
+	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
+	{
+		mInitNumCitiesCubes.push_back(i.GetUint());
+	}
+	doleInitialDiseaseCubes();
+
+	mMaxMovesPerTurn = mMovesRemaining = doc["game"]["movesPerTurn"].GetInt();
+	mNumPlayerCardsToDraw = doc["game"]["numPlayerCardsToDraw"].GetInt();
+
+	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
+	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
+}
+
+void Board::cleanup()
+{
+	for(auto &v : mCities)
+	{
+		v = nullptr;
+	}
+	mCities.clear();
+
+	for(auto &v : mPlayers)
+	{
+		v = nullptr;
+	}
+	mPlayers.clear();
+
+	for(auto &v : playerDraw)
+	{
+		v = nullptr;
+	}
+	playerDraw.clear();
+
+	for(auto &v : playerDiscard)
+	{
+		v = nullptr;
+	}
+	playerDiscard.clear();
+
+	for(auto &v : mInfectDraw)
+	{
+		v = nullptr;
+	}
+	mInfectDraw.clear();
+
+	for(auto &v : infectDiscard)
+	{
+		v = nullptr;
+	}
+	infectDiscard.clear();
+}
+
+void Board::dealInitialPlayerCards()
+{
 	//now deal player cards to players
 	int initialHandSize;
 	switch(mPlayers.size())
@@ -106,32 +171,6 @@ void Board::init(int numPlayers)
 			dealTopPlayerCard(mpActivePawn);
 		}
 	}
-
-	//TODO: dole out disease cubes based on initNumCitiesCubes in json data
-	//for i where i = initNumCitiesCubes[j], give random city j + 1 cubes
-
-	mMaxMovesPerTurn = mMovesRemaining = doc["game"]["movesPerTurn"].GetInt();
-	// TODO: store this in json array[2] and find a way to make it more intuitive (based on screen width and card size rather than hardcoded)
-	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetInt(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetInt());
-	mNumPlayerCardsToDraw = doc["game"]["numPlayerCardsToDraw"].GetInt();
-
-	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
-	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
-}
-
-void Board::cleanup()
-{
-	for(auto &v : mCities)
-	{
-		v = nullptr;
-	}
-	mCities.clear();
-
-	for(auto &v : mPlayers)
-	{
-		v = nullptr;
-	}
-	mPlayers.clear();
 }
 
 void Board::dealTopPlayerCard(Player *player)
@@ -144,8 +183,7 @@ void Board::dealTopPlayerCard(Player *player)
 	}
 	else
 	{
-		//TODO: end game as loss
-		std::cout << "TODO: you lost\n";
+		endGameAndRestart();
 	}
 }
 
@@ -167,6 +205,80 @@ void Board::discardPlayerCard(Player *player, PlayerCard *card)
 	player->discardCard(card);
 	card->setPosition(mPlayerDiscardLocation);
 	playerDiscard.push_back(card);
+}
+
+void Board::discardInfectionCard(InfectionCard *card)
+{
+	card->setPosition(mInfectionDiscardLocation);
+	infectDiscard.push_back(card);
+}
+
+void Board::drawInfectionCard(int numCubesToAdd)
+{
+	InfectionCard *card = *mInfectDraw.begin();
+	card->getCity()->incrementDiseaseCubes(numCubesToAdd);
+	mInfectDraw.erase(mInfectDraw.begin());
+	discardInfectionCard(card);
+}
+
+void Board::doleInitialDiseaseCubes()
+{
+	//for i where i = initNumCitiesCubes[j], give random city j + 1 cubes
+	int numInitCubes = 1;
+	for(const auto &i : mInitNumCitiesCubes)
+	{
+		int numCities = i;
+		for(unsigned int j = 0; j < numCities; j++)
+		{
+			drawInfectionCard(numInitCubes);
+		}
+		numInitCubes++;
+	}
+}
+
+void Board::endGameAndRestart()
+{
+	//TODO: end game as loss
+	std::cout << "TODO: you lost\n";
+
+	// move all discarded cards to their draw piles
+	for(auto &v : playerDiscard)
+	{
+		playerDraw.push_back(v);
+	}
+	playerDiscard.clear();
+	for(auto &v : infectDiscard)
+	{
+		placeInfectionCardOntoDeck(v);
+	}
+	infectDiscard.clear();
+	// take all player cards from players' hands and replace them in player draw
+	for(auto &v : mPlayers)
+	{
+		v->replaceHandIntoDeck(playerDraw, mPlayerDrawLocation);
+	}
+	// reset each city's cubes to 0
+	for(auto &v : mCities)
+	{
+		v->clearAllCubes();
+	}
+	// reshuffle draw piles
+	shuffleDrawPiles();
+	// redraw player cards
+	dealInitialPlayerCards();
+	// redraw infection cards
+	doleInitialDiseaseCubes();
+	// move players to Atlanta
+	for(auto &v : mPlayers)
+	{
+		// TODO: store a better way of determining starting city
+		v->moveCity(mCities[0]);
+	}
+	// reset moveCount
+	mMovesRemaining = mMaxMovesPerTurn;
+	// reset activePawn to starting player
+	mpActivePawn = mPlayers[0];
+	// TODO: other functionality (eg resetting counters, epidemic states, etc)
 }
 
 void Board::endTurn()
@@ -194,6 +306,18 @@ void Board::endTurn()
 	mMovesRemaining = mMaxMovesPerTurn;
 }
 
+void Board::placeInfectionCardOntoDeck(InfectionCard *card)
+{
+	card->setPosition(mInfectionDrawLocation);
+	mInfectDraw.insert(mInfectDraw.begin(), card);
+}
+
+void Board::shuffleDrawPiles()
+{
+	std::random_shuffle(playerDraw.begin(), playerDraw.end());
+	std::random_shuffle(mInfectDraw.begin(), mInfectDraw.end());
+}
+
 void Board::handleEvent(const Event &theEvent)
 {
 	if(theEvent.getType() == MOUSE_CLICK_EVENT)
@@ -208,6 +332,17 @@ void Board::handleEvent(const Event &theEvent)
 		{
 			if(ev.getButton() == LEFT)
 			{
+				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
+				// TODO: find a way to show this graphically
+				// Hacky, but we'll just ask the top card in each stack for its position
+				if(playerDiscard.size > 0)
+				{
+					if(playerDiscard[0]->contains(ev.getPosition()))
+					{
+
+					}
+				}
+
 				//if no active card
 				if(mpActiveCard == nullptr)
 				{
@@ -241,6 +376,7 @@ void Board::handleEvent(const Event &theEvent)
 							{
 								// TODO: move this to its own method and highlight the card
 								mpActiveCard = v;
+								mpActiveCard->setColor(Color(100, 255, 255));
 								return;
 							}
 						}
@@ -258,12 +394,14 @@ void Board::handleEvent(const Event &theEvent)
 							mpActivePawn->moveCity(city);
 							discardPlayerCard(mpActivePawn, mpActiveCard);
 							gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+							mpActiveCard->setColor(Color(255, 255, 255));
 							mpActiveCard = nullptr;
 							return;
 						}
 					}
 
 					// Bogus click, reset active card
+					mpActiveCard->setColor(Color(255, 255, 255));
 					mpActiveCard = nullptr;
 					return;
 				}

@@ -125,6 +125,11 @@ bool City::decrementDiseaseCubes(const int decrement)
 	return true;
 }
 
+void City::clearAllCubes()
+{
+	setDiseaseCubes(0);
+}
+
 void City::incrementDiseaseCubes(const int increment)
 {
 	int prevCubes = mDiseaseCubes;
