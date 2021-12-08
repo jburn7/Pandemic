@@ -66,6 +66,11 @@ void Unit::update(double timeElapsed)
 	}
 }
 
+void Unit::move(const Vector2D &delta)
+{
+	setPosition(mPosition + delta);
+}
+
 bool Unit::contains(Vector2D &loc)
 {
 	return mPosition.getX() < loc.getX() && mPosition.getX() + getWidth() > loc.getX() && mPosition.getY() < loc.getY() && mPosition.getY() + getHeight() > loc.getY();

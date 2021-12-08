@@ -14,6 +14,8 @@ public:
 
 	virtual std::string debugDescription();
 
+	virtual void move(const Vector2D &delta);
+
 	//setters
 	void setPosition(Vector2D pos);
 

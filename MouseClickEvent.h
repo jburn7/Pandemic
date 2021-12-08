@@ -4,8 +4,8 @@
 
 enum MouseButton
 {
-	LEFT,
-	RIGHT
+	MOUSE_LEFT,
+	MOUSE_RIGHT
 };
 
 class MouseClickEvent : public Event

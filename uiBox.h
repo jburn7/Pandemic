@@ -14,6 +14,8 @@ public:
 
 	void draw(Font &font, Color &color);
 
+	void move(const Vector2D &delta);
+
 	//setters
 	void setPosition(Vector2D pos);
 	void setText(const std::string &text);

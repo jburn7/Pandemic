@@ -1,5 +1,6 @@
 #include "Board.h"
 #include "game.h"
+#include "PanCameraEvent.h"
 
 #include "SFML\Graphics.hpp"
 
@@ -101,6 +102,8 @@ void Board::init(int numPlayers)
 
 	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
 	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
+	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
+	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
 }
 
 void Board::cleanup()
@@ -362,6 +365,7 @@ void Board::shuffleDrawPiles()
 
 void Board::handleEvent(const Event &theEvent)
 {
+	const Gamestate gameState = Game::getInstance()->getGamestate();
 	if(theEvent.getType() == MOUSE_CLICK_EVENT)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
@@ -371,9 +375,9 @@ void Board::handleEvent(const Event &theEvent)
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
 				if click landed on a card, set that card to active and resolve that in any future clicks(eg set card to active, then click on own city to perform charter flight action, or do trades if player clicks in card area of another player, etc)
 		*/
-		if(Game::getInstance()->getGamestate() == PLAYING)
+		if(gameState == PLAYING)
 		{
-			if(ev.getButton() == LEFT)
+			if(ev.getButton() == MOUSE_LEFT)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
@@ -457,7 +461,7 @@ void Board::handleEvent(const Event &theEvent)
 					return;
 				}
 			}
-			else if(ev.getButton() == RIGHT)
+			else if(ev.getButton() == MOUSE_RIGHT)
 			{
 				//DEBUG
 				//if any city was clicked, increment its cubes
@@ -480,6 +484,24 @@ void Board::handleEvent(const Event &theEvent)
 		if(mMovesRemaining <= 0)
 		{
 			endTurn();
+		}
+	}
+	else if(theEvent.getType() == PAN_CAMERA_EVENT)
+	{
+		const PanCameraEvent &ev = static_cast<const PanCameraEvent&>(theEvent);
+		if(gameState == PLAYING)
+		{
+			// TODO: instead of moving every card, just give board a single sprite for each deck and move just that sprite to have deck follow cameras and change that sprite each time the top of deck was modified
+			// Every hand card will still have to be moved though
+			// TODO: add titles describing each draw pile
+			const Vector2D delta = ev.getDelta();
+			for(auto &player : mPlayers)
+			{
+				for(auto &card : player->getHand())
+				{
+					card->move(delta);
+				}
+			}
 		}
 	}
 }

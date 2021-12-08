@@ -1,4 +1,5 @@
 #include "graphicsSystem.h"
+#include "PanCameraEvent.h"
 
 void setPosition(sf::Transformable &trans, const Vector2D &vec)
 {
@@ -9,6 +10,8 @@ GraphicsSystem::GraphicsSystem()
 {
 	mWidth = 0;
 	mHeight = 0;
+
+	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
 }
 
 GraphicsSystem::~GraphicsSystem()
@@ -22,6 +25,7 @@ void GraphicsSystem::init(int w, int h, const std::string &t)
 	mDisplay.create(sf::VideoMode(w, h, 32), sf::String(title));
 	mWidth = w;
 	mHeight = h;
+	mCameraPosition = Vector2D(mWidth / 2, mHeight / 2);
 }
 
 void GraphicsSystem::cleanup()
@@ -95,9 +99,24 @@ void GraphicsSystem::drawScale(const Vector2D &targetLoc, Sprite &sprite, const 
 	mDisplay.draw(temp);
 }
 
+void GraphicsSystem::handleEvent(const Event &theEvent)
+{
+	if(theEvent.getType() == PAN_CAMERA_EVENT)
+	{
+		mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
+	}
+}
+
 void GraphicsSystem::flip()
 {
 	mDisplay.display();
+}
+
+void GraphicsSystem::update()
+{
+	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f(mWidth, mHeight));
+	mDisplay.setView(view);
+	mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
 }
 
 void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message){
@@ -126,4 +145,9 @@ int GraphicsSystem::getHeight()
 int GraphicsSystem::getWidth()
 {
 	return mWidth;
+}
+
+const Vector2D & GraphicsSystem::getTopLeft() const 
+{
+	return mTopLeft;
 }

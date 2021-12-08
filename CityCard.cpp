@@ -30,6 +30,16 @@ std::string CityCard::debugDescription()
 	{
 		return mpCity->getName();
 	}
+	else
+	{
+		return "";
+	}
+}
+
+void CityCard::move(const Vector2D & delta)
+{
+	Unit::move(delta);
+	mText->move(delta);
 }
 
 void CityCard::setPosition(Vector2D pos)

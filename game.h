@@ -2,6 +2,7 @@
 #include "graphicsSystem.h"
 #include "unitManager.h"
 #include "graphicsBufferManager.h"
+#include "CameraManager.h"
 #include "inputSystem.h"
 #include "Timer.h"
 #include "PerformanceTracker.h"
@@ -63,6 +64,7 @@ protected:
 	void update(double timeElapsed);
 	void render();
 
+	CameraManager mCameraManager;
 	GraphicsBufferManager mGraphicsBufferManager;
 	InputSystem mInputSystem;
 	GraphicsSystem mGraphics;

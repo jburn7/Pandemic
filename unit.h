@@ -26,6 +26,8 @@ public:
 
 	virtual std::string debugDescription() { return ""; }
 
+	virtual void move(const Vector2D &delta);
+
 	//collision functions
 	bool contains(Vector2D &loc);
 

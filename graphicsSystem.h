@@ -4,9 +4,11 @@
 #include "SFML\Graphics\Text.hpp"
 #include "sprite.h"
 #include "font.h"
+#include "EventListener.h"
+#include "EventSystem.h"
 #include <string>
 
-class GraphicsSystem : public Trackable
+class GraphicsSystem : public EventListener
 {
 	friend class InputSystem; //for polling RenderWindow Events
 public:
@@ -26,7 +28,12 @@ public:
 
 	void drawScale(const Vector2D &targetLoc, Sprite &sprite, const Vector2D &scale);
 
+	virtual void handleEvent(const Event &theEvent);
+
 	void flip();
+
+	//just updates the camera position, does NOT draw
+	void update();
 
 	void writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message);
 
@@ -38,9 +45,12 @@ public:
 	int getHeight();
 
 	int getWidth();
+
+	const Vector2D &getTopLeft() const;
 protected:
 	int mWidth, mHeight;
 
-	// TODO: add camera position so screen can scroll. Look at Untitled Final Project for example (or just straight copy/paste, that system is really simple)
+	Vector2D mCameraPosition;
+	Vector2D mTopLeft; // For consistent UI drawing after camera has panned
 	sf::RenderWindow mDisplay;
 };

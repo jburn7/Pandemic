@@ -62,6 +62,11 @@ void UIBox::draw(Font &font, Color &color)
 	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, color, mText);
 }
 
+void UIBox::move(const Vector2D & delta)
+{
+	setPosition(mPosition + delta);
+}
+
 void UIBox::setPosition(Vector2D pos)
 {
 	mPosition = pos;

@@ -83,8 +83,8 @@ void Game::init(const std::string &jsonPath)
 	//add all names for graphics buffers, then loop through and add them
 	std::vector<std::string> graphicsBuffersNames;
 	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 
-	rapidjson::Value &a = doc[JSONPATH]["graphicsBuffers"];
-	for(auto& v : a.GetArray())
+	rapidjson::Value &component = doc[JSONPATH]["graphicsBuffers"];
+	for(auto& v : component.GetArray())
 	{
 		graphicsBuffersNames.push_back(v.GetString());
 	}
@@ -96,14 +96,18 @@ void Game::init(const std::string &jsonPath)
 	}
 
 	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 
-	a = doc[JSONPATH]["animations"];
+	component = doc[JSONPATH]["animations"];
 	//int tileSize = doc[JSONPATH]["tileSize"].GetInt();
 	int tileSize = width / 50; //TODO: placeholder until I can figure out whether tilesize is necessary
 
 	//load animations for mUnitManager
-	mUnitManager.setUnitAnimations(loadUnitAnimations(a, tileSize));
+	mUnitManager.setUnitAnimations(loadUnitAnimations(component, tileSize));
 
 	//mLevelManager.init();
+
+	// Init camera with json values for bounds/speed
+	component = doc[JSONPATH]["camera"];
+	mCameraManager.init(Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()), component["panSpeed"].GetFloat());
 
 	mFont.loadFont(std::string(doc[JSONPATH]["assetsPath"].GetString()) + "\\" + doc[JSONPATH]["uiFont"].GetString(), doc[JSONPATH]["fontSize"].GetInt());
 	mUi->setFont(&mFont);
@@ -125,6 +129,7 @@ void Game::cleanup()
 	mGraphics.cleanup();
 	mInputSystem.cleanup();
 	//mLevelManager.cleanup();
+	//mCameraManager.cleanup();
 	mUnitManager.cleanup();
 }
 
@@ -145,7 +150,9 @@ void Game::loop()
 		fpsTimer.start();
 		gpEventSystem->dispatchAllEvents();
 		processInput();
+		mCameraManager.update();
 		update(mClock.getElapsedTime());
+		mGraphics.update();
 		render();
 		frames++;
 		double fps = frames / mClock.getElapsedTime() * 1000;

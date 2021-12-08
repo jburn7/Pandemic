@@ -1,5 +1,6 @@
 #include "inputSystem.h"
 #include "game.h"
+#include "KeyEvent.h"
 
 InputSystem::InputSystem()
 {
@@ -33,16 +34,56 @@ void InputSystem::checkForInput()
 			switch(e.mouseButton.button)
 			{
 			case sf::Mouse::Button::Left:
-				mb = LEFT;
+				mb = MOUSE_LEFT;
 				break;
 			case sf::Mouse::Button::Right:
-				mb = RIGHT;
+				mb = MOUSE_RIGHT;
 				break;
 			default:
-				mb = LEFT;
+				mb = MOUSE_LEFT;
 			}
 			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::getInstance()->getGraphics().mDisplay);
 			gpEventSystem->fireEvent(new MouseClickEvent(MOUSE_CLICK_EVENT, Vector2D((float)mousePos.x, (float)mousePos.y), mb));
+		}
+		else if(e.type == sf::Event::KeyPressed)
+		{
+			switch(e.key.code)
+			{
+			case sf::Keyboard::Left:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, LEFT));
+				break;
+			case sf::Keyboard::Right:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, RIGHT));
+				break;
+			case sf::Keyboard::Up:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, UP));
+				break;
+			case sf::Keyboard::Down:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, DOWN));
+				break;
+			default:
+				break;
+			}
+		}
+		else if(e.type == sf::Event::KeyReleased)
+		{
+			switch(e.key.code)
+			{
+			case sf::Keyboard::Left:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, LEFT));
+				break;
+			case sf::Keyboard::Right:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, RIGHT));
+				break;
+			case sf::Keyboard::Up:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, UP));
+				break;
+			case sf::Keyboard::Down:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, DOWN));
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	if(Game::getInstance()->getGamestate() == PLAYING)
@@ -61,7 +102,6 @@ void InputSystem::checkForInput()
 		if wasd is released
 			fire stop camera move event as above
 		*/
-		
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
