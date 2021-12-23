@@ -61,7 +61,7 @@ void UnitManager::draw()
 	{
 		for(unsigned int i = 0; i < mUnits.size(); i++)
 		{
-			if(mUnits[i]->getZLayer() == j)
+			if(mUnits[i]->getZLayer() == j && !(mUnits[i]->getIsHidden()))
 			{
 				mUnits[i]->draw();
 			}

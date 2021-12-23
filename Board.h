@@ -43,8 +43,6 @@ private:
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
 
-	// TODO: store pannable size of board and prevent panning outside of that
-
 	Vector2D mPlayerDiscardLocation, mPlayerDrawLocation, mInfectionDrawLocation, mInfectionDiscardLocation;
 
 	std::vector<EnumDiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
@@ -56,6 +54,6 @@ private:
 
 	std::vector<PlayerCard*> playerDraw;
 	std::vector<PlayerCard*> playerDiscard;
-	std::vector<InfectionCard*> mInfectDraw;
+	std::vector<InfectionCard*> infectDraw;
 	std::vector<InfectionCard*> infectDiscard;
 };

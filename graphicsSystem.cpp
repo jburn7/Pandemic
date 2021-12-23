@@ -38,6 +38,12 @@ void GraphicsSystem::clear()
 	mDisplay.clear(sf::Color::Black);
 }
 
+Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos)
+{
+	sf::Vector2f worldPos = mDisplay.mapPixelToCoords(sf::Vector2i(pos.getX(), pos.getY()));
+	return Vector2D(worldPos.x, worldPos.y);
+}
+
 void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite)
 {
 	sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));

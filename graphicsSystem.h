@@ -22,6 +22,8 @@ public:
 
 	void clear();
 
+	Vector2D convertToWorldCoordinates(Vector2D pos);
+
 	void draw(const Vector2D &targetLoc, Sprite &sprite);
 
 	void draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale);

@@ -59,6 +59,10 @@ void Player::replaceHandIntoDeck(std::vector<PlayerCard*>& deck, const Vector2D 
 	for(auto &v : mHand)
 	{
 		v->setPosition(position);
+		if(deck.size() > 0)
+		{
+			deck[0]->setIsHidden(true);
+		}
 		deck.push_back(v);
 	}
 
@@ -92,5 +96,6 @@ std::vector<PlayerCard*>& Player::getHand()
 
 void Player::positionCard(int index, PlayerCard *pc)
 {
-	pc->setPosition(mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index));
+	const Vector2D offset = Game::getInstance()->getCameraManager().getOffset();
+	pc->setPosition(offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index));
 }

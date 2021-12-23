@@ -42,13 +42,15 @@ void Board::init(int numPlayers)
 		// Also generate city card deck here since each card is tied to a city
 		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 		PlayerCard *pc = new PlayerCard(mPlayerDrawLocation, cityCardBackground, city);
+		pc->setZLayer(2);
 		playerDraw.push_back(pc);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
 
 		// Also generate infection card deck here since each card is tied to a city
 		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 		InfectionCard *infectionCard = new InfectionCard(mInfectionDrawLocation, infectionCardBackground, city);
-		mInfectDraw.push_back(infectionCard);
+		infectionCard->setZLayer(2);
+		infectDraw.push_back(infectionCard);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, infectionCard));
 
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, city));
@@ -132,11 +134,11 @@ void Board::cleanup()
 	}
 	playerDiscard.clear();
 
-	for(auto &v : mInfectDraw)
+	for(auto &v : infectDraw)
 	{
 		v = nullptr;
 	}
-	mInfectDraw.clear();
+	infectDraw.clear();
 
 	for(auto &v : infectDiscard)
 	{
@@ -181,8 +183,13 @@ void Board::dealTopPlayerCard(Player *player)
 	if(playerDraw.size() > 0)
 	{
 		PlayerCard* pc = *playerDraw.begin();
+		pc->setIsHidden(false);
 		player->dealCard(pc);
 		playerDraw.erase(playerDraw.begin());
+		if(playerDraw.size() > 0)
+		{
+			playerDraw[0]->setIsHidden(false);
+		}
 	}
 	else
 	{
@@ -207,20 +214,33 @@ void Board::discardPlayerCard(Player *player, PlayerCard *card)
 {
 	player->discardCard(card);
 	card->setPosition(mPlayerDiscardLocation);
+	if(playerDiscard.size() > 0)
+	{
+		playerDiscard[playerDiscard.size() - 1]->setIsHidden(true);
+	}
 	playerDiscard.push_back(card);
 }
 
 void Board::discardInfectionCard(InfectionCard *card)
 {
 	card->setPosition(mInfectionDiscardLocation);
+	if(infectDiscard.size() > 0)
+	{
+		infectDiscard[infectDiscard.size() - 1]->setIsHidden(true);
+	}
+	card->setIsHidden(false);
 	infectDiscard.push_back(card);
 }
 
 void Board::drawInfectionCard(int numCubesToAdd)
 {
-	InfectionCard *card = *mInfectDraw.begin();
+	InfectionCard *card = *infectDraw.begin();
 	card->getCity()->incrementDiseaseCubes(numCubesToAdd);
-	mInfectDraw.erase(mInfectDraw.begin());
+	infectDraw.erase(infectDraw.begin());
+	if(infectDraw.size() > 0)
+	{
+		infectDraw[0]->setIsHidden(false);
+	}
 	discardInfectionCard(card);
 }
 
@@ -247,6 +267,12 @@ void Board::endGameAndRestart()
 	// move all discarded cards to their draw piles
 	for(auto &v : playerDiscard)
 	{
+		v->setIsHidden(true);
+		v->setPosition(mPlayerDrawLocation);
+		if(playerDraw.size() > 0)
+		{
+			playerDraw[0]->setIsHidden(true);
+		}
 		playerDraw.push_back(v);
 	}
 	playerDiscard.clear();
@@ -311,8 +337,12 @@ void Board::endTurn()
 
 void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 {
+	if(infectDraw.size() > 0)
+	{
+		infectDraw[0]->setIsHidden(true);
+	}
 	card->setPosition(mInfectionDrawLocation);
-	mInfectDraw.insert(mInfectDraw.begin(), card);
+	infectDraw.insert(infectDraw.begin(), card);
 }
 
 bool Board::checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener)
@@ -360,7 +390,7 @@ bool Board::checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D 
 void Board::shuffleDrawPiles()
 {
 	std::random_shuffle(playerDraw.begin(), playerDraw.end());
-	std::random_shuffle(mInfectDraw.begin(), mInfectDraw.end());
+	std::random_shuffle(infectDraw.begin(), infectDraw.end());
 }
 
 void Board::handleEvent(const Event &theEvent)
@@ -369,7 +399,7 @@ void Board::handleEvent(const Event &theEvent)
 	if(theEvent.getType() == MOUSE_CLICK_EVENT)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
-		Vector2D pos = ev.getPosition();
+		Vector2D pos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition());
 		/*
 		if click landed on city adjacent to active pawn, move that pawn
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
@@ -381,6 +411,9 @@ void Board::handleEvent(const Event &theEvent)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
+				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
+				const Vector2D worldPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(pos);
+				std::cout << "\t World coords at " << "(" << worldPos.getX() << ", " << worldPos.getY() << ")" << std::endl;
 				if(checkDeckForClick(playerDraw, pos, "Player Draw contents:"))
 				{
 					return;
@@ -389,7 +422,7 @@ void Board::handleEvent(const Event &theEvent)
 				{
 					return;
 				}
-				if(checkDeckForClick(mInfectDraw, pos, "Infection Draw contents:"))
+				if(checkDeckForClick(infectDraw, pos, "Infection Draw contents:"))
 				{
 					return;
 				}
@@ -416,7 +449,7 @@ void Board::handleEvent(const Event &theEvent)
 						//for each neighbor, if it was clicked, move pawn to it and break
 						for(auto &v : mpActivePawn->getCurrentCity()->getNeighbors())
 						{
-							if(v->contains(ev.getPosition()))
+							if(v->contains(pos))
 							{
 								mpActivePawn->moveCity(v);
 								gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
@@ -427,7 +460,7 @@ void Board::handleEvent(const Event &theEvent)
 						// For each card player owns, if it was clicked, set it to active
 						for(auto &v : mpActivePawn->getHand())
 						{
-							if(v->contains(ev.getPosition()))
+							if(v->contains(pos))
 							{
 								// TODO: move this to its own method
 								mpActiveCard = v;
@@ -444,7 +477,7 @@ void Board::handleEvent(const Event &theEvent)
 							// Move pawn to city and discard card
 					for(auto &city : mCities)
 					{
-						if(mpActiveCard->getCity() == city && city->contains(ev.getPosition()) && !mpActivePawn->isInCity(city))
+						if(mpActiveCard->getCity() == city && city->contains(pos) && !mpActivePawn->isInCity(city))
 						{
 							mpActivePawn->moveCity(city);
 							discardPlayerCard(mpActivePawn, mpActiveCard);
@@ -467,7 +500,7 @@ void Board::handleEvent(const Event &theEvent)
 				//if any city was clicked, increment its cubes
 				for(auto &v : mCities)
 				{
-					if(v->contains(ev.getPosition()))
+					if(v->contains(pos))
 					{
 						v->incrementDiseaseCubes(1);
 						return;
@@ -491,7 +524,6 @@ void Board::handleEvent(const Event &theEvent)
 		const PanCameraEvent &ev = static_cast<const PanCameraEvent&>(theEvent);
 		if(gameState == PLAYING)
 		{
-			// TODO: instead of moving every card, just give board a single sprite for each deck and move just that sprite to have deck follow cameras and change that sprite each time the top of deck was modified
 			// Every hand card will still have to be moved though
 			// TODO: add titles describing each draw pile
 			const Vector2D delta = ev.getDelta();
@@ -501,6 +533,27 @@ void Board::handleEvent(const Event &theEvent)
 				{
 					card->move(delta);
 				}
+			}
+			mPlayerDrawLocation += delta;
+			mPlayerDiscardLocation += delta;
+			mInfectionDrawLocation += delta;
+			mInfectionDiscardLocation += delta;
+			// TODO: instead of moving every card, just give board a single sprite for each deck and move just that sprite to have deck follow cameras and change that sprite each time the top of deck was modified
+			for(auto &card : playerDraw)
+			{
+				card->setPosition(mPlayerDrawLocation);
+			}
+			for(auto &card : playerDiscard)
+			{
+				card->setPosition(mPlayerDiscardLocation);
+			}
+			for(auto &card : infectDraw)
+			{
+				card->setPosition(mInfectionDrawLocation);
+			}
+			for(auto &card : infectDiscard)
+			{
+				card->setPosition(mInfectionDiscardLocation);
 			}
 		}
 	}

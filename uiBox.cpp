@@ -12,7 +12,7 @@ UIBox::UIBox(const Vector2D pos, const float width, const float height, const in
 	mBackground = sprite;
 
 	mScale = Vector2D(1, 1);
-	mPadding = 1.3f; //debug value
+	mPadding = 6.f; //debug value
 
 	resizeBackground();
 }
@@ -57,8 +57,11 @@ bool UIBox::contains(Vector2D pos)
 
 void UIBox::draw(Font &font, Color &color)
 {
-	//TODO: fix box backgrounds and also do null check for mBackground
-	//Game::getInstance()->getGraphics().drawScale(mPosition, *mBackground, mScale);
+	//TODO: fix box backgrounds
+	if(mBackground)
+	{
+		Game::getInstance()->getGraphics().drawScale(mPosition, *mBackground, mScale);
+	}
 	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, color, mText);
 }
 
@@ -82,8 +85,10 @@ void UIBox::resizeBackground()
 {
 	//pad the text with a background that gives in both dimensions
 	int textWidth = Game::getInstance()->getDefaultFont().getWidth(mText, mFontSize);
-	int textHeight = 12; //debug
-	mScale = Vector2D((textWidth * mPadding) / mBackground->getWidth(), (textHeight * mPadding) / mBackground->getHeight());
-	//mTextOffset = Vector2D(mBackground->getWidth() * mPadding / 2, mBackground->getHeight() * mPadding / 2);
-	int i = 0;
+	int textHeight = Game::getInstance()->getDefaultFont().getHeight(mText, mFontSize); //TODO: give a font pointer in init
+	// TODO: add a second "padding" background that has the same position at background but is just a solid color and is bigger in size by [padding] pixels
+	mScale = Vector2D((float)(textWidth) / (float)mBackground->getWidth(), (float)(textHeight) / (float)mBackground->getHeight());
+	float backgroundWidth = mBackground->getWidth() * mScale.getX();
+	float backgroundHeight = mBackground->getHeight() * mScale.getY();
+	mTextOffset = Vector2D(backgroundWidth / 2, backgroundHeight / 2) - Vector2D((float)textWidth / 2, (float)textHeight);
 }

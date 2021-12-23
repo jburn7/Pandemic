@@ -43,6 +43,7 @@ public:
 	
 	//getters
 	Board &getBoard(){ return mBoard; }
+	CameraManager &getCameraManager() { return mCameraManager; }
 	Font &getDefaultFont(){ return mFont; }
 	Gamestate &getGamestate(){ return mGamestate; }
 	GraphicsBufferManager &getGraphicsBufferManager();

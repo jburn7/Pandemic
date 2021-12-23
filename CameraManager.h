@@ -18,6 +18,9 @@ public:
 	//event functions
 	virtual void handleEvent(const Event& theEvent);
 
+	// Getters
+	const Vector2D getOffset();
+
 private:
 	bool mCameraPanLeft, mCameraPanRight, mCameraPanUp, mCameraPanDown; // If we want to get fancy we could move these into two enums or something
 

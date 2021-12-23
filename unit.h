@@ -34,6 +34,7 @@ public:
 	//setters
 	void setAnimating(bool torf);
 	void setColor(const Color &color);
+	void setIsHidden(const bool isHidden);
 	void setPosition(Vector2D pos);
 	void setSprite(Sprite *s);
 	void setRotation(double theta);
@@ -43,6 +44,7 @@ public:
 	//getters
 	Vector2D getCenter();
 	Vector2D &getPosition();
+	bool getIsHidden();
 	int getWidth();
 	int getHeight();
 	int getZLayer();
@@ -59,6 +61,7 @@ protected:
 	double mTheta; //for storing rotation data
 
 	int mZLayer; // UnitManager.draw reads this and decides how to position units on top of one another. 0 is farthest "back" and all units default to most front layer
+	bool mIsHidden;
 
 	Color mColor;
 	Vector2D mScale;

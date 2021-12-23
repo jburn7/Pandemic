@@ -6,6 +6,7 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	mpCity = city;
 	mText = new UIBox(Vector2D(0, 0), s->getWidth() * 0.8f, s->getHeight() * 0.2f, (int)(s->getHeight() * 0.15f), Vector2D(0, 0), city->getName(), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("blank.png")));
 	setPosition(pos);
+	setIsHidden(true); // default not to draw until it has been "drawn" from deck (ha)
 }
 
 CityCard::~CityCard()

@@ -107,3 +107,8 @@ void CameraManager::handleEvent(const Event &theEvent)
 		}
 	}
 }
+
+const Vector2D CameraManager::getOffset()
+{
+	return mCenter;
+}

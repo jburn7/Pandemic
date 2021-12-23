@@ -11,6 +11,7 @@ Unit::Unit()
 	mConstantFrame = NULL;
 	mAnimating = false;
 	mZLayer = MAX_Z_LAYERS;
+	mIsHidden = false;
 }
 
 Unit::Unit(Vector2D pos, Animation *a) : Unit()
@@ -93,6 +94,11 @@ void Unit::setColor(const Color &color)
 	}
 }
 
+void Unit::setIsHidden(const bool isHidden)
+{
+	mIsHidden = isHidden;
+}
+
 void Unit::setPosition(Vector2D pos)
 {
 	mPosition = pos;
@@ -135,6 +141,11 @@ Vector2D Unit::getCenter()
 Vector2D &Unit::getPosition()
 {
 	return mPosition;
+}
+
+bool Unit::getIsHidden()
+{
+	return mIsHidden;
 }
 
 int Unit::getWidth()
