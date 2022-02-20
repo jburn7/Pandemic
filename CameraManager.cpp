@@ -1,22 +1,24 @@
 #include "CameraManager.h"
 #include "KeyEvent.h"
-#include "PanCameraEvent.h"
+#include "CameraEvents.h"
 #include "game.h"
 
-void CameraManager::init(const Vector2D bounds, const float panSpeed)
+void CameraManager::init(const Vector2D bounds, const float panSpeed, const float panAcceleration)
 {
 	mCameraPanDown = mCameraPanLeft = mCameraPanRight = mCameraPanUp = false;
-	mPanSpeed = panSpeed;
+	mMaxPanSpeed = panSpeed;
+	mPanSpeed = 0;
+	mPanAcceleration = panAcceleration;
 	mBounds = bounds;
 	mCenter = Vector2D(0, 0);
 
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(KEY_RELEASED_EVENT, this);
+	gpEventSystem->addListener(MOUSE_WHEEL_EVENT, this);
 }
 
 void CameraManager::update()
 {
-	// TODO: add acceleration
 	if(mCameraPanRight)
 	{
 		const Vector2D delta = Vector2D(std::min(mPanSpeed, std::abs(mBounds.getX() - mCenter.getX())), 0);
@@ -52,6 +54,16 @@ void CameraManager::update()
 			gpEventSystem->fireEvent(new PanCameraEvent(PAN_CAMERA_EVENT, delta));
 			mCenter += delta;
 		}
+	}
+
+	if(mCameraPanRight || mCameraPanLeft || mCameraPanDown || mCameraPanUp)
+	{
+		mPanSpeed += mPanAcceleration;
+		mPanSpeed = std::min(mPanSpeed, mMaxPanSpeed);
+	}
+	else
+	{
+		mPanSpeed = 0;
 	}
 }
 
@@ -102,6 +114,22 @@ void CameraManager::handleEvent(const Event &theEvent)
 				mCameraPanDown = false;
 				break;
 			default:
+				break;
+			}
+		}
+	}
+	else if(theEvent.getType() == MOUSE_WHEEL_EVENT)
+	{
+		const MouseWheelEvent &ev = static_cast<const MouseWheelEvent&>(theEvent);
+		if(gameState == PLAYING)
+		{
+			switch(ev.getDirection())
+			{
+			case MOUSE_WHEEL_DOWN:
+				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, 0.05));
+				break;
+			case MOUSE_WHEEL_UP:
+				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, -0.05));
 				break;
 			}
 		}

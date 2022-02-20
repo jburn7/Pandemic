@@ -85,6 +85,18 @@ void InputSystem::checkForInput()
 				break;
 			}
 		}
+		else if(e.type == sf::Event::MouseWheelMoved)
+		{
+			switch(e.mouseWheel.delta)
+			{
+			case 1:
+				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_UP));
+				break;
+			case -1:
+				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_DOWN));
+				break;
+			}
+		}
 	}
 	if(Game::getInstance()->getGamestate() == PLAYING)
 	{

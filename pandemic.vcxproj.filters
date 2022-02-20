@@ -111,13 +111,19 @@
     <ClInclude Include="CityCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PanCameraEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CameraManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AISystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -210,6 +216,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CameraManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AISystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

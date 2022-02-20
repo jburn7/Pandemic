@@ -9,6 +9,7 @@
 
 class Board : public EventListener
 {
+	friend class AISystem;
 public:
 	Board();
 	~Board();
@@ -25,7 +26,8 @@ private:
 	void cleanup();
 	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player);
-	bool decrementDiseaseCubes(City *city);
+	bool decrementDiseaseCubes(City *const city);
+	void decrementDiseaseCubesMove(City *const city); // This guy will wrap the decrement moves event with the decrement cube event. Separate from the former func because we want to keep the functionality to decrement cubes without moving (i.e. event cards later)
 	void discardPlayerCard(Player* player, PlayerCard* card);
 	void discardInfectionCard(InfectionCard *card);
 	void drawInfectionCard(int numCubesToAdd);

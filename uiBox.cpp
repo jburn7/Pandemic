@@ -1,18 +1,21 @@
 #include "uiBox.h"
 #include "game.h"
 
-UIBox::UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const std::string &text, Sprite *sprite)
+UIBox::UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Sprite *sprite, Sprite *background)
 {
 	mPosition = pos;
 	mWidth = width;
 	mHeight = height;
 	mFontSize = fontSize;
 	mTextOffset = textOffset;
+	mColor = color;
 	mText = text;
 	mBackground = sprite;
+	mPaddingBackground = background;
 
 	mScale = Vector2D(1, 1);
-	mPadding = 6.f; //debug value
+	mPaddingBackgroundScale = Vector2D(1, 1);
+	mPaddingAmount = padding; //debug value
 
 	resizeBackground();
 }
@@ -33,7 +36,16 @@ UIBox::UIBox(const UIBox &other)
 	{
 		mBackground = nullptr;
 	}
-	mPadding = other.mPadding;
+	if(other.mPaddingBackground)
+	{
+		mBackground = new Sprite(*other.mPaddingBackground);
+		delete other.mPaddingBackground;
+	}
+	else
+	{
+		mBackground = nullptr;
+	}
+	mPaddingAmount = other.mPaddingAmount;
 	mTextOffset = other.mTextOffset;
 	mColor = other.mColor;
 	mScale = other.mScale;
@@ -48,6 +60,11 @@ UIBox::~UIBox()
 		delete mBackground;
 		mBackground = NULL;
 	}
+	if(mPaddingBackground)
+	{
+		delete mPaddingBackground;
+		mPaddingBackground = NULL;
+	}
 }
 
 bool UIBox::contains(Vector2D pos)
@@ -55,14 +72,17 @@ bool UIBox::contains(Vector2D pos)
 	return pos.getX() > mPosition.getX() && pos.getX() < mPosition.getX() + mWidth && pos.getY() > mPosition.getY() && pos.getY() < mPosition.getY() + mHeight;
 }
 
-void UIBox::draw(Font &font, Color &color)
+void UIBox::draw(Font &font)
 {
-	//TODO: fix box backgrounds
+	if(mPaddingBackground)
+	{
+		Game::getInstance()->getGraphics().drawScale(mPosition, *mPaddingBackground, mPaddingBackgroundScale);
+	}
 	if(mBackground)
 	{
-		Game::getInstance()->getGraphics().drawScale(mPosition, *mBackground, mScale);
+		Game::getInstance()->getGraphics().drawScale(mPosition + Vector2D(mTextOffset.getX(), -mTextOffset.getY()), *mBackground, mScale);
 	}
-	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, color, mText);
+	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, mColor, mText);
 }
 
 void UIBox::move(const Vector2D & delta)
@@ -85,10 +105,16 @@ void UIBox::resizeBackground()
 {
 	//pad the text with a background that gives in both dimensions
 	int textWidth = Game::getInstance()->getDefaultFont().getWidth(mText, mFontSize);
-	int textHeight = Game::getInstance()->getDefaultFont().getHeight(mText, mFontSize); //TODO: give a font pointer in init
-	// TODO: add a second "padding" background that has the same position at background but is just a solid color and is bigger in size by [padding] pixels
+	int textHeight = Game::getInstance()->getDefaultFont().getHeight(mText, mFontSize);
+	// TODO: pixels are still off for text backgrounds
 	mScale = Vector2D((float)(textWidth) / (float)mBackground->getWidth(), (float)(textHeight) / (float)mBackground->getHeight());
-	float backgroundWidth = mBackground->getWidth() * mScale.getX();
-	float backgroundHeight = mBackground->getHeight() * mScale.getY();
+	float backgroundWidth = std::floor(mBackground->getWidth() * mScale.getX());
+	float backgroundHeight = std::floor(mBackground->getHeight() * mScale.getY());
+	if(mPaddingBackground)
+	{
+		mPaddingBackgroundScale = Vector2D((textWidth + mPaddingAmount) / (mPaddingBackground->getWidth()), (textHeight + mPaddingAmount) / (mPaddingBackground->getHeight()));
+		backgroundWidth = std::floor(mBackground->getWidth() * mPaddingBackgroundScale.getX());
+		backgroundHeight = std::floor(mBackground->getHeight() * mPaddingBackgroundScale.getY());
+	} 
 	mTextOffset = Vector2D(backgroundWidth / 2, backgroundHeight / 2) - Vector2D((float)textWidth / 2, (float)textHeight);
 }

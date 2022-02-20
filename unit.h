@@ -2,7 +2,7 @@
 #include "animation.h"
 
 #define PI 3.1415926535897932
-#define MAX_Z_LAYERS 2
+#define MAX_Z_LAYERS 4
 
 //declare any classes that require double dispatch for collision here
 
@@ -35,6 +35,7 @@ public:
 	void setAnimating(bool torf);
 	void setColor(const Color &color);
 	void setIsHidden(const bool isHidden);
+	void setIsGuiLayer(const bool isGui);
 	void setPosition(Vector2D pos);
 	void setSprite(Sprite *s);
 	void setRotation(double theta);
@@ -45,6 +46,7 @@ public:
 	Vector2D getCenter();
 	Vector2D &getPosition();
 	bool getIsHidden();
+	bool getIsGuiLayer();
 	int getWidth();
 	int getHeight();
 	int getZLayer();
@@ -62,6 +64,7 @@ protected:
 
 	int mZLayer; // UnitManager.draw reads this and decides how to position units on top of one another. 0 is farthest "back" and all units default to most front layer
 	bool mIsHidden;
+	bool mIsGuiLayer; // Probably a better way to do this but I need to draw some items onto a separate "gui" view so they don't scale with the camera. Ideally I would have UnitManeger store them separately instead of iterating through units twice, but we can cross that bridge if it's too slow
 
 	Color mColor;
 	Vector2D mScale;

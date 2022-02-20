@@ -75,6 +75,7 @@ void Game::init(const std::string &jsonPath)
 	int width = doc[JSONPATH]["width"].GetInt(), height = doc[JSONPATH]["height"].GetInt();
 	mGraphics.init(width, height, doc[JSONPATH]["title"].GetString());
 	mInputSystem.init();
+	mAISystem.init(doc["ai"]["ticksPerPlayerMove"].GetInt());
 	
 	mUi = new UI;
 
@@ -98,7 +99,7 @@ void Game::init(const std::string &jsonPath)
 	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 
 	component = doc[JSONPATH]["animations"];
 	//int tileSize = doc[JSONPATH]["tileSize"].GetInt();
-	int tileSize = width / 50; //TODO: placeholder until I can figure out whether tilesize is necessary
+	int tileSize = 0; // tileSize not used until I add animations
 
 	//load animations for mUnitManager
 	mUnitManager.setUnitAnimations(loadUnitAnimations(component, tileSize));
@@ -107,8 +108,9 @@ void Game::init(const std::string &jsonPath)
 
 	// Init camera with json values for bounds/speed
 	component = doc[JSONPATH]["camera"];
-	mCameraManager.init(Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()), component["panSpeed"].GetFloat());
+	mCameraManager.init(Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()), component["panSpeed"].GetFloat(), component["panAcceleration"].GetFloat());
 
+	// Init UI stuff like fonts and text sizes
 	mFont.loadFont(std::string(doc[JSONPATH]["assetsPath"].GetString()) + "\\" + doc[JSONPATH]["uiFont"].GetString(), doc[JSONPATH]["fontSize"].GetInt());
 	mUi->setFont(&mFont);
 
@@ -152,7 +154,6 @@ void Game::loop()
 		processInput();
 		mCameraManager.update();
 		update(mClock.getElapsedTime());
-		mGraphics.update();
 		render();
 		frames++;
 		double fps = frames / mClock.getElapsedTime() * 1000;
@@ -202,6 +203,7 @@ UnitManager &Game::getUnitManager()
 void Game::processInput()
 {
 	mInputSystem.checkForInput();
+	mAISystem.update(mBoard);
 }
 
 void Game::update(double timeElapsed)
@@ -216,7 +218,10 @@ void Game::update(double timeElapsed)
 void Game::render()
 {
 	mGraphics.clear();
-	mUnitManager.draw();
+	mGraphics.update(BASE_VIEW);
+	mUnitManager.draw(BASE_VIEW);
+	mGraphics.update(GUI_VIEW);
+	mUnitManager.draw(GUI_VIEW);
 	mUi->draw();
 	mGraphics.flip();
 	//if(mJustReset)

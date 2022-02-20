@@ -24,3 +24,22 @@ private:
 	MouseButton mButton;
 	Vector2D mPosition;
 };
+
+enum MouseWheel
+{
+	MOUSE_WHEEL_DOWN,
+	MOUSE_WHEEL_UP
+};
+
+class MouseWheelEvent : public Event
+{
+public:
+	MouseWheelEvent(EventType type, MouseWheel direction) : Event(type)
+	{
+		mDirection = direction;
+	}
+
+	MouseWheel getDirection() const { return mDirection; }
+private:
+	MouseWheel mDirection;
+};

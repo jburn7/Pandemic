@@ -4,11 +4,34 @@
 
 City::City(const std::string &name, const int type, const Vector2D &pos, Sprite *s) : Unit(pos, s)
 {
+	// TODO: fix hitbox issue (seems to be shifted to left?)
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["city"];
+	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
+	const Color color = Color(c["infoColor"]["r"].GetInt(), c["infoColor"]["g"].GetInt(), c["infoColor"]["b"].GetInt());
 
-	mCubeText = new UIBox(Vector2D(pos.getX(), pos.getY() + s->getHeight()), 0, 0, c["fontSize"].GetInt(), Vector2D(0, 0), "0", new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(c["infoBackgroundImg"].GetString()))); //deletes called in this dtor, UIBox dtor
-	mNameText = new UIBox(Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()), 0, 0, c["fontSize"].GetInt(), Vector2D(0, 0), "0", new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(c["infoBackgroundImg"].GetString()))); //deletes called in this dtor, UIBox dtor
+	mCubeText = new UIBox(
+		Vector2D(pos.getX(), pos.getY() + s->getHeight()),
+		0, 
+		0,
+		c["fontSize"].GetInt(),
+		Vector2D(0, 0),
+		color,
+		c["infoTextPadding"].GetFloat(), 
+		"0",
+		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
+		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))); //deletes called in this dtor, UIBox dtor
+	mNameText = new UIBox(
+		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
+		0,
+		0,
+		c["fontSize"].GetInt(), 
+		Vector2D(0, 0),
+		color,
+		c["infoTextPadding"].GetFloat(),
+		"0",
+		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
+		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))); //deletes called in this dtor, UIBox dtor
 
 	mName = name;
 	mNameText->setText(mName);
@@ -20,7 +43,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mRadius = c["radius"].GetInt();
 
 	//calculate potential positions for pawns
-	pawnPositions.push_back(Vector2D(pos.getX(), pos.getY() - 75)); //debug. TODO: find some other way to account for pawn's height
+	pawnPositions.push_back(Vector2D(pos.getX(), pos.getY() - s->getHeight()));
 	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth() / 3, pos.getY()));
 	pawnPositions.push_back(Vector2D(pos.getX() + 2 * s->getWidth() / 3, pos.getY()));
 	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth(), pos.getY() + s->getHeight() / 3));
@@ -82,8 +105,8 @@ void City::draw()
 {
 	//draw city sprite and city info in text
 	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
-	mCubeText->draw(Game::getInstance()->getDefaultFont(), Color(255, 0, 255)); //TODO: store color in json if I plan to make it not white
-	mNameText->draw(Game::getInstance()->getDefaultFont(), Color(255, 0, 255));
+	mCubeText->draw(Game::getInstance()->getDefaultFont());
+	mNameText->draw(Game::getInstance()->getDefaultFont());
 }
 
 void City::loadNeighbors(const std::vector<City*> &cities, const std::vector<int> &neighbors)
@@ -156,7 +179,12 @@ std::vector<City*> City::getNeighbors()
 	return mNeighbors;
 }
 
-int City::getType()
+int City::getNumberOfDiseaseCubes() const
+{
+	return mDiseaseCubes;
+}
+
+int City::getType() const
 {
 	return mType;
 }

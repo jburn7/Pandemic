@@ -4,6 +4,7 @@
 #include "graphicsBufferManager.h"
 #include "CameraManager.h"
 #include "inputSystem.h"
+#include "AISystem.h"
 #include "Timer.h"
 #include "PerformanceTracker.h"
 #include "jsonData.h"
@@ -65,6 +66,7 @@ protected:
 	void update(double timeElapsed);
 	void render();
 
+	AISystem mAISystem;
 	CameraManager mCameraManager;
 	GraphicsBufferManager mGraphicsBufferManager;
 	InputSystem mInputSystem;

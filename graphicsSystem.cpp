@@ -1,5 +1,5 @@
 #include "graphicsSystem.h"
-#include "PanCameraEvent.h"
+#include "CameraEvents.h"
 
 void setPosition(sf::Transformable &trans, const Vector2D &vec)
 {
@@ -10,8 +10,10 @@ GraphicsSystem::GraphicsSystem()
 {
 	mWidth = 0;
 	mHeight = 0;
+	mCameraZoom = 1;
 
 	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
+	gpEventSystem->addListener(ZOOM_CAMERA_EVENT, this);
 }
 
 GraphicsSystem::~GraphicsSystem()
@@ -38,9 +40,12 @@ void GraphicsSystem::clear()
 	mDisplay.clear(sf::Color::Black);
 }
 
-Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos)
+Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsLayer layer)
 {
+	sf::View oldView = mDisplay.getView();
+	update(layer); // switch to view corresponding to given layer to get correct coordinate conversions
 	sf::Vector2f worldPos = mDisplay.mapPixelToCoords(sf::Vector2i(pos.getX(), pos.getY()));
+	mDisplay.setView(oldView);
 	return Vector2D(worldPos.x, worldPos.y);
 }
 
@@ -111,6 +116,10 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 	{
 		mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
 	}
+	else if(theEvent.getType() == ZOOM_CAMERA_EVENT)
+	{
+		mCameraZoom += static_cast<const ZoomCameraEvent&>(theEvent).getDelta();
+	}
 }
 
 void GraphicsSystem::flip()
@@ -118,11 +127,23 @@ void GraphicsSystem::flip()
 	mDisplay.display();
 }
 
-void GraphicsSystem::update()
+void GraphicsSystem::update(const GraphicsLayer layer)
 {
-	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f(mWidth, mHeight));
-	mDisplay.setView(view);
-	mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
+	switch(layer)
+	{
+	case BASE_VIEW:
+	{
+		sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f(mWidth, mHeight));
+		view.zoom(mCameraZoom);
+		mDisplay.setView(view);
+		mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
+	}
+		break;
+	case GUI_VIEW:
+		sf::View view(sf::Vector2f(mWidth / 2, mHeight / 2), sf::Vector2f(mWidth, mHeight));
+		mDisplay.setView(view);
+		break;
+	}
 }
 
 void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message){

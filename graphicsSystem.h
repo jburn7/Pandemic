@@ -8,6 +8,12 @@
 #include "EventSystem.h"
 #include <string>
 
+enum GraphicsLayer
+{
+	BASE_VIEW,
+	GUI_VIEW
+};
+
 class GraphicsSystem : public EventListener
 {
 	friend class InputSystem; //for polling RenderWindow Events
@@ -22,7 +28,7 @@ public:
 
 	void clear();
 
-	Vector2D convertToWorldCoordinates(Vector2D pos);
+	Vector2D convertToWorldCoordinates(Vector2D pos, const GraphicsLayer layer);
 
 	void draw(const Vector2D &targetLoc, Sprite &sprite);
 
@@ -35,7 +41,7 @@ public:
 	void flip();
 
 	//just updates the camera position, does NOT draw
-	void update();
+	void update(const GraphicsLayer layer);
 
 	void writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message);
 
@@ -53,6 +59,7 @@ protected:
 	int mWidth, mHeight;
 
 	Vector2D mCameraPosition;
+	double mCameraZoom;
 	Vector2D mTopLeft; // For consistent UI drawing after camera has panned
 	sf::RenderWindow mDisplay;
 };

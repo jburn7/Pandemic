@@ -6,13 +6,13 @@
 class UIBox : public Trackable
 {
 public:
-	UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const std::string &text, Sprite *sprite);
+	UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Sprite *sprite, Sprite *background);
 	UIBox(const UIBox &other);
 	~UIBox();
 
 	bool contains(Vector2D pos);
 
-	void draw(Font &font, Color &color);
+	void draw(Font &font);
 
 	void move(const Vector2D &delta);
 
@@ -24,11 +24,12 @@ private:
 
 	Vector2D mPosition;
 	float mWidth, mHeight;
-	Vector2D mScale;
+	Vector2D mScale, mPaddingBackgroundScale;
 	int mFontSize;
 	std::string mText;
 	Sprite *mBackground;
-	float mPadding;
+	Sprite *mPaddingBackground;
+	float mPaddingAmount;
 	Vector2D mTextOffset;
 	Color mColor;
 };

@@ -10,8 +10,9 @@ Unit::Unit()
 	mAnimation = NULL;
 	mConstantFrame = NULL;
 	mAnimating = false;
-	mZLayer = MAX_Z_LAYERS;
+	mZLayer = 1;
 	mIsHidden = false;
+	mIsGuiLayer = false;
 }
 
 Unit::Unit(Vector2D pos, Animation *a) : Unit()
@@ -99,6 +100,11 @@ void Unit::setIsHidden(const bool isHidden)
 	mIsHidden = isHidden;
 }
 
+void Unit::setIsGuiLayer(const bool isGui)
+{
+	mIsGuiLayer = isGui;
+}
+
 void Unit::setPosition(Vector2D pos)
 {
 	mPosition = pos;
@@ -146,6 +152,11 @@ Vector2D &Unit::getPosition()
 bool Unit::getIsHidden()
 {
 	return mIsHidden;
+}
+
+bool Unit::getIsGuiLayer()
+{
+	return mIsGuiLayer;
 }
 
 int Unit::getWidth()

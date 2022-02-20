@@ -32,7 +32,9 @@ public:
 
 	std::vector<City*> getNeighbors();
 
-	int getType();
+	int getNumberOfDiseaseCubes() const;
+
+	int getType() const;
 
 	//setters
 	void setDiseaseCubes(const int cubes);

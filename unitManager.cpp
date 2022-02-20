@@ -1,5 +1,6 @@
 #include "unitManager.h"
 #include "game.h"
+#include "graphicsSystem.h"
 
 UnitManager::UnitManager()
 {
@@ -53,15 +54,16 @@ Unit *UnitManager::getUnit(int index)
 	return mUnits[index];
 }
 
-void UnitManager::draw()
+void UnitManager::draw(const GraphicsLayer layer)
 {
 	// naive z layer implementation. If this is too slow, then we can keep a vector of unit indexes that partitions the unit vector into z sections
 	// makes for slower unit additions/creations and takes more time to implement which is why this is here now
+	// Or just sort by z layer every time we add or remove a unit
 	for(int j = 0; j <= MAX_Z_LAYERS; j++)
 	{
 		for(unsigned int i = 0; i < mUnits.size(); i++)
 		{
-			if(mUnits[i]->getZLayer() == j && !(mUnits[i]->getIsHidden()))
+			if(mUnits[i]->getZLayer() == j && !(mUnits[i]->getIsHidden()) && ((mUnits[i]->getIsGuiLayer() && layer == GUI_VIEW) || (!mUnits[i]->getIsGuiLayer() && layer == BASE_VIEW)))
 			{
 				mUnits[i]->draw();
 			}

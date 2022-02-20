@@ -3,6 +3,8 @@
 #include "EventListener.h"
 #include <map>
 
+enum GraphicsLayer;
+
 class UnitManager : public EventListener
 {
 public:
@@ -27,7 +29,7 @@ public:
 	Unit *getUnit(int index);
 
 	//game flow functions
-	void draw();
+	void draw(const GraphicsLayer layer);
 
 	void resetLevel();
 

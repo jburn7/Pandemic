@@ -1,6 +1,8 @@
 #include "Board.h"
 #include "game.h"
-#include "PanCameraEvent.h"
+#include "CameraEvents.h"
+#include "graphicsSystem.h"
+#include "AIEvents.h"
 
 #include "SFML\Graphics.hpp"
 
@@ -42,14 +44,14 @@ void Board::init(int numPlayers)
 		// Also generate city card deck here since each card is tied to a city
 		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 		PlayerCard *pc = new PlayerCard(mPlayerDrawLocation, cityCardBackground, city);
-		pc->setZLayer(2);
+		pc->setZLayer(3);
 		playerDraw.push_back(pc);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
 
 		// Also generate infection card deck here since each card is tied to a city
 		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 		InfectionCard *infectionCard = new InfectionCard(mInfectionDrawLocation, infectionCardBackground, city);
-		infectionCard->setZLayer(2);
+		infectionCard->setZLayer(3);
 		infectDraw.push_back(infectionCard);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, infectionCard));
 
@@ -106,6 +108,9 @@ void Board::init(int numPlayers)
 	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
+	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
+	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
+	gpEventSystem->addListener(AI_SHOULD_MOVE_EVENT, this);
 }
 
 void Board::cleanup()
@@ -197,7 +202,7 @@ void Board::dealTopPlayerCard(Player *player)
 	}
 }
 
-bool Board::decrementDiseaseCubes(City *city)
+bool Board::decrementDiseaseCubes(City* const city)
 {
 	bool didDecrement = city->decrementDiseaseCubes(1);
 	if(didDecrement)
@@ -208,6 +213,15 @@ bool Board::decrementDiseaseCubes(City *city)
 		}
 	}
 	return didDecrement;
+}
+
+void Board::decrementDiseaseCubesMove(City *const city)
+{
+	if(decrementDiseaseCubes(mpActivePawn->getCurrentCity()))
+	{
+		gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+		return;
+	}
 }
 
 void Board::discardPlayerCard(Player *player, PlayerCard *card)
@@ -399,7 +413,9 @@ void Board::handleEvent(const Event &theEvent)
 	if(theEvent.getType() == MOUSE_CLICK_EVENT)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
-		Vector2D pos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition());
+		// Two different coordinates for the two different views, will need to track both and then each unit here can decide which one to use based on whether it is a gui unit
+		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), BASE_VIEW);
+		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GUI_VIEW);
 		/*
 		if click landed on city adjacent to active pawn, move that pawn
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
@@ -412,21 +428,21 @@ void Board::handleEvent(const Event &theEvent)
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
-				const Vector2D worldPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(pos);
-				std::cout << "\t World coords at " << "(" << worldPos.getX() << ", " << worldPos.getY() << ")" << std::endl;
-				if(checkDeckForClick(playerDraw, pos, "Player Draw contents:"))
+				std::cout << "\t World coords at " << "(" << basePos.getX() << ", " << basePos.getY() << ")" << std::endl;
+				std::cout << "\t GUI coords at " << "(" << guiPos.getX() << ", " << guiPos.getY() << ")" << std::endl;
+				if(checkDeckForClick(playerDraw, guiPos, "Player Draw contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(playerDiscard, pos, "Player Discard contents:"))
+				if(checkDeckForClick(playerDiscard, guiPos, "Player Discard contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(infectDraw, pos, "Infection Draw contents:"))
+				if(checkDeckForClick(infectDraw, guiPos, "Infection Draw contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(infectDiscard, pos, "Infection Discard contents:"))
+				if(checkDeckForClick(infectDiscard, guiPos, "Infection Discard contents:"))
 				{
 					return;
 				}
@@ -435,21 +451,16 @@ void Board::handleEvent(const Event &theEvent)
 				if(mpActiveCard == nullptr)
 				{
 				    //  if pawn's current city was clicked
-					if(mpActivePawn->getCurrentCity()->contains(pos))
+					if(mpActivePawn->getCurrentCity()->contains(basePos))
 					{
-						//reduce disease cubes
-						if(decrementDiseaseCubes(mpActivePawn->getCurrentCity()))
-						{
-							gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
-							return;
-						}
+						decrementDiseaseCubesMove(mpActivePawn->getCurrentCity());
 					}
 					else
 					{
 						//for each neighbor, if it was clicked, move pawn to it and break
 						for(auto &v : mpActivePawn->getCurrentCity()->getNeighbors())
 						{
-							if(v->contains(pos))
+							if(v->contains(basePos))
 							{
 								mpActivePawn->moveCity(v);
 								gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
@@ -460,7 +471,7 @@ void Board::handleEvent(const Event &theEvent)
 						// For each card player owns, if it was clicked, set it to active
 						for(auto &v : mpActivePawn->getHand())
 						{
-							if(v->contains(pos))
+							if(v->contains(guiPos))
 							{
 								// TODO: move this to its own method
 								mpActiveCard = v;
@@ -477,7 +488,7 @@ void Board::handleEvent(const Event &theEvent)
 							// Move pawn to city and discard card
 					for(auto &city : mCities)
 					{
-						if(mpActiveCard->getCity() == city && city->contains(pos) && !mpActivePawn->isInCity(city))
+						if(mpActiveCard->getCity() == city && city->contains(basePos) && !mpActivePawn->isInCity(city))
 						{
 							mpActivePawn->moveCity(city);
 							discardPlayerCard(mpActivePawn, mpActiveCard);
@@ -500,7 +511,7 @@ void Board::handleEvent(const Event &theEvent)
 				//if any city was clicked, increment its cubes
 				for(auto &v : mCities)
 				{
-					if(v->contains(pos))
+					if(v->contains(basePos))
 					{
 						v->incrementDiseaseCubes(1);
 						return;
@@ -524,21 +535,9 @@ void Board::handleEvent(const Event &theEvent)
 		const PanCameraEvent &ev = static_cast<const PanCameraEvent&>(theEvent);
 		if(gameState == PLAYING)
 		{
-			// Every hand card will still have to be moved though
 			// TODO: add titles describing each draw pile
-			const Vector2D delta = ev.getDelta();
-			for(auto &player : mPlayers)
-			{
-				for(auto &card : player->getHand())
-				{
-					card->move(delta);
-				}
-			}
-			mPlayerDrawLocation += delta;
-			mPlayerDiscardLocation += delta;
-			mInfectionDrawLocation += delta;
-			mInfectionDiscardLocation += delta;
-			// TODO: instead of moving every card, just give board a single sprite for each deck and move just that sprite to have deck follow cameras and change that sprite each time the top of deck was modified
+
+			// TODO: this only needs to happen for each card once when that card is moved onto a different deck rather than everytime the camera moves
 			for(auto &card : playerDraw)
 			{
 				card->setPosition(mPlayerDrawLocation);
@@ -554,6 +553,16 @@ void Board::handleEvent(const Event &theEvent)
 			for(auto &card : infectDiscard)
 			{
 				card->setPosition(mInfectionDiscardLocation);
+			}
+		}
+	}
+	else if(theEvent.getType() == AI_PLAYER_CUBE_EVENT)
+	{
+		if(gameState == PLAYING) {
+			const AIPlayerCubeEvent &ev = static_cast<const AIPlayerCubeEvent&>(theEvent);
+			if(ev.getCity()->getNumberOfDiseaseCubes() > 0)
+			{
+				decrementDiseaseCubesMove(ev.getCity());
 			}
 		}
 	}

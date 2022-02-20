@@ -1,4 +1,7 @@
 {
+	"ai": {
+		"ticksPerPlayerMove": 60
+	},
 	"cities": [
 		{
 			"name": "Atlanta",
@@ -44,9 +47,23 @@
 	"city": {
 		"initialCubes": 0,
 		"fontSize": 16,
+		"fontPadding": 6,
 		"infoBackgroundImg": "menu_tile_simple.png",
+		"infoTextPadding": 6,
+		"infoColor": {
+			"r": 55,
+			"g": 95,
+			"b": 105
+		},
 		"outbreakThreshold": 3,
 		"radius": 75
+	},
+	"cityCard": {
+		"color": {
+			"r": 0,
+			"g": 0,
+			"b": 0
+		}
 	},
 	"game": {
 		"width": 1920,
@@ -78,7 +95,8 @@
 		"camera": {
 			"boundsWidth": 1200,
 			"boundsHeight": 700,
-			"panSpeed": 7
+			"panSpeed": 7,
+			"panAcceleration": 0.8
 		},
 		"assetsPath": "assets/",
 		"uiFont": "cour.ttf",
@@ -90,7 +108,8 @@
 			"graph_edge.png",
 			"menu_tile.png",
 			"menu_tile_simple.png",
-			"pawn.png"
+			"pawn.png",
+			"plain_square.png"
 		],
 		"animations": [ ]
 	},
@@ -126,6 +145,7 @@
 		"startString": "",
 		"failedString": "",
 		"completeString": "",
-		"replayString": ""
+		"replayString": "",
+		"defaultUIPaddingImage": "plain_square.png"
 	}
 }

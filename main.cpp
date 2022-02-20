@@ -21,11 +21,6 @@
 #include "game.h"
 #include "MemoryTracker.h"
 
-/*3/31/2020: TODO: instead of having a generic Board or Level class, just utilize sf:View's functionality, and keep the cov and width/height of view
-	stored in Game itself.
-	First goals are to set up a simple two-city graph, have pawns move between them, in/decrement the disease cubes on the cities, and render all of this
-*/
-
 int main()
 {
 	srand(time(NULL));
