@@ -59,7 +59,12 @@ protected:
 	int mWidth, mHeight;
 
 	Vector2D mCameraPosition;
+	sf::Vector2i oldOffsetCoords;
+	sf::Vector2i mZoomPosition;
 	double mCameraZoom;
 	Vector2D mTopLeft; // For consistent UI drawing after camera has panned
 	sf::RenderWindow mDisplay;
+
+private:
+	void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);
 };

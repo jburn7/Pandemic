@@ -6,15 +6,15 @@
 class AIPlayerMoveEvent : public Event
 {
 public:
-	AIPlayerMoveEvent(EventType type, const City *targetCity, const CityCard *cardUsed) : Event(type)
+	AIPlayerMoveEvent(EventType type, City* const targetCity, CityCard* const cardUsed = nullptr) : Event(type), mpTargetCity(targetCity), mpCardUsed(cardUsed)
 	{
-		mpTargetCity = targetCity;
-		mpCardUsed = cardUsed;
 	}
 
+	City *getCity() const { return mpTargetCity; }
+
 private:
-	const City *mpTargetCity;
-	const CityCard *mpCardUsed;
+	City* const mpTargetCity;
+	CityCard* const mpCardUsed;
 };
 
 class AIPlayerCubeEvent : public Event

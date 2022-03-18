@@ -1,6 +1,6 @@
 {
 	"ai": {
-		"ticksPerPlayerMove": 60
+		"ticksPerPlayerMove": 60000
 	},
 	"cities": [
 		{

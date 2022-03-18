@@ -87,13 +87,14 @@ void InputSystem::checkForInput()
 		}
 		else if(e.type == sf::Event::MouseWheelMoved)
 		{
+			const Vector2D cursorLocation = Vector2D(e.mouseWheel.x, e.mouseWheel.y);
 			switch(e.mouseWheel.delta)
 			{
 			case 1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_UP));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_UP, cursorLocation));
 				break;
 			case -1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_DOWN));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_DOWN, cursorLocation));
 				break;
 			}
 		}

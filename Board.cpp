@@ -566,6 +566,28 @@ void Board::handleEvent(const Event &theEvent)
 			}
 		}
 	}
+	else if(theEvent.getType() == AI_PLAYER_MOVE_EVENT)
+	{
+		if(gameState == PLAYING)
+		{
+			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
+			bool isNeighbor = false;
+			// TODO: write helper funcs for vec like .contains
+			City *const currentCity = mpActivePawn->getCurrentCity();
+			for(auto &c : currentCity->getNeighbors())
+			{
+				if(c == ev.getCity())
+				{
+					isNeighbor = true;
+				}
+			}
+			if(isNeighbor)
+			{
+				mpActivePawn->moveCity(ev.getCity());
+				gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+			}
+		}
+	}
 }
 
 const int Board::getMovesRemaining()

@@ -34,12 +34,16 @@ enum MouseWheel
 class MouseWheelEvent : public Event
 {
 public:
-	MouseWheelEvent(EventType type, MouseWheel direction) : Event(type)
+	MouseWheelEvent(EventType type, MouseWheel direction, const Vector2D cursorLocation) : Event(type)
 	{
 		mDirection = direction;
+		mCursorLocation = cursorLocation;
 	}
 
 	MouseWheel getDirection() const { return mDirection; }
+
+	Vector2D getCursorLocation() const { return mCursorLocation; }
 private:
 	MouseWheel mDirection;
+	Vector2D mCursorLocation;
 };

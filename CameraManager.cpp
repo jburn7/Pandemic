@@ -120,16 +120,18 @@ void CameraManager::handleEvent(const Event &theEvent)
 	}
 	else if(theEvent.getType() == MOUSE_WHEEL_EVENT)
 	{
+		// TODO: Limit zoom value
 		const MouseWheelEvent &ev = static_cast<const MouseWheelEvent&>(theEvent);
+		const Vector2D zoomLocation = ev.getCursorLocation();
 		if(gameState == PLAYING)
 		{
 			switch(ev.getDirection())
 			{
 			case MOUSE_WHEEL_DOWN:
-				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, 0.05));
+				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, 0.05, zoomLocation));
 				break;
 			case MOUSE_WHEEL_UP:
-				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, -0.05));
+				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, -0.05, zoomLocation));
 				break;
 			}
 		}

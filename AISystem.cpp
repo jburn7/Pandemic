@@ -21,8 +21,8 @@ void AISystem::update(const Board &board)
 {
 	if(mTicksCounter++ >= mTicksPerPlayerMove || mShouldMakePlayerMove)
 	{
-		// TODO: read board and send a move event
 		mShouldMakePlayerMove = false;
+		mTicksCounter = 0;
 
 		/*  Really dumb AI, v0.1:
 			If player's current city has a cube, decrement it
@@ -33,6 +33,24 @@ void AISystem::update(const Board &board)
 		if(currentCity->getNumberOfDiseaseCubes() > 0)
 		{
 			gpEventSystem->fireEvent(new AIPlayerCubeEvent(AI_PLAYER_CUBE_EVENT, currentCity));
+			return;
+		}
+		std::vector<City*> neighbors = currentCity->getNeighbors();
+		bool moved = false;
+		for(auto &n : neighbors)
+		{
+			if(n->getNumberOfDiseaseCubes() > 0)
+			{
+				gpEventSystem->fireEvent(new AIPlayerMoveEvent(AI_PLAYER_MOVE_EVENT, n));
+				moved = true;
+				return;
+			}
+		}
+		if(!moved)
+		{
+			int randomCity = rand() % neighbors.size();
+			gpEventSystem->fireEvent(new AIPlayerMoveEvent(AI_PLAYER_MOVE_EVENT, neighbors[randomCity]));
+			return;
 		}
 	}
 
