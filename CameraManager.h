@@ -20,7 +20,6 @@ public:
 	const Vector2D getOffset();
 
 private:
-	// TODO: add zoom in/out for quicker navigation
 	bool mCameraPanLeft, mCameraPanRight, mCameraPanUp, mCameraPanDown; // If we want to get fancy we could move these into two enums or something
 
 	float mPanSpeed, mMaxPanSpeed, mPanAcceleration;

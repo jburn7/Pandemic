@@ -34,6 +34,7 @@ private:
 	void doleInitialDiseaseCubes();
 	void endGameAndRestart();
 	void endTurn();
+	void flyToCity(City* const city);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
 	bool checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener);
 	bool checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D pos, const std::string &opener); // Sure would be cool if C++ could cast from vec<Derived*> to vec<Base*>...

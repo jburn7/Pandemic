@@ -20,7 +20,6 @@ void JSONData::cleanup()
 		delete msInstance;
 		msInstance = NULL;
 	}
-	msInstance->mDoc.Clear();
 }
 
 rapidjson::Document &JSONData::getJSON()

@@ -74,7 +74,7 @@ bool Player::isInCity(City *city)
 	return currentCity == city;
 }
 
-void Player::moveCity(City *newCity)
+void Player::moveCity(City* const newCity)
 {
 	if(currentCity)
 	{

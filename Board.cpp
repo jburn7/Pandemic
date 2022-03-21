@@ -1,10 +1,9 @@
 #include "Board.h"
 #include "game.h"
 #include "CameraEvents.h"
+#include "ColorManager.h"
 #include "graphicsSystem.h"
 #include "AIEvents.h"
-
-#include "SFML\Graphics.hpp"
 
 Board::Board()
 {
@@ -349,6 +348,16 @@ void Board::endTurn()
 	mMovesRemaining = mMaxMovesPerTurn;
 }
 
+// Wraps flying, nulling active card, and discarding
+void Board::flyToCity(City* const city)
+{
+	mpActivePawn->moveCity(city);
+	discardPlayerCard(mpActivePawn, mpActiveCard);
+	gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+	mpActiveCard->setColor(ColorManager::getInstance()->black);
+	mpActiveCard = nullptr;
+}
+
 void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 {
 	if(infectDraw.size() > 0)
@@ -475,7 +484,7 @@ void Board::handleEvent(const Event &theEvent)
 							{
 								// TODO: move this to its own method
 								mpActiveCard = v;
-								mpActiveCard->setColor(Color(100, 255, 255));
+								mpActiveCard->setColor(ColorManager::getInstance()->teal);
 								return;
 							}
 						}
@@ -483,24 +492,25 @@ void Board::handleEvent(const Event &theEvent)
 				}
 				else
 				{
+					bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity());
 					// Poll each city, if it was clicked
-						// If city matches card's city
+					    // If charter flight, then move pawn to city and discard card
+						// Else if city matches card's city
 							// Move pawn to city and discard card
 					for(auto &city : mCities)
 					{
-						if(mpActiveCard->getCity() == city && city->contains(basePos) && !mpActivePawn->isInCity(city))
+						if(city->contains(basePos))
 						{
-							mpActivePawn->moveCity(city);
-							discardPlayerCard(mpActivePawn, mpActiveCard);
-							gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
-							mpActiveCard->setColor(Color(255, 255, 255));
-							mpActiveCard = nullptr;
-							return;
+							if((isCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
+							{
+								flyToCity(city);
+								return;
+							}
 						}
 					}
 
 					// Bogus click, reset active card
-					mpActiveCard->setColor(Color(255, 255, 255));
+					mpActiveCard->setColor(ColorManager::getInstance()->black);
 					mpActiveCard = nullptr;
 					return;
 				}

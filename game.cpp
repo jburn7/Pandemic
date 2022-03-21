@@ -1,4 +1,5 @@
 #include "game.h"
+#include "ColorManager.h"
 
 Game *Game::msInstance = NULL;
 
@@ -72,6 +73,7 @@ void Game::init(const std::string &jsonPath)
 {
 	JSONData::init(jsonPath.c_str());
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
+	ColorManager::init(doc["colors"]);
 	int width = doc[JSONPATH]["width"].GetInt(), height = doc[JSONPATH]["height"].GetInt();
 	mGraphics.init(width, height, doc[JSONPATH]["title"].GetString());
 	mInputSystem.init();
@@ -133,6 +135,9 @@ void Game::cleanup()
 	//mLevelManager.cleanup();
 	//mCameraManager.cleanup();
 	mUnitManager.cleanup();
+
+	ColorManager::cleanup();
+	JSONData::cleanup();
 }
 
 void Game::complete()

@@ -1,12 +1,13 @@
 #pragma once
 #include "document.h"
 #include "rapidjson.h"
+#include "Trackable.h"
 #include <fstream>
 #include <string>
 #include <sstream>
 
 //the data should be pretty small, so one class holding all game data should be manageable
-class JSONData
+class JSONData : public Trackable
 {
 public:
 	static JSONData *getInstance();

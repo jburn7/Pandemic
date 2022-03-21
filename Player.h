@@ -20,7 +20,7 @@ public:
 
 	bool isInCity(City* city);
 
-	void moveCity(City* newCity);
+	void moveCity(City* const newCity);
 
 	//getters
 	City* getCurrentCity();
