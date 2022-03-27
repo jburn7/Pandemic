@@ -4,7 +4,6 @@
 
 City::City(const std::string &name, const int type, const Vector2D &pos, Sprite *s) : Unit(pos, s)
 {
-	// TODO: fix hitbox issue (seems to be shifted to left?)
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["city"];
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
@@ -58,7 +57,7 @@ City::~City()
 
 bool City::contains(Vector2D &loc)
 {
-	return (mPosition - loc).getLength() < mRadius;
+	return (getCenter() - loc).getLength() < mRadius;
 }
 
 void City::handleEvent(const Event &theEvent)

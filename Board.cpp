@@ -89,9 +89,10 @@ void Board::init(unsigned int numPlayers)
 	{
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
+	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
-		Player *p = new Player(mCities[0], std::vector<PlayerCard*>(), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
+		Player *p = new Player(mCities[0], std::vector<PlayerCard*>(), playerHandLocation, new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
 		if(playerColors.size() > i)
 		{
 			p->setColor(playerColors[i]);
@@ -106,7 +107,6 @@ void Board::init(unsigned int numPlayers)
 
 	dealInitialPlayerCards();
 
-	// TODO: find a way to make these positions more intuitive (based on screen width and card size rather than hardcoded)
 	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat());
 	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
 
@@ -244,6 +244,16 @@ void Board::decrementDiseaseCubesMove(City *const city)
 	{
 		gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
 		return;
+	}
+}
+
+void Board::decrementRemainingMoves()
+{
+	// Adjust moves and end turn if needed
+	mMovesRemaining--;
+	if(mMovesRemaining <= 0)
+	{
+		endTurn();
 	}
 }
 
@@ -554,13 +564,7 @@ void Board::handleEvent(const Event &theEvent)
 	}
 	else if(theEvent.getType() == DECREMENT_MOVES_EVENT)
 	{
-		//TODO: move to new function(s) for decrement moves and end turn
-		//adjust moves and change active pawn if needed
-		mMovesRemaining--;
-		if(mMovesRemaining <= 0)
-		{
-			endTurn();
-		}
+		decrementRemainingMoves();
 	}
 	else if(theEvent.getType() == PAN_CAMERA_EVENT)
 	{

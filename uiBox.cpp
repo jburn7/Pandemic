@@ -106,7 +106,6 @@ void UIBox::resizeBackground()
 	//pad the text with a background that gives in both dimensions
 	int textWidth = Game::getInstance()->getDefaultFont().getWidth(mText, mFontSize);
 	int textHeight = Game::getInstance()->getDefaultFont().getHeight(mText, mFontSize);
-	// TODO: pixels are still off for text backgrounds
 	mScale = Vector2D((float)(textWidth) / (float)mBackground->getWidth(), (float)(textHeight) / (float)mBackground->getHeight());
 	float backgroundWidth = std::floor(mBackground->getWidth() * mScale.getX());
 	float backgroundHeight = std::floor(mBackground->getHeight() * mScale.getY());

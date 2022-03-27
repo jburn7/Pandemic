@@ -56,7 +56,7 @@
 			"b": 105
 		},
 		"outbreakThreshold": 3,
-		"radius": 75
+		"radius": 46
 	},
 	"cityCard": {
 		"color": "white",
@@ -116,6 +116,10 @@
 			1520,
 			0
 		],
+		"playerHandLocation": {
+			"x": 100,
+			"y": 780
+		},
 		"initNumCitiesCubes": [
 			3,
 			0,
@@ -125,7 +129,10 @@
 			"boundsWidth": 1200,
 			"boundsHeight": 700,
 			"panSpeed": 7,
-			"panAcceleration": 0.8
+			"panAcceleration": 0.8,
+			"zoomAmount": 0.05,
+			"maxZoom": 2,
+			"minZoom": 1
 		},
 		"assetsPath": "assets/",
 		"uiFont": "cour.ttf",

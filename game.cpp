@@ -110,7 +110,14 @@ void Game::init(const std::string &jsonPath)
 
 	// Init camera with json values for bounds/speed
 	component = doc[JSONPATH]["camera"];
-	mCameraManager.init(Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()), component["panSpeed"].GetFloat(), component["panAcceleration"].GetFloat());
+	mCameraManager.init(
+		Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()),
+		component["panSpeed"].GetFloat(), 
+		component["panAcceleration"].GetFloat(),
+		component["zoomAmount"].GetFloat(),
+		component["maxZoom"].GetFloat(),
+		component["minZoom"].GetFloat()
+	);
 
 	// Init UI stuff like fonts and text sizes
 	mFont.loadFont(std::string(doc[JSONPATH]["assetsPath"].GetString()) + "\\" + doc[JSONPATH]["uiFont"].GetString(), doc[JSONPATH]["fontSize"].GetInt());

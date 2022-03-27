@@ -8,7 +8,7 @@ class City;
 class Player : public Unit
 {
 public:
-	Player(City *city, std::vector<PlayerCard*> cards, Sprite *s);
+	Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s);
 
 	virtual ~Player();
 

@@ -2,27 +2,10 @@
 #include "City.h"
 #include "game.h"
 
-int Player::playerNum = 0;
-
-Player::Player(City *city, std::vector<PlayerCard*> cards, Sprite *s) : Unit(Vector2D(0, 0), s)
+Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s) : Unit(Vector2D(0, 0), s)
 {
-	//TODO: fill in rest of cases
-	switch(playerNum)
-	{
-	case 0:
-		//TODO: make position data-driven. I might want to constantly render the active player's hand at the same spot on screen and just modify it based on active player
-		mHandStart = Vector2D((float)100, (float)Game::getInstance()->getGraphics().getHeight() - (float)300);
-		mHandDirection = Vector2D((float)1, (float)0);
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	default:
-		break;
-	}
+	mHandStart = playerHandLocation;
+	mHandDirection = Vector2D((float)1, (float)0);
 	mHand = cards;
 	moveCity(city);
 }
@@ -96,6 +79,6 @@ std::vector<PlayerCard*>& Player::getHand()
 
 void Player::positionCard(int index, PlayerCard *pc)
 {
-	const Vector2D offset = Vector2D(0, 0);//Game::getInstance()->getCameraManager().getOffset();
+	const Vector2D offset = Vector2D(0, 0);
 	pc->setPosition(offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index));
 }

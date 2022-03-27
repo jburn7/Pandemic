@@ -3,12 +3,16 @@
 #include "CameraEvents.h"
 #include "game.h"
 
-void CameraManager::init(const Vector2D bounds, const float panSpeed, const float panAcceleration)
+void CameraManager::init(const Vector2D bounds, const float panSpeed, const float panAcceleration, const float zoomAmount, const float maxZoom, const float minZoom)
 {
 	mCameraPanDown = mCameraPanLeft = mCameraPanRight = mCameraPanUp = false;
 	mMaxPanSpeed = panSpeed;
 	mPanSpeed = 0;
 	mPanAcceleration = panAcceleration;
+	mZoomAmount = zoomAmount;
+	mMaxZoom = maxZoom;
+	mMinZoom = minZoom;
+	mCurrentZoom = 1;
 	mBounds = bounds;
 	mCenter = Vector2D(0, 0);
 
@@ -120,7 +124,6 @@ void CameraManager::handleEvent(const Event &theEvent)
 	}
 	else if(theEvent.getType() == MOUSE_WHEEL_EVENT)
 	{
-		// TODO: Limit zoom value
 		const MouseWheelEvent &ev = static_cast<const MouseWheelEvent&>(theEvent);
 		const Vector2D zoomLocation = ev.getCursorLocation();
 		if(gameState == PLAYING)
@@ -128,10 +131,18 @@ void CameraManager::handleEvent(const Event &theEvent)
 			switch(ev.getDirection())
 			{
 			case MOUSE_WHEEL_DOWN:
-				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, 0.05, zoomLocation));
+				if(mCurrentZoom < mMaxZoom)
+				{
+					gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, mZoomAmount, zoomLocation));
+					mCurrentZoom = std::min(mCurrentZoom + mZoomAmount, mMaxZoom);
+				}
 				break;
 			case MOUSE_WHEEL_UP:
-				gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, -0.05, zoomLocation));
+				if(mCurrentZoom > mMinZoom)
+				{
+					gpEventSystem->fireEvent(new ZoomCameraEvent(ZOOM_CAMERA_EVENT, -mZoomAmount, zoomLocation));
+					mCurrentZoom = std::max(mCurrentZoom - mZoomAmount, mMinZoom);
+				}
 				break;
 			}
 		}
