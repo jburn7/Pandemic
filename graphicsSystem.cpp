@@ -27,8 +27,8 @@ void GraphicsSystem::init(int w, int h, const std::string &t)
 	mDisplay.create(sf::VideoMode(w, h, 32), sf::String(title));
 	mWidth = w;
 	mHeight = h;
- 	mCameraPosition = Vector2D(mWidth / 2, mHeight / 2);
-	mZoomPosition = sf::Vector2i(mCameraPosition.getX(), mCameraPosition.getY());
+ 	mCameraPosition = Vector2D((float)mWidth / 2, (float)mHeight / 2);
+	mZoomPosition = sf::Vector2i((int)mCameraPosition.getX(), (int)mCameraPosition.getY());
 	oldOffsetCoords = sf::Vector2i(0, 0);
 }
 
@@ -46,7 +46,7 @@ Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsL
 {
 	sf::View oldView = mDisplay.getView();
 	update(layer); // switch to view corresponding to given layer to get correct coordinate conversions
-	sf::Vector2f worldPos = mDisplay.mapPixelToCoords(sf::Vector2i(pos.getX(), pos.getY()));
+	sf::Vector2f worldPos = mDisplay.mapPixelToCoords(sf::Vector2i((int)pos.getX(), (int)pos.getY()));
 	mDisplay.setView(oldView);
 	return Vector2D(worldPos.x, worldPos.y);
 }
@@ -73,11 +73,11 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double thet
 	//only supports unscaled drawing for reflected sprites
 	if(scale.getX() == -1)
 	{
-		temp.move(sprite.getWidth(), 0);
+		temp.move((float)sprite.getWidth(), 0);
 	}
 	if(scale.getY() == -1)
 	{
-		temp.move(0, sprite.getHeight());
+		temp.move(0, (float)sprite.getHeight());
 	}
 	if(sprite.getColor())
 	{
@@ -98,11 +98,11 @@ void GraphicsSystem::drawScale(const Vector2D &targetLoc, Sprite &sprite, const 
 	//only supports unscaled drawing for reflected sprites
 	if(scale.getX() == -1)
 	{
-		temp.move(sprite.getWidth(), 0);
+		temp.move((float)sprite.getWidth(), 0);
 	}
 	if(scale.getY() == -1)
 	{
-		temp.move(0, sprite.getHeight());
+		temp.move(0, (float)sprite.getHeight());
 	}
 	if(sprite.getColor())
 	{
@@ -122,7 +122,7 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		mCameraZoom += ev.getDelta();
-		mZoomPosition = sf::Vector2i(ev.getZoomLocation().getX(), ev.getZoomLocation().getY());
+		mZoomPosition = sf::Vector2i((int)ev.getZoomLocation().getX(), (int)ev.getZoomLocation().getY());
 	}
 }
 
@@ -133,8 +133,8 @@ void GraphicsSystem::flip()
 
 void GraphicsSystem::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom)
 {
-	sf::Vector2f vec = sf::Vector2f(pixel.x, pixel.y);
-	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f(mWidth, mHeight));
+	sf::Vector2f vec = sf::Vector2f((float)pixel.x, (float)pixel.y);
+	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f((float)mWidth, (float)mHeight));
 	window.setView(view);
 	oldOffsetCoords = pixel;
 	const sf::Vector2f beforeCoord{window.mapPixelToCoords(pixel)};
@@ -153,13 +153,13 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 	{
 	case BASE_VIEW:
 	{
-		zoomViewAt(mZoomPosition, mDisplay, mCameraZoom);
+		zoomViewAt(mZoomPosition, mDisplay, (float)mCameraZoom);
 		sf::View view = mDisplay.getView();
 		mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
 	}
 		break;
 	case GUI_VIEW:
-		sf::View view(sf::Vector2f(mWidth / 2, mHeight / 2), sf::Vector2f(mWidth, mHeight));
+		sf::View view(sf::Vector2f((float)mWidth / 2, (float)mHeight / 2), sf::Vector2f((float)mWidth, (float)mHeight));
 		mDisplay.setView(view);
 		break;
 	}

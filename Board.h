@@ -14,7 +14,7 @@ public:
 	Board();
 	~Board();
 
-	void init(int numPlayers);
+	void init(unsigned int numPlayers);
 
 	//event functions
 	virtual void handleEvent(const Event& theEvent);
@@ -23,6 +23,7 @@ public:
 	const int getMovesRemaining();
 
 private:
+	void activatePlayerCard(PlayerCard* card);
 	void cleanup();
 	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player);
@@ -43,6 +44,8 @@ private:
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
 	unsigned int mActivePawnIndex; //lets mpActivePawn switch to next pawn in array
+
+	Color mActiveCardColor;
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
 

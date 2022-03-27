@@ -1,5 +1,6 @@
 #include "CityCard.h"
 #include "game.h"
+#include "ColorManager.h"
 
 CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 {
@@ -8,7 +9,7 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["cityCard"];
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
-	const Color color = Color(c["color"]["r"].GetInt(), c["color"]["g"].GetInt(), c["color"]["b"].GetInt());
+	const Color color = ColorManager::getInstance()->color(c["color"].GetString());
 
 	mText = new UIBox(Vector2D(0, 0), s->getWidth() * 0.8f, s->getHeight() * 0.2f, (int)(s->getHeight() * 0.15f), Vector2D(0, 0), color, 0, city->getName(), new Sprite(*graphics->getGraphicsBuffer("blank.png")), nullptr);
 	setPosition(pos);

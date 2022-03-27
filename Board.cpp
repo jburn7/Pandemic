@@ -14,14 +14,20 @@ Board::~Board()
 	cleanup();
 }
 
-void Board::init(int numPlayers)
+void Board::init(unsigned int numPlayers)
 {
-	//load cities
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
+
+	// Initialize variables
+	ColorManager& colorManager = *ColorManager::getInstance();
+	mActiveCardColor = colorManager.color(doc["cityCard"]["highlightColor"].GetString());
+
+	//load cities
 	rapidjson::Value &c = doc["cities"];
+
 	//build array of neighbors for each city, as well as infection card deck and city cards for player card deck
-	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetInt(), doc["game"]["playerDrawLocation"].GetArray()[1].GetInt());
-	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetInt(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetInt());
+	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDrawLocation"].GetArray()[1].GetFloat());
+	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat());
 	std::vector<std::vector<int>> neighborMap;
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
 	for(auto &v : c.GetArray())
@@ -58,7 +64,7 @@ void Board::init(int numPlayers)
 	}
 
 	// Init disease type info
-	for(unsigned int i = 0; i <= numTypes; i++)
+	for(int i = 0; i <= numTypes; i++)
 	{
 		mDiseaseStages.push_back(Spreading);
 		mDiseaseCubesRemainingByType.push_back(0);
@@ -78,12 +84,12 @@ void Board::init(int numPlayers)
 	// Also load in colors here and set each player to its matching color in colors array if available
 	std::vector<Color> playerColors;
 	rapidjson::Value &colors = doc["pawn"]["playerColors"];
-	ColorManager& colorManager = *ColorManager::getInstance();
+	
 	for(auto &v : colors.GetArray())
 	{
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
-	for(int i = 0; i < numPlayers; i++)
+	for(unsigned int i = 0; i < numPlayers; i++)
 	{
 		Player *p = new Player(mCities[0], std::vector<PlayerCard*>(), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
 		if(playerColors.size() > i)
@@ -101,8 +107,8 @@ void Board::init(int numPlayers)
 	dealInitialPlayerCards();
 
 	// TODO: find a way to make these positions more intuitive (based on screen width and card size rather than hardcoded)
-	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetInt(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetInt());
-	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetInt(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetInt());
+	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat());
+	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
 
 	// Initialize disease cubes on cities
 	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
@@ -121,6 +127,13 @@ void Board::init(int numPlayers)
 	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
 	gpEventSystem->addListener(AI_SHOULD_MOVE_EVENT, this);
+}
+
+void Board::activatePlayerCard(PlayerCard* card)
+{
+	mpActiveCard = card;
+	// TODO: store highlight color as member rather than explicitly getting it here
+	mpActiveCard->setColor(ColorManager::getInstance()->teal);
 }
 
 void Board::cleanup()
@@ -165,7 +178,7 @@ void Board::cleanup()
 void Board::dealInitialPlayerCards()
 {
 	//now deal player cards to players
-	int initialHandSize;
+	unsigned int initialHandSize;
 	switch(mPlayers.size())
 	{
 	case 1:
@@ -271,11 +284,11 @@ void Board::drawInfectionCard(int numCubesToAdd)
 void Board::doleInitialDiseaseCubes()
 {
 	//for i where i = initNumCitiesCubes[j], give random city j + 1 cubes
-	int numInitCubes = 1;
+	unsigned int numInitCubes = 1;
 	for(const auto &i : mInitNumCitiesCubes)
 	{
 		int numCities = i;
-		for(unsigned int j = 0; j < numCities; j++)
+		for(int j = 0; j < numCities; j++)
 		{
 			drawInfectionCard(numInitCubes);
 		}
@@ -345,7 +358,7 @@ void Board::endTurn()
 
 	*/
 
-	for(unsigned int i = 0; i < mNumPlayerCardsToDraw; i++)
+	for(int i = 0; i < mNumPlayerCardsToDraw; i++)
 	{
 		dealTopPlayerCard(mpActivePawn);
 	}
@@ -493,9 +506,7 @@ void Board::handleEvent(const Event &theEvent)
 						{
 							if(v->contains(guiPos))
 							{
-								// TODO: move this to its own method
-								mpActiveCard = v;
-								mpActiveCard->setColor(ColorManager::getInstance()->teal);
+								activatePlayerCard(v);
 								return;
 							}
 						}

@@ -11,8 +11,8 @@ Player::Player(City *city, std::vector<PlayerCard*> cards, Sprite *s) : Unit(Vec
 	{
 	case 0:
 		//TODO: make position data-driven. I might want to constantly render the active player's hand at the same spot on screen and just modify it based on active player
-		mHandStart = Vector2D(100, Game::getInstance()->getGraphics().getHeight() - 300);
-		mHandDirection = Vector2D(1, 0);
+		mHandStart = Vector2D((float)100, (float)Game::getInstance()->getGraphics().getHeight() - (float)300);
+		mHandDirection = Vector2D((float)1, (float)0);
 		break;
 	case 1:
 		break;

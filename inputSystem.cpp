@@ -87,7 +87,7 @@ void InputSystem::checkForInput()
 		}
 		else if(e.type == sf::Event::MouseWheelMoved)
 		{
-			const Vector2D cursorLocation = Vector2D(e.mouseWheel.x, e.mouseWheel.y);
+			const Vector2D cursorLocation = Vector2D((float)e.mouseWheel.x, (float)e.mouseWheel.y);
 			switch(e.mouseWheel.delta)
 			{
 			case 1:

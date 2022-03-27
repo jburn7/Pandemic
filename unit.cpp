@@ -163,11 +163,11 @@ int Unit::getWidth()
 {
 	if(mAnimation)
 	{
-		return mAnimation->getCurrentSprite()->getWidth() * mScale.getX();
+		return mAnimation->getCurrentSprite()->getWidth() * (int)mScale.getX();
 	}
 	else if(mConstantFrame)
 	{
-		return mConstantFrame->getWidth() * mScale.getX();
+		return mConstantFrame->getWidth() * (int)mScale.getX();
 	}
 
 	return 0;
@@ -177,11 +177,11 @@ int Unit::getHeight()
 {
 	if(mAnimation)
 	{
-		return mAnimation->getCurrentSprite()->getHeight() * mScale.getY();
+		return mAnimation->getCurrentSprite()->getHeight() * (int)mScale.getY();
 	}
 	else if(mConstantFrame)
 	{
-		return mConstantFrame->getHeight() * mScale.getY();
+		return mConstantFrame->getHeight() * (int)mScale.getY();
 	}
 
 	return 0;

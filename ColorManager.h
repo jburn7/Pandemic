@@ -8,22 +8,22 @@ class ColorManager : public Trackable
 {
 public:
 	static ColorManager *getInstance();
-	static void init(rapidjson::Value& const doc);
+	static void init(rapidjson::Value const& doc);
 	static void cleanup();
 
 	// In case color was not manually added to list of get-only colors
 	Color color(const std::string &name);
 
 	// Get-only color names
-	const Color&
-		black = mBlack,
-		orange = mOrange,
-		purple = mPurple,
-		teal = mTeal,
-		white = mWhite;
-	
+	const Color
+		&black = mBlack,
+		&orange = mOrange,
+		&purple = mPurple,
+		&teal = mTeal,
+		&white = mWhite;
+
 protected:
-	ColorManager(rapidjson::Value& const doc);
+	ColorManager(rapidjson::Value const& doc);
 	~ColorManager();
 
 	static ColorManager* msInstance;

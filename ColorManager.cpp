@@ -2,7 +2,7 @@
 
 ColorManager *ColorManager::msInstance = nullptr;
 
-ColorManager::ColorManager(rapidjson::Value& const doc)
+ColorManager::ColorManager(rapidjson::Value const& doc)
 {
 	for(auto &v : doc.GetArray())
 	{
@@ -25,7 +25,7 @@ ColorManager *ColorManager::getInstance()
 	return msInstance;
 }
 
-void ColorManager::init(rapidjson::Value& const doc)
+void ColorManager::init(rapidjson::Value const& doc)
 {
 	msInstance = new ColorManager(doc);
 }

@@ -23,7 +23,7 @@
 
 int main()
 {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	gpEventSystem = new EventSystem;
 	Game::initInstance();
 	Game::getInstance()->init("data/jsonData.json");

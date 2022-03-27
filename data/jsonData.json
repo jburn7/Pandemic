@@ -59,11 +59,8 @@
 		"radius": 75
 	},
 	"cityCard": {
-		"color": {
-			"r": 0,
-			"g": 0,
-			"b": 0
-		}
+		"color": "white",
+		"highlightColor": "teal"
 	},
 	"colors": [
 		{
