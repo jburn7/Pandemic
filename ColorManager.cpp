@@ -6,14 +6,14 @@ ColorManager::ColorManager(rapidjson::Value& const doc)
 {
 	for(auto &v : doc.GetArray())
 	{
-		colors[v["name"].GetString()] = Color(v["r"].GetInt(), v["g"].GetInt(), v["b"].GetInt());
+		mColors[v["name"].GetString()] = Color(v["r"].GetInt(), v["g"].GetInt(), v["b"].GetInt());
 	}
 
-	black = colors["black"];
-	orange = colors["orange"];
-	purple = colors["purple"];
-	teal = colors["teal"];
-	white = colors["white"];
+	mBlack = mColors["black"];
+	mOrange = mColors["orange"];
+	mPurple = mColors["purple"];
+	mTeal = mColors["teal"];
+	mWhite = mColors["white"];
 }
 
 ColorManager::~ColorManager()
@@ -37,6 +37,16 @@ void ColorManager::cleanup()
 		delete msInstance;
 		msInstance = nullptr;
 	}
+}
+
+Color ColorManager::color(const std::string &name)
+{
+	if(mColors.find(name) == mColors.end())
+	{
+		return Color();
+	}
+
+	return mColors[name];
 }
 
 

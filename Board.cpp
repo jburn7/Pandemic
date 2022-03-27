@@ -75,10 +75,21 @@ void Board::init(int numPlayers)
 	shuffleDrawPiles();
 
 	//load in players. they should all start at Atlanta according to rules, which should always be first city in array
+	// Also load in colors here and set each player to its matching color in colors array if available
+	std::vector<Color> playerColors;
+	rapidjson::Value &colors = doc["pawn"]["playerColors"];
+	ColorManager& colorManager = *ColorManager::getInstance();
+	for(auto &v : colors.GetArray())
+	{
+		playerColors.push_back(Color(colorManager.color(v.GetString())));
+	}
 	for(int i = 0; i < numPlayers; i++)
 	{
-		//TODO: set players to different colors
 		Player *p = new Player(mCities[0], std::vector<PlayerCard*>(), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
+		if(playerColors.size() > i)
+		{
+			p->setColor(playerColors[i]);
+		}
 		mPlayers.push_back(p);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, p));
 	}
