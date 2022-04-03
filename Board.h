@@ -25,6 +25,7 @@ public:
 private:
 	void activatePlayerCard(PlayerCard* card);
 	void cleanup();
+	UIBox* createDeckNameText(const rapidjson::Document &doc, const std::string &name, const Vector2D location, const int deckNamePadding, const int deckNameFontSize);
 	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player);
 	bool decrementDiseaseCubes(City *const city);

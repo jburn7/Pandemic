@@ -106,15 +106,15 @@
 		"movesPerTurn": 4,
 		"numPlayerCardsToDraw": 2,
 		"playerDiscardLocation": [
-			1820,
-			980
+			1720,
+			900
 		],
 		"playerDrawLocation": [
 			0,
 			300
 		],
 		"infectionDiscardLocation": [
-			1820,
+			1720,
 			0
 		],
 		"infectionDrawLocation": [

@@ -111,18 +111,35 @@ void Board::init(unsigned int numPlayers)
 	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
 
 	int deckNameFontSize = doc["deck"]["nameFontSize"].GetInt();
-	int deckNamePadding = doc["deck"]["namePadding"].GetFloat();
-	mPlayerDrawNameText = new UIBox(
-		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() - (deckNameFontSize + deckNamePadding * 2)),
-		deckNameFontSize,
-		Vector2D(0, 0),
-		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
+	float deckNamePadding = doc["deck"]["namePadding"].GetFloat();
+	int cardSize = playerDraw[0]->getHeight(); // All cards are same height so just grab height from a card that we know exists
+	mPlayerDrawNameText = createDeckNameText(
+		doc, 
+		"Player Draw", 
+		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() + cardSize + deckNameFontSize), 
+		deckNamePadding, 
+		deckNameFontSize);
+
+	mPlayerDiscardNameText = createDeckNameText(
+		doc,
+		"Player Discard",
+		Vector2D(mPlayerDiscardLocation.getX(), mPlayerDiscardLocation.getY() + cardSize + deckNameFontSize),
 		deckNamePadding,
-		"Player Draw",
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
-	); //deletes called in this dtor, UIBox dtor
-	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mPlayerDrawNameText));
+		deckNameFontSize);
+
+	mInfectionDrawNameText = createDeckNameText(
+		doc,
+		"Infection Draw",
+		Vector2D(mInfectionDrawLocation.getX(), mInfectionDrawLocation.getY() + cardSize + deckNameFontSize),
+		deckNamePadding,
+		deckNameFontSize);
+
+	mInfectionDiscardNameText = createDeckNameText(
+		doc,
+		"Infection Discard",
+		Vector2D(mInfectionDiscardLocation.getX(), mInfectionDiscardLocation.getY() + cardSize + deckNameFontSize),
+		deckNamePadding,
+		deckNameFontSize);
 
 	// Initialize disease cubes on cities
 	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
@@ -208,6 +225,24 @@ void Board::cleanup()
 		// delete handled by unit manager
 		mInfectionDiscardNameText = nullptr;
 	}
+}
+
+UIBox* Board::createDeckNameText(const rapidjson::Document &doc, const std::string &name, const Vector2D location, const int deckNamePadding, const int deckNameFontSize)
+{
+	ColorManager& colorManager = *ColorManager::getInstance();
+	UIBox *deckNameText = new UIBox(
+		Vector2D(location.getX(), location.getY()),
+		deckNameFontSize,
+		Vector2D(0, 0),
+		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
+		deckNamePadding,
+		name,
+		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
+		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
+	); //deletes called in this dtor, UIBox dtor
+	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, deckNameText));
+
+	return deckNameText;
 }
 
 void Board::dealInitialPlayerCards()
