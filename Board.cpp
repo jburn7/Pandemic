@@ -110,6 +110,17 @@ void Board::init(unsigned int numPlayers)
 	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat());
 	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
 
+	mPlayerDrawNameText = new UIBox(
+		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() - 10), // TODO: data-ify padding amount
+		doc["deck"]["nameFontSize"].GetInt(),
+		Vector2D(0, 0),
+		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
+		doc["deck"]["namePadding"].GetFloat(),
+		"Player Draw",
+		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
+		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
+	); //deletes called in this dtor, UIBox dtor
+
 	// Initialize disease cubes on cities
 	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
 	{
@@ -173,6 +184,27 @@ void Board::cleanup()
 		v = nullptr;
 	}
 	infectDiscard.clear();
+
+	if(mPlayerDrawNameText)
+	{
+		delete mPlayerDrawNameText;
+		mPlayerDiscardNameText = nullptr;
+	}
+	if(mPlayerDiscardNameText)
+	{
+		delete mPlayerDiscardNameText;
+		mPlayerDiscardNameText = nullptr;
+	}
+	if(mInfectionDrawNameText)
+	{
+		delete mInfectionDrawNameText;
+		mInfectionDrawNameText = nullptr;
+	}
+	if(mInfectionDiscardNameText)
+	{
+		delete mInfectionDiscardNameText;
+		mInfectionDiscardNameText = nullptr;
+	}
 }
 
 void Board::dealInitialPlayerCards()
@@ -571,25 +603,7 @@ void Board::handleEvent(const Event &theEvent)
 		const PanCameraEvent &ev = static_cast<const PanCameraEvent&>(theEvent);
 		if(gameState == PLAYING)
 		{
-			// TODO: add titles describing each draw pile
-
-			// TODO: this only needs to happen for each card once when that card is moved onto a different deck rather than everytime the camera moves
-			for(auto &card : playerDraw)
-			{
-				card->setPosition(mPlayerDrawLocation);
-			}
-			for(auto &card : playerDiscard)
-			{
-				card->setPosition(mPlayerDiscardLocation);
-			}
-			for(auto &card : infectDraw)
-			{
-				card->setPosition(mInfectionDrawLocation);
-			}
-			for(auto &card : infectDiscard)
-			{
-				card->setPosition(mInfectionDiscardLocation);
-			}
+			// TODO: add titles describing each draw pile 
 		}
 	}
 	else if(theEvent.getType() == AI_PLAYER_CUBE_EVENT)

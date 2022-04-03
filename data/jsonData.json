@@ -94,6 +94,11 @@
 			"b": 0
 		}
 	],
+	"deck": {
+		"nameFontSize": 12,
+		"namePadding": 6,
+		"nameBackgroundImg": "menu_tile_simple.png"
+	},
 	"game": {
 		"width": 1920,
 		"height": 1080,
@@ -162,6 +167,7 @@
 		"rColor": 255,
 		"gColor": 255,
 		"bColor": 255,
+		"defaultUIColor": "white",
 		"startString": "",
 		"failedString": "",
 		"completeString": "",

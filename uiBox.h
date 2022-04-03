@@ -6,7 +6,7 @@
 class UIBox : public Trackable
 {
 public:
-	UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Sprite *sprite, Sprite *background);
+	UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Sprite *sprite, Sprite *background);
 	UIBox(const UIBox &other);
 	~UIBox();
 

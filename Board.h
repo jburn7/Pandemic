@@ -50,7 +50,9 @@ private:
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
 
+	// TODO: abstract these to a Deck unit that handles drawing of cards and names and such
 	Vector2D mPlayerDiscardLocation, mPlayerDrawLocation, mInfectionDrawLocation, mInfectionDiscardLocation;
+	UIBox *mPlayerDiscardNameText, *mPlayerDrawNameText, *mInfectionDrawNameText, *mInfectionDiscardNameText;
 
 	std::vector<EnumDiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
 	std::vector<int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types

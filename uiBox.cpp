@@ -1,11 +1,9 @@
 #include "uiBox.h"
 #include "game.h"
 
-UIBox::UIBox(const Vector2D pos, const float width, const float height, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Sprite *sprite, Sprite *background)
+UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Sprite *sprite, Sprite *background)
 {
 	mPosition = pos;
-	mWidth = width;
-	mHeight = height;
 	mFontSize = fontSize;
 	mTextOffset = textOffset;
 	mColor = color;
@@ -16,6 +14,9 @@ UIBox::UIBox(const Vector2D pos, const float width, const float height, const in
 	mScale = Vector2D(1, 1);
 	mPaddingBackgroundScale = Vector2D(1, 1);
 	mPaddingAmount = padding; //debug value
+
+	mWidth = 0;
+	mHeight = 0;
 
 	resizeBackground();
 }
@@ -115,5 +116,7 @@ void UIBox::resizeBackground()
 		backgroundWidth = std::floor(mBackground->getWidth() * mPaddingBackgroundScale.getX());
 		backgroundHeight = std::floor(mBackground->getHeight() * mPaddingBackgroundScale.getY());
 	} 
+	mWidth = backgroundWidth;
+	mHeight = backgroundHeight;
 	mTextOffset = Vector2D(backgroundWidth / 2, backgroundHeight / 2) - Vector2D((float)textWidth / 2, (float)textHeight);
 }

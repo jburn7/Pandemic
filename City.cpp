@@ -11,8 +11,6 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 
 	mCubeText = new UIBox(
 		Vector2D(pos.getX(), pos.getY() + s->getHeight()),
-		0, 
-		0,
 		c["fontSize"].GetInt(),
 		Vector2D(0, 0),
 		color,
@@ -22,8 +20,6 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))); //deletes called in this dtor, UIBox dtor
 	mNameText = new UIBox(
 		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
-		0,
-		0,
 		c["fontSize"].GetInt(), 
 		Vector2D(0, 0),
 		color,
