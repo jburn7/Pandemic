@@ -15,6 +15,8 @@ UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, 
 	mPaddingBackgroundScale = Vector2D(1, 1);
 	mPaddingAmount = padding; //debug value
 
+	setIsGuiLayer(true);
+
 	mWidth = 0;
 	mHeight = 0;
 
@@ -84,6 +86,11 @@ void UIBox::draw(Font &font)
 		Game::getInstance()->getGraphics().drawScale(mPosition + Vector2D(mTextOffset.getX(), -mTextOffset.getY()), *mBackground, mScale);
 	}
 	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, mColor, mText);
+}
+
+void UIBox::draw()
+{
+	draw(Game::getInstance()->getDefaultFont());
 }
 
 void UIBox::move(const Vector2D & delta)

@@ -110,16 +110,19 @@ void Board::init(unsigned int numPlayers)
 	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat());
 	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
 
+	int deckNameFontSize = doc["deck"]["nameFontSize"].GetInt();
+	int deckNamePadding = doc["deck"]["namePadding"].GetFloat();
 	mPlayerDrawNameText = new UIBox(
-		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() - 10), // TODO: data-ify padding amount
-		doc["deck"]["nameFontSize"].GetInt(),
+		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() - (deckNameFontSize + deckNamePadding * 2)),
+		deckNameFontSize,
 		Vector2D(0, 0),
 		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
-		doc["deck"]["namePadding"].GetFloat(),
+		deckNamePadding,
 		"Player Draw",
 		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
 		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
 	); //deletes called in this dtor, UIBox dtor
+	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mPlayerDrawNameText));
 
 	// Initialize disease cubes on cities
 	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
@@ -187,22 +190,22 @@ void Board::cleanup()
 
 	if(mPlayerDrawNameText)
 	{
-		delete mPlayerDrawNameText;
+		// delete handled by unit manager
 		mPlayerDiscardNameText = nullptr;
 	}
 	if(mPlayerDiscardNameText)
 	{
-		delete mPlayerDiscardNameText;
+		// delete handled by unit manager
 		mPlayerDiscardNameText = nullptr;
 	}
 	if(mInfectionDrawNameText)
 	{
-		delete mInfectionDrawNameText;
+		// delete handled by unit manager
 		mInfectionDrawNameText = nullptr;
 	}
 	if(mInfectionDiscardNameText)
 	{
-		delete mInfectionDiscardNameText;
+		// delete handled by unit manager
 		mInfectionDiscardNameText = nullptr;
 	}
 }

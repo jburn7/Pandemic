@@ -52,11 +52,11 @@ void Unit::draw()
 {
 	if(mAnimation)
 	{
-		Game::getInstance()->getGraphics().drawScale(mPosition , *mAnimation->getCurrentSprite(), mScale);
+		Game::getInstance()->getGraphics().drawScale(mPosition, *mAnimation->getCurrentSprite(), mScale);
 	}
-	else
+	else if(mConstantFrame)
 	{
-		Game::getInstance()->getGraphics().draw(mPosition , *mConstantFrame, mTheta, mScale);
+		Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
 	}
 }
 

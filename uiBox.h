@@ -2,8 +2,9 @@
 #include "Vector2D.h"
 #include "sprite.h"
 #include "font.h"
+#include "unit.h"
 
-class UIBox : public Trackable
+class UIBox : public Unit
 {
 public:
 	UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Sprite *sprite, Sprite *background);
@@ -12,7 +13,9 @@ public:
 
 	bool contains(Vector2D pos);
 
+	// Can either be manually drawn if another unit owns it or draw itself if it is added to UnitManager
 	void draw(Font &font);
+	virtual void draw();
 
 	void move(const Vector2D &delta);
 
