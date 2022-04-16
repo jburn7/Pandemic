@@ -9,9 +9,9 @@
 			"posY": 700,
 			"type": 0,
 			"neighbors": [
-				1,
-				2,
-				3
+				"Chicago",
+				"Detroit",
+				"Lagos"
 			]
 		},
 		{
@@ -20,8 +20,8 @@
 			"posY": 500,
 			"type": 0,
 			"neighbors": [
-				0,
-				2
+				"Atlanta",
+				"Detroit"
 			]
 		},
 		{
@@ -30,8 +30,8 @@
 			"posY": 200,
 			"type": 0,
 			"neighbors": [
-				1,
-				0
+				"Chicago",
+				"Atlanta"
 			]
 		},
 		{
@@ -40,7 +40,7 @@
 			"posY": 900,
 			"type": 0,
 			"neighbors": [
-				0
+				"Atlanta"
 			]
 		}
 	],
@@ -142,6 +142,7 @@
 		"assetsPath": "assets/",
 		"uiFont": "cour.ttf",
 		"fontSize": 20,
+		"startingCity": "Atlanta",
 		"graphicsBuffers": [
 			"blank.png",
 			"city.png",

@@ -25,10 +25,12 @@ void Board::init(unsigned int numPlayers)
 	//load cities
 	rapidjson::Value &c = doc["cities"];
 
+	mStartingCity = doc["game"]["startingCity"].GetString();
+
 	//build array of neighbors for each city, as well as infection card deck and city cards for player card deck
 	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDrawLocation"].GetArray()[1].GetFloat());
 	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat());
-	std::vector<std::vector<int>> neighborMap;
+	std::vector<std::vector<std::string>> neighborMap;
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
 	// TODO: add more cities, then we can add epidemics
 	for(auto &v : c.GetArray())
@@ -38,13 +40,14 @@ void Board::init(unsigned int numPlayers)
 		{
 			numTypes = type;
 		}
-		City *city = new City(v["name"].GetString(), type, Vector2D(v["posX"].GetFloat(), v["posY"].GetFloat()), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city.png"))); //deletes will be called in UnitManager destructor and Unit destructor respectively
+		std::string cityName = v["name"].GetString();
+		City *city = new City(cityName, type, Vector2D(v["posX"].GetFloat(), v["posY"].GetFloat()), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city.png"))); //deletes will be called in UnitManager destructor and Unit destructor respectively
 		city->setScale(1, 1);
-		mCities.push_back(city);
-		neighborMap.push_back(std::vector<int>());
+		mCities.insert(CityItem(cityName, city));
+		neighborMap.push_back(std::vector<std::string>());
 		for(auto &n : v["neighbors"].GetArray())
 		{
-			neighborMap.back().push_back(n.GetInt());
+			neighborMap.back().push_back(n.GetString());
 		}
 
 		// Also generate city card deck here since each card is tied to a city
@@ -73,11 +76,13 @@ void Board::init(unsigned int numPlayers)
 
 	//now that all cities neighbors are loaded, find their neighbors and set the pointers
 	//neighbor corresponds to position in JSON array, and thus position in mCities
-	for(unsigned int i = 0; i < mCities.size(); i++)
+	int cityIndex = 0;
+	for(auto &c : mCities)
 	{
-		mCities[i]->loadNeighbors(mCities, neighborMap[i]);
+		City* city = c.second;
+		city->loadNeighbors(mCities, neighborMap[cityIndex]);
+		cityIndex++;
 	}
-
 	// TODO: add event cards to player deck
 	shuffleDrawPiles();
 
@@ -94,7 +99,7 @@ void Board::init(unsigned int numPlayers)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
-		Player *p = new Player(mCities[0], std::vector<PlayerCard*>(), playerHandLocation, new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
+		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
 		if(playerColors.size() > i)
 		{
 			p->setColor(playerColors[i]);
@@ -172,7 +177,7 @@ void Board::cleanup()
 {
 	for(auto &v : mCities)
 	{
-		v = nullptr;
+		v.second = nullptr;
 	}
 	mCities.clear();
 
@@ -407,7 +412,7 @@ void Board::endGameAndRestart()
 	// reset each city's cubes to 0
 	for(auto &v : mCities)
 	{
-		v->clearAllCubes();
+		v.second->clearAllCubes();
 	}
 	// reshuffle draw piles
 	shuffleDrawPiles();
@@ -418,7 +423,7 @@ void Board::endGameAndRestart()
 	// move players to Atlanta
 	for(auto &v : mPlayers)
 	{
-		v->moveCity(mCities[0]);
+		v->moveCity(mCities.at(mStartingCity));
 	}
 	// reset moveCount
 	mMovesRemaining = mMaxMovesPerTurn;
@@ -599,8 +604,9 @@ void Board::handleEvent(const Event &theEvent)
 					    // If charter flight, then move pawn to city and discard card
 						// Else if city matches card's city
 							// Move pawn to city and discard card
-					for(auto &city : mCities)
+					for(auto &c : mCities)
 					{
+						City* const city = c.second;
 						if(city->contains(basePos))
 						{
 							if((isCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
@@ -621,11 +627,12 @@ void Board::handleEvent(const Event &theEvent)
 			{
 				//DEBUG
 				//if any city was clicked, increment its cubes
-				for(auto &v : mCities)
+				for(auto &c : mCities)
 				{
-					if(v->contains(basePos))
+					City* const city = c.second;
+					if(city->contains(basePos))
 					{
-						v->incrementDiseaseCubes(1);
+						city->incrementDiseaseCubes(1);
 						return;
 					}
 				}

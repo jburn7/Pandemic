@@ -21,7 +21,7 @@ public:
 
 	virtual void draw(); //overriding because I need to make sure edges are drawn under city sprites
 
-	void loadNeighbors(const std::vector<City*> &cities, const std::vector<int> &neighbors);
+	void loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors);
 
 	bool decrementDiseaseCubes(const int decrement); //return true if cubes were above 0 beforehand
 	void clearAllCubes();

@@ -104,17 +104,17 @@ void City::draw()
 	mNameText->draw(Game::getInstance()->getDefaultFont());
 }
 
-void City::loadNeighbors(const std::vector<City*> &cities, const std::vector<int> &neighbors)
+void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors)
 {
 	//for each neighbor, set a pointer to it
 	//also go ahead and create a constant sprite which will serve as the visual "edge" of the graph, connecting from this city to its neighbor
 	for(auto &v : neighbors)
 	{
-		mNeighbors.push_back(cities[v]);
+		mNeighbors.push_back(cities.at(v));
 		Sprite *s = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("graph_edge.png")); //delete called in unit dtor
 		//set width to distance between this and neighbor
 		Vector2D p = getCenter();
-		Vector2D q = cities[v]->getCenter();
+		Vector2D q = cities.at(v)->getCenter();
 		Vector2D pq = p - q;
 		double width = pq.getLength();
 		s->setWidth((int)width);

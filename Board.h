@@ -7,6 +7,8 @@
 #include "event.h"
 #include "DiseaseStages.h"
 
+typedef std::pair<std::string, City*> CityItem;
+
 class Board : public EventListener
 {
 	friend class AISystem;
@@ -47,6 +49,8 @@ private:
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
 	unsigned int mActivePawnIndex; //lets mpActivePawn switch to next pawn in array
 
+	std::string mStartingCity;
+
 	Color mActiveCardColor;
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
@@ -59,7 +63,8 @@ private:
 	std::vector<int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
 	std::vector<int> mInitNumCitiesCubes; // stores ratio of disease cubes to dole out for each infection card draw in setup phase
 
-	std::vector<City*> mCities;
+	//std::vector<City*> mCities;
+	std::map<std::string, City*> mCities;
 	std::vector<Player*> mPlayers;
 
 	std::vector<PlayerCard*> playerDraw;
