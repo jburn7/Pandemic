@@ -6,7 +6,8 @@ enum Key
 	LEFT,
 	RIGHT,
 	UP,
-	DOWN
+	DOWN,
+	SPACE
 };
 
 class KeyPressedEvent : public Event

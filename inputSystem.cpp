@@ -61,6 +61,9 @@ void InputSystem::checkForInput()
 			case sf::Keyboard::Down:
 				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, DOWN));
 				break;
+			case sf::Keyboard::Space:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, SPACE));
+				break;
 			default:
 				break;
 			}

@@ -163,7 +163,6 @@ void Board::init(unsigned int numPlayers)
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
-	gpEventSystem->addListener(AI_SHOULD_MOVE_EVENT, this);
 }
 
 void Board::activatePlayerCard(PlayerCard* card)

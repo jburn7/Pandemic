@@ -1,6 +1,7 @@
 #include "AISystem.h"
 #include "AIEvents.h"
 #include "EventSystem.h"
+#include "KeyEvent.h"
 
 AISystem::AISystem()
 {
@@ -15,6 +16,8 @@ void AISystem::init(int ticksPerPlayerMove)
 	mTicksPerPlayerMove = ticksPerPlayerMove;
 	mTicksCounter = 0;
 	mShouldMakePlayerMove = false;
+
+	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
 }
 
 void AISystem::update(const Board &board)
@@ -58,8 +61,16 @@ void AISystem::update(const Board &board)
 
 void AISystem::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == AI_SHOULD_MOVE_EVENT)
+	if(theEvent.getType() == KEY_PRESSED_EVENT)
 	{
-		mShouldMakePlayerMove = true;
+		const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
+		switch(ev.getKey())
+		{
+		case SPACE:
+			mShouldMakePlayerMove = true;
+			break;
+		default:
+			break;
+		}
 	}
 }
