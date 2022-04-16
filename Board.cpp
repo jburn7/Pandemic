@@ -30,6 +30,7 @@ void Board::init(unsigned int numPlayers)
 	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat());
 	std::vector<std::vector<int>> neighborMap;
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
+	// TODO: add more cities, then we can add epidemics
 	for(auto &v : c.GetArray())
 	{
 		int type = v["type"].GetInt();
@@ -89,6 +90,7 @@ void Board::init(unsigned int numPlayers)
 	{
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
+	// TODO: add support for more than 1 player (switch after each turn, display next player's hand, remove old player's hand from click handler, etc)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
@@ -154,7 +156,6 @@ void Board::init(unsigned int numPlayers)
 	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
 	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
-	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
 	gpEventSystem->addListener(AI_SHOULD_MOVE_EVENT, this);
@@ -417,7 +418,6 @@ void Board::endGameAndRestart()
 	// move players to Atlanta
 	for(auto &v : mPlayers)
 	{
-		// TODO: store a better way of determining starting city
 		v->moveCity(mCities[0]);
 	}
 	// reset moveCount
@@ -635,14 +635,6 @@ void Board::handleEvent(const Event &theEvent)
 	else if(theEvent.getType() == DECREMENT_MOVES_EVENT)
 	{
 		decrementRemainingMoves();
-	}
-	else if(theEvent.getType() == PAN_CAMERA_EVENT)
-	{
-		const PanCameraEvent &ev = static_cast<const PanCameraEvent&>(theEvent);
-		if(gameState == PLAYING)
-		{
-			// TODO: add titles describing each draw pile 
-		}
 	}
 	else if(theEvent.getType() == AI_PLAYER_CUBE_EVENT)
 	{
