@@ -10,8 +10,8 @@
 			"type": 0,
 			"neighbors": [
 				"Chicago",
-				"Detroit",
-				"Lagos"
+				"Miami",
+				"Washington"
 			]
 		},
 		{
@@ -21,26 +21,83 @@
 			"type": 0,
 			"neighbors": [
 				"Atlanta",
-				"Detroit"
+				"Los Angeles",
+				"Mexico City",
+				"Montreal",
+				"San Francisco"
 			]
 		},
 		{
-			"name": "Detroit",
+			"name": "Los Angeles",
+			"posX": -250,
+			"posY": 700,
+			"type": 0,
+			"neighbors": [
+				"Chicago",
+				"San Francisco"
+			]
+		},
+		{
+			"name": "Mexico City",
+			"posX": -100,
+			"posY": 1200,
+			"type": 0,
+			"neighbors": [
+				"Chicago",
+				"Los Angeles"
+			]
+		},
+		{
+			"name": "Miami",
+			"posX": 900,
+			"posY": 900,
+			"type": 0,
+			"neighbors": [
+				"Atlanta",
+				"Washington"
+			]
+		},
+		{
+			"name": "Montreal",
 			"posX": 900,
 			"posY": 200,
 			"type": 0,
 			"neighbors": [
 				"Chicago",
-				"Atlanta"
+				"New York",
+				"Washington"
 			]
 		},
 		{
-			"name": "Lagos",
-			"posX": 900,
-			"posY": 900,
+			"name": "New York",
+			"posX": 1200,
+			"posY": 200,
 			"type": 0,
 			"neighbors": [
-				"Atlanta"
+				"Montreal",
+				"Washington"
+			]
+		},
+		{
+			"name": "San Francisco",
+			"posX": -300,
+			"posY": 300,
+			"type": 0,
+			"neighbors": [
+				"Chicago",
+				"Los Angeles"
+			]
+		},
+		{
+			"name": "Washington",
+			"posX": 1100,
+			"posY": 700,
+			"type": 0,
+			"neighbors": [
+				"Atlanta",
+				"Miami",
+				"Montreal",
+				"New York"
 			]
 		}
 	],

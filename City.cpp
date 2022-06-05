@@ -17,7 +17,8 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		c["infoTextPadding"].GetFloat(), 
 		"0",
 		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
-		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))); //deletes called in this dtor, UIBox dtor
+		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString())),
+		&Game::getInstance()->getDefaultFont()); //deletes called in this dtor, UIBox dtor
 	mNameText = new UIBox(
 		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
 		c["fontSize"].GetInt(), 
@@ -26,7 +27,8 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		c["infoTextPadding"].GetFloat(),
 		"0",
 		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
-		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))); //deletes called in this dtor, UIBox dtor
+		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString())),
+		&Game::getInstance()->getDefaultFont()); //deletes called in this dtor, UIBox dtor
 
 	mName = name;
 	mNameText->setText(mName);
@@ -100,8 +102,8 @@ void City::draw()
 {
 	//draw city sprite and city info in text
 	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
-	mCubeText->draw(Game::getInstance()->getDefaultFont());
-	mNameText->draw(Game::getInstance()->getDefaultFont());
+	mCubeText->draw();
+	mNameText->draw();
 }
 
 void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors)

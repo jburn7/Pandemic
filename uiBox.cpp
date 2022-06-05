@@ -1,7 +1,8 @@
 #include "uiBox.h"
 #include "game.h"
+#include "Glyph.h"
 
-UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Sprite *sprite, Sprite *background)
+UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Sprite *sprite, Sprite *background, Font *font)
 {
 	mPosition = pos;
 	mFontSize = fontSize;
@@ -10,6 +11,14 @@ UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, 
 	mText = text;
 	mBackground = sprite;
 	mPaddingBackground = background;
+	if(mFont)
+	{
+		mFont = font;
+	}
+	else
+	{
+		mFont = &Game::getInstance()->getDefaultFont();
+	}
 
 	mScale = Vector2D(1, 1);
 	mPaddingBackgroundScale = Vector2D(1, 1);
@@ -68,6 +77,8 @@ UIBox::~UIBox()
 		delete mPaddingBackground;
 		mPaddingBackground = NULL;
 	}
+
+	mFont = nullptr;
 }
 
 bool UIBox::contains(Vector2D pos)
@@ -75,7 +86,7 @@ bool UIBox::contains(Vector2D pos)
 	return pos.getX() > mPosition.getX() && pos.getX() < mPosition.getX() + mWidth && pos.getY() > mPosition.getY() && pos.getY() < mPosition.getY() + mHeight;
 }
 
-void UIBox::draw(Font &font)
+void UIBox::draw()
 {
 	if(mPaddingBackground)
 	{
@@ -85,17 +96,58 @@ void UIBox::draw(Font &font)
 	{
 		Game::getInstance()->getGraphics().drawScale(mPosition + Vector2D(mTextOffset.getX(), -mTextOffset.getY()), *mBackground, mScale);
 	}
-	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, font, mColor, mText);
-}
-
-void UIBox::draw()
-{
-	draw(Game::getInstance()->getDefaultFont());
+	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, *mFont, mColor, mText);
 }
 
 void UIBox::move(const Vector2D & delta)
 {
 	setPosition(mPosition + delta);
+}
+
+void UIBox::resizeToFitWidth(const float boundsWidth)
+{
+	std::vector<int> whitespaceIndeces;
+	std::vector<float> wordWidths;
+	int index = 0;
+	float totalWidth = 0.f;
+	float lastWordWidth = 0.f;
+	float largestWordWidth = 0.f;
+
+	// Calculate text width and space locations
+	for(char c : mText)
+	{
+		if(c == ' ')
+		{
+			whitespaceIndeces.push_back(index);
+			float wordWidth = totalWidth - lastWordWidth;
+			wordWidths.push_back(wordWidth);
+			lastWordWidth = wordWidth;
+			if(wordWidth > largestWordWidth)
+			{
+				largestWordWidth = wordWidth;
+			}
+		}
+
+		Glyph glyph = mFont->getGlyph(c, mFontSize, false);
+		totalWidth += glyph.getAdvance();
+		index++;
+	}
+
+	// First, try to break on last whitespace recursively
+	index = whitespaceIndeces.size() - 1;
+	while(totalWidth > boundsWidth && index >= 0)
+	{
+		mText[whitespaceIndeces[index]] = '\n';
+		totalWidth -= wordWidths[index];
+		index--;
+	}
+
+	// Then if that doesn't work, shrink largest word width into boundsWidth and adjust fontSize accordingly
+	if(totalWidth > boundsWidth)
+	{
+		float ratio = totalWidth / boundsWidth;
+		mFontSize /= ratio;
+	}
 }
 
 void UIBox::setPosition(Vector2D pos)
@@ -112,8 +164,8 @@ void UIBox::setText(const std::string & text)
 void UIBox::resizeBackground()
 {
 	//pad the text with a background that gives in both dimensions
-	int textWidth = Game::getInstance()->getDefaultFont().getWidth(mText, mFontSize);
-	int textHeight = Game::getInstance()->getDefaultFont().getHeight(mText, mFontSize);
+	int textWidth = mFont->getWidth(mText, mFontSize);
+	int textHeight = mFont->getHeight(mText, mFontSize);
 	mScale = Vector2D((float)(textWidth) / (float)mBackground->getWidth(), (float)(textHeight) / (float)mBackground->getHeight());
 	float backgroundWidth = std::floor(mBackground->getWidth() * mScale.getX());
 	float backgroundHeight = std::floor(mBackground->getHeight() * mScale.getY());

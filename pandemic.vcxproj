@@ -132,6 +132,7 @@
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="Glyph.h" />
     <ClInclude Include="graphicsBuffer.h" />
     <ClInclude Include="graphicsBufferManager.h" />
     <ClInclude Include="graphicsSystem.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="Glyph.cpp" />
     <ClCompile Include="graphicsBuffer.cpp" />
     <ClCompile Include="graphicsBufferManager.cpp" />
     <ClCompile Include="graphicsSystem.cpp" />

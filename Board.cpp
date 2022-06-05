@@ -168,8 +168,7 @@ void Board::init(unsigned int numPlayers)
 void Board::activatePlayerCard(PlayerCard* card)
 {
 	mpActiveCard = card;
-	// TODO: store highlight color as member rather than explicitly getting it here
-	mpActiveCard->setColor(ColorManager::getInstance()->teal);
+	mpActiveCard->setColor(mActiveCardColor);
 }
 
 void Board::cleanup()

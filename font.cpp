@@ -1,4 +1,5 @@
 #include "font.h"
+#include "Glyph.h"
 
 Font::Font()
 {
@@ -16,6 +17,11 @@ Font::~Font()
 void Font::loadFont(std::string &fontPath, int fs)
 {
 	mFont.loadFromFile(fontPath);
+}
+
+Glyph Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+{
+	return Glyph(mFont.getGlyph(codePoint, characterSize, bold, outlineThickness));
 }
 
 int Font::getWidth(const std::string message, const int fontSize)

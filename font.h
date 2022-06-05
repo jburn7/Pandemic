@@ -4,7 +4,9 @@
 #include <string>
 #include "Trackable.h"
 
-class Font : public Trackable{
+class Glyph;
+
+class Font : public Trackable {
 	friend class GraphicsSystem;
 public:
 	Font();
@@ -14,6 +16,8 @@ public:
 	~Font();
 
 	void loadFont(std::string &fontPath, int fs);
+
+	Glyph getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
 	//getters
 	int getWidth(const std::string message, const int fontSize);
