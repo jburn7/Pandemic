@@ -13,7 +13,6 @@ template<typename T>
 class Deck : public Trackable
 {
 public:
-	Deck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName);
 	virtual ~Deck();
 
 	void addCard(T *card);
@@ -27,6 +26,9 @@ protected:
 	Vector2D mPosition;
 
 private:
+	friend PlayerCardDeck;
+	friend InfectionCardDeck;
+	Deck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName);
 	UIBox* createDeckNameText(const rapidjson::Document &doc);
 	const std::string mDeckName;
 	UIBox *mTextBox;

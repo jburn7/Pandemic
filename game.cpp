@@ -75,7 +75,7 @@ void Game::init(const std::string &jsonPath)
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	ColorManager::init(doc["colors"]);
 	int width = doc[JSONPATH]["width"].GetInt(), height = doc[JSONPATH]["height"].GetInt();
-	mGraphics.init(width, height, doc[JSONPATH]["title"].GetString());
+	mGraphics.init(doc, width, height, doc[JSONPATH]["title"].GetString());
 	mInputSystem.init();
 	mAISystem.init(doc["ai"]["ticksPerPlayerMove"].GetInt());
 	

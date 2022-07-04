@@ -1,5 +1,6 @@
 #include "graphicsSystem.h"
 #include "CameraEvents.h"
+#include "SFML\Graphics\RectangleShape.hpp"
 
 void setPosition(sf::Transformable &trans, const Vector2D &vec)
 {
@@ -21,7 +22,7 @@ GraphicsSystem::~GraphicsSystem()
 	cleanup();
 }
 
-void GraphicsSystem::init(int w, int h, const std::string &t)
+void GraphicsSystem::init(const rapidjson::Document &doc, int w, int h, const std::string &t)
 {
 	std::string title(t);
 	mDisplay.create(sf::VideoMode(w, h, 32), sf::String(title));
@@ -30,6 +31,14 @@ void GraphicsSystem::init(int w, int h, const std::string &t)
  	mCameraPosition = Vector2D((float)mWidth / 2, (float)mHeight / 2);
 	mZoomPosition = sf::Vector2i((int)mCameraPosition.getX(), (int)mCameraPosition.getY());
 	oldOffsetCoords = sf::Vector2i(0, 0);
+	sf::View view = sf::View(sf::Vector2f(mWidth / 2, mHeight / 2), sf::Vector2f(mWidth, mHeight));
+	mBoardViewport = sf::FloatRect(
+		doc["window"]["boardViewport"]["startX"].GetFloat(),
+		doc["window"]["boardViewport"]["startY"].GetFloat(),
+		doc["window"]["boardViewport"]["widthRatio"].GetFloat(),
+		doc["window"]["boardViewport"]["heightRatio"].GetFloat());
+	view.setViewport(mBoardViewport);
+	mDisplay.setView(view);
 }
 
 void GraphicsSystem::cleanup()
@@ -128,6 +137,16 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 
 void GraphicsSystem::flip()
 {
+	// TODO: move this outline, either make a RectangleShape: Unit class or give Units an optional outline
+	sf::RectangleShape boardOutline;
+	sf::FloatRect boardViewportInPixels = sf::FloatRect(mWidth * mBoardViewport.left, mHeight * mBoardViewport.top, mWidth * mBoardViewport.width, mHeight * mBoardViewport.height);
+	boardOutline.setSize(sf::Vector2f(boardViewportInPixels.width, boardViewportInPixels.height));
+	boardOutline.setPosition(sf::Vector2f(boardViewportInPixels.left, boardViewportInPixels.top));
+	boardOutline.setOutlineColor(sf::Color::White);
+	boardOutline.setOutlineThickness(5);
+	boardOutline.setFillColor(sf::Color::Transparent);
+	mDisplay.draw(boardOutline);
+
 	mDisplay.display();
 }
 
@@ -135,6 +154,7 @@ void GraphicsSystem::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, fl
 {
 	sf::Vector2f vec = sf::Vector2f((float)pixel.x, (float)pixel.y);
 	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f((float)mWidth, (float)mHeight));
+	view.setViewport(mBoardViewport);
 	window.setView(view);
 	oldOffsetCoords = pixel;
 	const sf::Vector2f beforeCoord{window.mapPixelToCoords(pixel)};

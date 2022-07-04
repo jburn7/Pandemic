@@ -7,6 +7,7 @@
 #include "EventListener.h"
 #include "EventSystem.h"
 #include <string>
+#include "document.h"
 
 enum GraphicsLayer
 {
@@ -22,7 +23,7 @@ public:
 
 	~GraphicsSystem();
 
-	void init(int w, int h, const std::string &title);
+	void init(const rapidjson::Document &doc, int w, int h, const std::string &title);
 
 	void cleanup();
 
@@ -64,6 +65,7 @@ protected:
 	double mCameraZoom;
 	Vector2D mTopLeft; // For consistent UI drawing after camera has panned
 	sf::RenderWindow mDisplay;
+	sf::FloatRect mBoardViewport;
 
 private:
 	void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);

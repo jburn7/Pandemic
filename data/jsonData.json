@@ -181,7 +181,7 @@
 		],
 		"playerHandLocation": {
 			"x": 100,
-			"y": 780
+			"y": 910
 		},
 		"initNumCitiesCubes": [
 			3,
@@ -232,5 +232,13 @@
 		"completeString": "",
 		"replayString": "",
 		"defaultUIPaddingImage": "plain_square.png"
+	},
+	"window": {
+		"boardViewport": {
+			"startX": 0.1,
+			"startY": 0.13,
+			"widthRatio": 0.8,
+			"heightRatio": 0.67
+		}
 	}
 }
