@@ -332,7 +332,6 @@ void Board::endGameAndRestart()
 	std::cout << "TODO: you lost\n";
 
 	// move all discarded cards to their draw piles
-	// TODO: uncomment and fix
 	PlayerCard* pc = mPlayerDiscardDeck->dealTopCard();
 	while(pc)
 	{
