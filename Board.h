@@ -9,6 +9,9 @@
 
 typedef std::pair<std::string, City*> CityItem;
 
+class PlayerCardDeck;
+class InfectionCardDeck;
+
 class Board : public EventListener
 {
 	friend class AISystem;
@@ -41,8 +44,6 @@ private:
 	void endTurn();
 	void flyToCity(City* const city);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
-	bool checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener);
-	bool checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D pos, const std::string &opener); // Sure would be cool if C++ could cast from vec<Derived*> to vec<Base*>...
 	void shuffleDrawPiles();
 
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
@@ -56,8 +57,10 @@ private:
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
 
 	// TODO: abstract these to a Deck unit that handles drawing of cards and names and such
-	Vector2D mPlayerDiscardLocation, mPlayerDrawLocation, mInfectionDrawLocation, mInfectionDiscardLocation;
-	UIBox *mPlayerDiscardNameText, *mPlayerDrawNameText, *mInfectionDrawNameText, *mInfectionDiscardNameText;
+	//Vector2D mPlayerDiscardLocation, mPlayerDrawLocation, mInfectionDrawLocation, mInfectionDiscardLocation;
+	//UIBox *mPlayerDiscardNameText, *mPlayerDrawNameText, *mInfectionDrawNameText, *mInfectionDiscardNameText;
+	PlayerCardDeck *mPlayerDiscardDeck, *mPlayerDrawDeck;
+	InfectionCardDeck *mInfectionDiscardDeck, *mInfectionDrawDeck;
 
 	std::vector<EnumDiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
 	std::vector<int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
@@ -67,8 +70,8 @@ private:
 	std::map<std::string, City*> mCities;
 	std::vector<Player*> mPlayers;
 
-	std::vector<PlayerCard*> playerDraw;
-	std::vector<PlayerCard*> playerDiscard;
-	std::vector<InfectionCard*> infectDraw;
-	std::vector<InfectionCard*> infectDiscard;
+	//std::vector<PlayerCard*> playerDraw;
+	//std::vector<PlayerCard*> playerDiscard;
+	//std::vector<InfectionCard*> infectDraw;
+	//std::vector<InfectionCard*> infectDiscard;
 };

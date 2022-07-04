@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "City.h"
 #include "game.h"
+#include "Deck.h"
 
 Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s) : Unit(Vector2D(0, 0), s)
 {
@@ -37,16 +38,11 @@ void Player::discardCard(PlayerCard *pc)
 	}
 }
 
-void Player::replaceHandIntoDeck(std::vector<PlayerCard*>& deck, const Vector2D &position)
+void Player::replaceHandIntoDeck(PlayerCardDeck *deck)
 {
 	for(auto &v : mHand)
 	{
-		v->setPosition(position);
-		if(deck.size() > 0)
-		{
-			deck[0]->setIsHidden(true);
-		}
-		deck.push_back(v);
+		deck->addCard(v);
 	}
 
 	mHand.clear();

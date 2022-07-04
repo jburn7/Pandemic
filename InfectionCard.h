@@ -6,7 +6,7 @@ class City;
 class InfectionCard : public CityCard
 {
 public:
-	InfectionCard(Vector2D &pos, Sprite *sprite, City *city);
+	InfectionCard(const Vector2D &pos, Sprite *sprite, City *city);
 
 	virtual ~InfectionCard();
 };

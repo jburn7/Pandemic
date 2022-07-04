@@ -4,6 +4,7 @@
 #include "ColorManager.h"
 #include "graphicsSystem.h"
 #include "AIEvents.h"
+#include "Deck.h"
 
 Board::Board()
 {
@@ -27,11 +28,32 @@ void Board::init(unsigned int numPlayers)
 
 	mStartingCity = doc["game"]["startingCity"].GetString();
 
-	//build array of neighbors for each city, as well as infection card deck and city cards for player card deck
-	mPlayerDrawLocation = Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDrawLocation"].GetArray()[1].GetFloat());
-	mInfectionDrawLocation = Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat());
+	mPlayerDrawDeck = new PlayerCardDeck(
+		doc,
+		Vector2D(doc["game"]["playerDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDrawLocation"].GetArray()[1].GetFloat()),
+		"Player Draw"
+	);
+	mPlayerDiscardDeck = new PlayerCardDeck(
+		doc,
+		Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat()),
+		"Player Discard"
+	);
+	mInfectionDrawDeck = new InfectionCardDeck(
+		doc,
+		Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat()),
+		"Infection Draw"
+	);
+	mInfectionDiscardDeck = new InfectionCardDeck(
+		doc,
+		Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat()),
+		"Infection Discard"
+	);
+
+	//build array of neighbors for each city, as well as infection card deck and city cards for player card deckS
 	std::vector<std::vector<std::string>> neighborMap;
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
+	const Vector2D playerDrawLocation = mPlayerDrawDeck->getPosition();
+	const Vector2D infectionDrawLocation = mInfectionDrawDeck->getPosition();
 	// TODO: add more cities, then we can add epidemics
 	for(auto &v : c.GetArray())
 	{
@@ -52,16 +74,16 @@ void Board::init(unsigned int numPlayers)
 
 		// Also generate city card deck here since each card is tied to a city
 		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
-		PlayerCard *pc = new PlayerCard(mPlayerDrawLocation, cityCardBackground, city);
+		PlayerCard *pc = new PlayerCard(playerDrawLocation, cityCardBackground, city);
 		pc->setZLayer(3);
-		playerDraw.push_back(pc);
+		mPlayerDrawDeck->addCard(pc);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
 
 		// Also generate infection card deck here since each card is tied to a city
 		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
-		InfectionCard *infectionCard = new InfectionCard(mInfectionDrawLocation, infectionCardBackground, city);
+		InfectionCard *infectionCard = new InfectionCard(infectionDrawLocation, infectionCardBackground, city);
 		infectionCard->setZLayer(3);
-		infectDraw.push_back(infectionCard);
+		mInfectionDrawDeck->addCard(infectionCard);
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, infectionCard));
 
 		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, city));
@@ -96,6 +118,7 @@ void Board::init(unsigned int numPlayers)
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
 	// TODO: add support for more than 1 player (switch after each turn, display next player's hand, remove old player's hand from click handler, etc)
+	// TODO: wrap cards if player's hand goes off screen
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
@@ -113,40 +136,6 @@ void Board::init(unsigned int numPlayers)
 	mpActivePawn = mPlayers[mActivePawnIndex];
 
 	dealInitialPlayerCards();
-
-	mPlayerDiscardLocation = Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat());
-	mInfectionDiscardLocation = Vector2D(doc["game"]["infectionDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDiscardLocation"].GetArray()[1].GetFloat());
-
-	int deckNameFontSize = doc["deck"]["nameFontSize"].GetInt();
-	float deckNamePadding = doc["deck"]["namePadding"].GetFloat();
-	int cardSize = playerDraw[0]->getHeight(); // All cards are same height so just grab height from a card that we know exists
-	mPlayerDrawNameText = createDeckNameText(
-		doc, 
-		"Player Draw", 
-		Vector2D(mPlayerDrawLocation.getX(), mPlayerDrawLocation.getY() + cardSize + deckNameFontSize), 
-		deckNamePadding, 
-		deckNameFontSize);
-
-	mPlayerDiscardNameText = createDeckNameText(
-		doc,
-		"Player Discard",
-		Vector2D(mPlayerDiscardLocation.getX(), mPlayerDiscardLocation.getY() + cardSize + deckNameFontSize),
-		deckNamePadding,
-		deckNameFontSize);
-
-	mInfectionDrawNameText = createDeckNameText(
-		doc,
-		"Infection Draw",
-		Vector2D(mInfectionDrawLocation.getX(), mInfectionDrawLocation.getY() + cardSize + deckNameFontSize),
-		deckNamePadding,
-		deckNameFontSize);
-
-	mInfectionDiscardNameText = createDeckNameText(
-		doc,
-		"Infection Discard",
-		Vector2D(mInfectionDiscardLocation.getX(), mInfectionDiscardLocation.getY() + cardSize + deckNameFontSize),
-		deckNamePadding,
-		deckNameFontSize);
 
 	// Initialize disease cubes on cities
 	for(const auto &i : doc["game"]["initNumCitiesCubes"].GetArray())
@@ -185,49 +174,25 @@ void Board::cleanup()
 	}
 	mPlayers.clear();
 
-	for(auto &v : playerDraw)
+	if(mPlayerDrawDeck)
 	{
-		v = nullptr;
+		delete mPlayerDrawDeck;
+		mPlayerDrawDeck = NULL;
 	}
-	playerDraw.clear();
-
-	for(auto &v : playerDiscard)
+	if(mPlayerDiscardDeck)
 	{
-		v = nullptr;
+		delete mPlayerDiscardDeck;
+		mPlayerDiscardDeck = NULL;
 	}
-	playerDiscard.clear();
-
-	for(auto &v : infectDraw)
+	if(mInfectionDrawDeck)
 	{
-		v = nullptr;
+		delete mInfectionDrawDeck;
+		mInfectionDrawDeck = NULL;
 	}
-	infectDraw.clear();
-
-	for(auto &v : infectDiscard)
+	if(mInfectionDiscardDeck)
 	{
-		v = nullptr;
-	}
-	infectDiscard.clear();
-
-	if(mPlayerDrawNameText)
-	{
-		// delete handled by unit manager
-		mPlayerDiscardNameText = nullptr;
-	}
-	if(mPlayerDiscardNameText)
-	{
-		// delete handled by unit manager
-		mPlayerDiscardNameText = nullptr;
-	}
-	if(mInfectionDrawNameText)
-	{
-		// delete handled by unit manager
-		mInfectionDrawNameText = nullptr;
-	}
-	if(mInfectionDiscardNameText)
-	{
-		// delete handled by unit manager
-		mInfectionDiscardNameText = nullptr;
+		delete mInfectionDiscardDeck;
+		mInfectionDiscardDeck = NULL;
 	}
 }
 
@@ -282,16 +247,10 @@ void Board::dealInitialPlayerCards()
 
 void Board::dealTopPlayerCard(Player *player)
 {
-	if(playerDraw.size() > 0)
+	PlayerCard* pc = mPlayerDrawDeck->dealTopCard();
+	if(pc)
 	{
-		PlayerCard* pc = *playerDraw.begin();
-		pc->setIsHidden(false);
 		player->dealCard(pc);
-		playerDraw.erase(playerDraw.begin());
-		if(playerDraw.size() > 0)
-		{
-			playerDraw[0]->setIsHidden(false);
-		}
 	}
 	else
 	{
@@ -334,35 +293,22 @@ void Board::decrementRemainingMoves()
 void Board::discardPlayerCard(Player *player, PlayerCard *card)
 {
 	player->discardCard(card);
-	card->setPosition(mPlayerDiscardLocation);
-	if(playerDiscard.size() > 0)
-	{
-		playerDiscard[playerDiscard.size() - 1]->setIsHidden(true);
-	}
-	playerDiscard.push_back(card);
+	mPlayerDiscardDeck->addCard(card);
 }
 
 void Board::discardInfectionCard(InfectionCard *card)
 {
-	card->setPosition(mInfectionDiscardLocation);
-	if(infectDiscard.size() > 0)
-	{
-		infectDiscard[infectDiscard.size() - 1]->setIsHidden(true);
-	}
-	card->setIsHidden(false);
-	infectDiscard.push_back(card);
+	mInfectionDiscardDeck->addCard(card);
 }
 
 void Board::drawInfectionCard(int numCubesToAdd)
 {
-	InfectionCard *card = *infectDraw.begin();
-	card->getCity()->incrementDiseaseCubes(numCubesToAdd);
-	infectDraw.erase(infectDraw.begin());
-	if(infectDraw.size() > 0)
+	InfectionCard* card = mInfectionDrawDeck->dealTopCard();
+	if(card)
 	{
-		infectDraw[0]->setIsHidden(false);
+		card->getCity()->incrementDiseaseCubes(numCubesToAdd);
+		discardInfectionCard(card);
 	}
-	discardInfectionCard(card);
 }
 
 void Board::doleInitialDiseaseCubes()
@@ -386,26 +332,23 @@ void Board::endGameAndRestart()
 	std::cout << "TODO: you lost\n";
 
 	// move all discarded cards to their draw piles
-	for(auto &v : playerDiscard)
+	// TODO: uncomment and fix
+	PlayerCard* pc = mPlayerDiscardDeck->dealTopCard();
+	while(pc)
 	{
-		v->setIsHidden(true);
-		v->setPosition(mPlayerDrawLocation);
-		if(playerDraw.size() > 0)
-		{
-			playerDraw[0]->setIsHidden(true);
-		}
-		playerDraw.push_back(v);
+		mPlayerDrawDeck->addCard(pc);
+		pc = mPlayerDiscardDeck->dealTopCard();
 	}
-	playerDiscard.clear();
-	for(auto &v : infectDiscard)
+	InfectionCard* card = mInfectionDiscardDeck->dealTopCard();
+	while(pc)
 	{
-		placeInfectionCardOntoDeck(v);
+		mInfectionDrawDeck->addCard(card);
+		card = mInfectionDiscardDeck->dealTopCard();
 	}
-	infectDiscard.clear();
 	// take all player cards from players' hands and replace them in player draw
 	for(auto &v : mPlayers)
 	{
-		v->replaceHandIntoDeck(playerDraw, mPlayerDrawLocation);
+		v->replaceHandIntoDeck(mPlayerDrawDeck);
 	}
 	// reset each city's cubes to 0
 	for(auto &v : mCities)
@@ -467,60 +410,13 @@ void Board::flyToCity(City* const city)
 
 void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 {
-	if(infectDraw.size() > 0)
-	{
-		infectDraw[0]->setIsHidden(true);
-	}
-	card->setPosition(mInfectionDrawLocation);
-	infectDraw.insert(infectDraw.begin(), card);
-}
-
-bool Board::checkDeckForClick(const std::vector<PlayerCard*> &deck, Vector2D pos, const std::string &opener)
-{
-	// Hacky, but we'll just ask the top card in each stack for its position
-	if(deck.size() > 0)
-	{
-		if(deck[0]->contains(pos))
-		{
-			std::cout << opener << std::endl;
-
-			for(auto &a : deck)
-			{
-				std::cout << a->debugDescription() << std::endl;
-			}
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Board::checkDeckForClick(const std::vector<InfectionCard*> &deck, Vector2D pos, const std::string &opener)
-{
-	// Hacky, but we'll just ask the top card in each stack for its position
-	if(deck.size() > 0)
-	{
-		if(deck[0]->contains(pos))
-		{
-			std::cout << opener << std::endl;
-
-			for(auto &a : deck)
-			{
-				std::cout << a->debugDescription() << std::endl;
-			}
-
-			return true;
-		}
-	}
-
-	return false;
+	mInfectionDiscardDeck->addCard(card);
 }
 
 void Board::shuffleDrawPiles()
 {
-	std::random_shuffle(playerDraw.begin(), playerDraw.end());
-	std::random_shuffle(infectDraw.begin(), infectDraw.end());
+	mPlayerDrawDeck->shuffle();
+	mInfectionDrawDeck->shuffle();
 }
 
 void Board::handleEvent(const Event &theEvent)
@@ -546,19 +442,19 @@ void Board::handleEvent(const Event &theEvent)
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
 				std::cout << "\t World coords at " << "(" << basePos.getX() << ", " << basePos.getY() << ")" << std::endl;
 				std::cout << "\t GUI coords at " << "(" << guiPos.getX() << ", " << guiPos.getY() << ")" << std::endl;
-				if(checkDeckForClick(playerDraw, guiPos, "Player Draw contents:"))
+				if(mPlayerDrawDeck->checkDeckForClick(guiPos, "Player Draw contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(playerDiscard, guiPos, "Player Discard contents:"))
+				if(mPlayerDiscardDeck->checkDeckForClick(guiPos, "Player Discard contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(infectDraw, guiPos, "Infection Draw contents:"))
+				if(mInfectionDrawDeck->checkDeckForClick(guiPos, "Infection Draw contents:"))
 				{
 					return;
 				}
-				if(checkDeckForClick(infectDiscard, guiPos, "Infection Discard contents:"))
+				if(mInfectionDiscardDeck->checkDeckForClick(guiPos, "Infection Discard contents:"))
 				{
 					return;
 				}

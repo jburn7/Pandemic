@@ -4,6 +4,7 @@
 #include <vector>
 
 class City;
+class PlayerCardDeck;
 
 class Player : public Unit
 {
@@ -16,7 +17,7 @@ public:
 
 	void discardCard(PlayerCard* pc);
 
-	void replaceHandIntoDeck(std::vector<PlayerCard*> &deck, const Vector2D &position);
+	void replaceHandIntoDeck(PlayerCardDeck *deck);
 
 	bool isInCity(City* city);
 

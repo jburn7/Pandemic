@@ -125,6 +125,7 @@
     <ClInclude Include="CityCard.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="ColorManager.h" />
+    <ClInclude Include="Deck.h" />
     <ClInclude Include="DiseaseStages.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="EventCard.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="CityCard.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="ColorManager.cpp" />
+    <ClCompile Include="Deck.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="EventListener.cpp" />
     <ClCompile Include="EventSystem.cpp" />

@@ -152,6 +152,7 @@
 		}
 	],
 	"deck": {
+		"cardHeight":  100,
 		"nameFontSize": 16,
 		"namePadding": 6,
 		"nameBackgroundImg": "menu_tile_simple.png"
