@@ -35,12 +35,12 @@ void Board::init(unsigned int numPlayers)
 	);
 	mPlayerDiscardDeck = new PlayerCardDeck(
 		doc,
-		Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat()),
+		Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat()),
 		"Player Discard"
 	);
 	mInfectionDrawDeck = new InfectionCardDeck(
 		doc,
-		Vector2D(doc["game"]["playerDiscardLocation"].GetArray()[0].GetFloat(), doc["game"]["playerDiscardLocation"].GetArray()[1].GetFloat()),
+		Vector2D(doc["game"]["infectionDrawLocation"].GetArray()[0].GetFloat(), doc["game"]["infectionDrawLocation"].GetArray()[1].GetFloat()),
 		"Infection Draw"
 	);
 	mInfectionDiscardDeck = new InfectionCardDeck(
@@ -194,24 +194,6 @@ void Board::cleanup()
 		delete mInfectionDiscardDeck;
 		mInfectionDiscardDeck = NULL;
 	}
-}
-
-UIBox* Board::createDeckNameText(const rapidjson::Document &doc, const std::string &name, const Vector2D location, const int deckNamePadding, const int deckNameFontSize)
-{
-	ColorManager& colorManager = *ColorManager::getInstance();
-	UIBox *deckNameText = new UIBox(
-		Vector2D(location.getX(), location.getY()),
-		deckNameFontSize,
-		Vector2D(0, 0),
-		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
-		deckNamePadding,
-		name,
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
-	); //deletes called in this dtor, UIBox dtor
-	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, deckNameText));
-
-	return deckNameText;
 }
 
 void Board::dealInitialPlayerCards()
