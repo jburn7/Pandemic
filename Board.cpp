@@ -394,10 +394,108 @@ void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 	mInfectionDiscardDeck->addCard(card);
 }
 
+void Board::resetActiveCard()
+{
+	mpActiveCard->setColor(ColorManager::getInstance()->black);
+	mpActiveCard = nullptr;
+}
+
 void Board::shuffleDrawPiles()
 {
 	mPlayerDrawDeck->shuffle();
 	mInfectionDrawDeck->shuffle();
+}
+
+void Board::handleGuiClick(Vector2D guiPos)
+{
+	// Hand click, deck click
+	if(mPlayerDrawDeck->checkDeckForClick(guiPos, "Player Draw contents:"))
+	{
+		return;
+	}
+	if(mPlayerDiscardDeck->checkDeckForClick(guiPos, "Player Discard contents:"))
+	{
+		return;
+	}
+	if(mInfectionDrawDeck->checkDeckForClick(guiPos, "Infection Draw contents:"))
+	{
+		return;
+	}
+	if(mInfectionDiscardDeck->checkDeckForClick(guiPos, "Infection Discard contents:"))
+	{
+		return;
+	}
+
+	// If no active card
+	if(mpActiveCard == nullptr)
+	{
+		// For each card player owns, if it was clicked, set it to active
+		for(auto &v : mpActivePawn->getHand())
+		{
+			if(v->contains(guiPos))
+			{
+				activatePlayerCard(v);
+				return;
+			}
+		}
+	}
+	else
+	{
+		// Bogus click, reset active card
+		resetActiveCard();
+		return;
+	}
+}
+
+void Board::handleBoardClick(Vector2D basePos)
+{
+	// City click
+	//if no active card
+	if(mpActiveCard == nullptr)
+	{
+		//  if pawn's current city was clicked
+		if(mpActivePawn->getCurrentCity()->contains(basePos))
+		{
+			decrementDiseaseCubesMove(mpActivePawn->getCurrentCity());
+		}
+		else
+		{
+			//for each neighbor, if it was clicked, move pawn to it and break
+			for(auto &v : mpActivePawn->getCurrentCity()->getNeighbors())
+			{
+				if(v->contains(basePos))
+				{
+					mpActivePawn->moveCity(v);
+					gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
+					return;
+				}
+			}
+		}
+	}
+	else
+	{
+		bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity());
+		// Poll each city, if it was clicked
+		// If charter flight, then move pawn to city and discard card
+		// Else if city matches card's city
+		// Move pawn to city and discard card
+		for(auto &c : mCities)
+		{
+			City* const city = c.second;
+			if(city->contains(basePos))
+			{
+				if((isCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
+				{
+					flyToCity(city);
+					return;
+				}
+			}
+		}
+
+		// Bogus click, reset active card
+		resetActiveCard();
+		return;
+	}
 }
 
 void Board::handleEvent(const Event &theEvent)
@@ -407,6 +505,7 @@ void Board::handleEvent(const Event &theEvent)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
 		// Two different coordinates for the two different views, will need to track both and then each unit here can decide which one to use based on whether it is a gui unit
+		// TODO: check which side of board outline the guiPos click fell on, then refactor this into handleGuiClick and handleBoardClick and handle based on side
 		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), BASE_VIEW);
 		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GUI_VIEW);
 		/*
@@ -414,6 +513,7 @@ void Board::handleEvent(const Event &theEvent)
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
 				if click landed on a card, set that card to active and resolve that in any future clicks(eg set card to active, then click on own city to perform charter flight action, or do trades if player clicks in card area of another player, etc)
 		*/
+
 		if(gameState == PLAYING)
 		{
 			if(ev.getButton() == MOUSE_LEFT)
@@ -534,7 +634,6 @@ void Board::handleEvent(const Event &theEvent)
 		{
 			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
 			bool isNeighbor = false;
-			// TODO: write helper funcs for vec like .contains
 			City *const currentCity = mpActivePawn->getCurrentCity();
 			for(auto &c : currentCity->getNeighbors())
 			{

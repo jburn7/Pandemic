@@ -42,7 +42,10 @@ private:
 	void endGameAndRestart();
 	void endTurn();
 	void flyToCity(City* const city);
+	void handleGuiClick(Vector2D guiPos);
+	void handleBoardClick(Vector2D basePos);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
+	void resetActiveCard();
 	void shuffleDrawPiles();
 
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
