@@ -90,11 +90,11 @@ void UIBox::draw()
 {
 	if(mPaddingBackground)
 	{
-		Game::getInstance()->getGraphics().drawScale(mPosition, *mPaddingBackground, mPaddingBackgroundScale);
+		Game::getInstance()->getGraphics().draw(mPosition, *mPaddingBackground, 0, mPaddingBackgroundScale);
 	}
 	if(mBackground)
 	{
-		Game::getInstance()->getGraphics().drawScale(mPosition + Vector2D(mTextOffset.getX(), -mTextOffset.getY()), *mBackground, mScale);
+		Game::getInstance()->getGraphics().draw(mPosition + Vector2D(mTextOffset.getX(), -mTextOffset.getY()), *mBackground, 0, mScale);
 	}
 	Game::getInstance()->getGraphics().writeText(mPosition + mTextOffset, mFontSize, *mFont, mColor, mText);
 }

@@ -52,11 +52,11 @@ void Unit::draw()
 {
 	if(mAnimation)
 	{
-		Game::getInstance()->getGraphics().drawScale(mPosition, *mAnimation->getCurrentSprite(), mScale);
+		Game::getInstance()->getGraphics().draw(mPosition, *mAnimation->getCurrentSprite(), mTheta, mScale, mOutline);
 	}
 	else if(mConstantFrame)
 	{
-		Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
+		Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale, mOutline);
 	}
 }
 
@@ -134,9 +134,19 @@ void Unit::setScale(float x, float y)
 	mScale = Vector2D(x, y);
 }
 
+void Unit::setOutline(const Outline &outline)
+{
+	mOutline = outline;
+}
+
 void Unit::setZLayer(int z)
 {
 	mZLayer = z;
+}
+
+void Unit::clearOutline()
+{
+	mOutline = Outline();
 }
 
 Vector2D Unit::getCenter()

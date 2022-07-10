@@ -8,6 +8,7 @@
 #include "EventSystem.h"
 #include <string>
 #include "document.h"
+#include "Outline.h"
 
 enum GraphicsLayer
 {
@@ -31,11 +32,7 @@ public:
 
 	Vector2D convertToWorldCoordinates(Vector2D pos, const GraphicsLayer layer);
 
-	void draw(const Vector2D &targetLoc, Sprite &sprite);
-
-	void draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale);
-
-	void drawScale(const Vector2D &targetLoc, Sprite &sprite, const Vector2D &scale);
+	void draw(const Vector2D &targetLoc, Sprite &sprite, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
 
 	virtual void handleEvent(const Event &theEvent);
 
@@ -68,5 +65,6 @@ protected:
 	sf::FloatRect mBoardViewport;
 
 private:
+	void drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline);
 	void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);
 };

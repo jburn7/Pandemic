@@ -60,14 +60,18 @@ Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsL
 	return Vector2D(worldPos.x, worldPos.y);
 }
 
-void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite)
+void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline)
 {
-	sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
-	temp.setPosition(sf::Vector2f(targetLoc.getX(), targetLoc.getY()));
-	mDisplay.draw(temp);
+	sf::RectangleShape boardOutline;
+	boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
+	boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
+	boardOutline.setOutlineColor(sf::Color(outline.color.mColor));
+	boardOutline.setOutlineThickness(outline.thickness);
+	boardOutline.setFillColor(sf::Color::Transparent);
+	mDisplay.draw(boardOutline);
 }
 
-void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale)
+void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale, const Outline &outline)
 {
 	sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
 	double degrees = theta * 180.0 / 3.1415926;
@@ -76,17 +80,14 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double thet
 	temp.setOrigin(sf::Vector2f(sprite.getOrigin().getX(), sprite.getOrigin().getY()));
 	temp.rotate((float)degrees);
 
-
-
 	temp.scale(scale.getX(), scale.getY());
-	//only supports unscaled drawing for reflected sprites
-	if(scale.getX() == -1)
+	if(scale.getX() < 0)
 	{
-		temp.move((float)sprite.getWidth(), 0);
+		temp.move((float)temp.getGlobalBounds().width, 0);
 	}
-	if(scale.getY() == -1)
+	if(scale.getY() < 0)
 	{
-		temp.move(0, (float)sprite.getHeight());
+		temp.move(0, (float)temp.getGlobalBounds().height);
 	}
 	if(sprite.getColor())
 	{
@@ -94,31 +95,9 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double thet
 	}
 	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
 
-
-
 	mDisplay.draw(temp);
-}
 
-void GraphicsSystem::drawScale(const Vector2D &targetLoc, Sprite &sprite, const Vector2D &scale)
-{
-	sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
-	temp.setPosition(sf::Vector2f(targetLoc.getX(), targetLoc.getY()));
-	temp.scale(scale.getX(), scale.getY());
-	//only supports unscaled drawing for reflected sprites
-	if(scale.getX() == -1)
-	{
-		temp.move((float)sprite.getWidth(), 0);
-	}
-	if(scale.getY() == -1)
-	{
-		temp.move(0, (float)sprite.getHeight());
-	}
-	if(sprite.getColor())
-	{
-		temp.setColor(sf::Color(sprite.getColor()->mColor));
-	}
-	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
-	mDisplay.draw(temp);
+	drawOutlineForBounds(temp.getGlobalBounds(), outline);
 }
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
