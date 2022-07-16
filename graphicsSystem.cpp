@@ -122,16 +122,6 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 
 void GraphicsSystem::flip()
 {
-	// TODO: move this outline, either make a RectangleShape: Unit class or give Units an optional outline
-	//sf::RectangleShape boardOutline;
-	//sf::FloatRect boardViewportInPixels = sf::FloatRect(mWidth * mBoardViewport.left, mHeight * mBoardViewport.top, mWidth * mBoardViewport.width, mHeight * mBoardViewport.height);
-	//boardOutline.setSize(sf::Vector2f(boardViewportInPixels.width, boardViewportInPixels.height));
-	//boardOutline.setPosition(sf::Vector2f(boardViewportInPixels.left, boardViewportInPixels.top));
-	//boardOutline.setOutlineColor(sf::Color::White);
-	//boardOutline.setOutlineThickness(5);
-	//boardOutline.setFillColor(sf::Color::Transparent);
-	//mDisplay.draw(boardOutline);
-
 	mDisplay.display();
 }
 
