@@ -61,6 +61,12 @@ void InputSystem::checkForInput()
 			case sf::Keyboard::Down:
 				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, DOWN));
 				break;
+			case sf::Keyboard::D:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, D));
+				break;
+			case sf::Keyboard::A:
+				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, A));
+				break;
 			case sf::Keyboard::Space:
 				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, SPACE));
 				break;
@@ -80,6 +86,12 @@ void InputSystem::checkForInput()
 				break;
 			case sf::Keyboard::Up:
 				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, UP));
+				break;
+			case sf::Keyboard::D:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, D));
+				break;
+			case sf::Keyboard::A:
+				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, A));
 				break;
 			case sf::Keyboard::Down:
 				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, DOWN));

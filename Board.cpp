@@ -3,6 +3,7 @@
 #include "CameraEvents.h"
 #include "ColorManager.h"
 #include "graphicsSystem.h"
+#include "KeyEvent.h"
 #include "AIEvents.h"
 #include "Deck.h"
 
@@ -15,13 +16,15 @@ Board::~Board()
 	cleanup();
 }
 
-void Board::init(unsigned int numPlayers)
+void Board::init()
 {
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 
 	// Initialize variables
 	ColorManager& colorManager = *ColorManager::getInstance();
 	mActiveCardColor = colorManager.color(doc["cityCard"]["highlightColor"].GetString());
+
+	
 
 	//load cities
 	rapidjson::Value &c = doc["cities"];
@@ -120,6 +123,7 @@ void Board::init(unsigned int numPlayers)
 	// TODO: add support for more than 1 player (switch after each turn, display next player's hand, remove old player's hand from click handler, etc)
 	// TODO: wrap cards if player's hand goes off screen (lower priority, screen has plenty of room)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
+	unsigned int numPlayers = doc["game"]["numPlayers"].GetUint();
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
 		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
@@ -132,8 +136,10 @@ void Board::init(unsigned int numPlayers)
 	}
 
 	mpActiveCard = nullptr;
-	mActivePawnIndex = 0;
-	mpActivePawn = mPlayers[mActivePawnIndex];
+	changeActivePawn(0);
+	// Can't use changeSelecedPawn until player's hand is initially set
+	mSelectedPawnIndex = 0;
+	mpSelectedPawn = mpActivePawn;
 
 	dealInitialPlayerCards();
 
@@ -207,6 +213,26 @@ void Board::cleanup()
 	}
 }
 
+void Board::changeActivePawn(int newIndex)
+{
+	mActivePawnIndex = newIndex;
+	mpActivePawn = mPlayers[mActivePawnIndex];
+}
+
+void Board::changeSelectedPawn(int newIndex)
+{
+	for(auto &v : mpSelectedPawn->getHand())
+	{
+		v->setIsHidden(true);
+	}
+	mSelectedPawnIndex = newIndex;
+	mpSelectedPawn = mPlayers[mSelectedPawnIndex];
+	for(auto &v : mpSelectedPawn->getHand())
+	{
+		v->setIsHidden(false);
+	}
+}
+
 void Board::dealInitialPlayerCards()
 {
 	//now deal player cards to players
@@ -217,7 +243,7 @@ void Board::dealInitialPlayerCards()
 		initialHandSize = 3; //debug value, as game doesn't allow for just one player
 		break;
 	case 2:
-		initialHandSize = 4;
+		initialHandSize = 1;
 		break;
 	case 3:
 		initialHandSize = 3;
@@ -231,18 +257,20 @@ void Board::dealInitialPlayerCards()
 	}
 	for(unsigned int i = 0; i < mPlayers.size(); i++)
 	{
+		mpSelectedPawn = mPlayers[i];
 		for(unsigned int j = 0; j < initialHandSize; j++)
 		{
-			dealTopPlayerCard(mpActivePawn);
+			dealTopPlayerCard(mpSelectedPawn, i == 0);
 		}
 	}
 }
 
-void Board::dealTopPlayerCard(Player *player)
+void Board::dealTopPlayerCard(Player *player, bool showCard)
 {
 	PlayerCard* pc = mPlayerDrawDeck->dealTopCard();
 	if(pc)
 	{
+		pc->setIsHidden(!showCard);
 		player->dealCard(pc);
 	}
 	else
@@ -386,7 +414,8 @@ void Board::endTurn()
 	{
 		mActivePawnIndex = 0;
 	}
-	mpActivePawn = mPlayers[mActivePawnIndex];
+	changeActivePawn(mActivePawnIndex);
+	changeSelectedPawn(mActivePawnIndex);
 	mMovesRemaining = mMaxMovesPerTurn;
 }
 
@@ -510,6 +539,20 @@ void Board::handleBoardClick(Vector2D basePos)
 	}
 }
 
+void Board::incrementSelectedPawn(int increment)
+{
+	int newIndex = mSelectedPawnIndex + increment;
+	if(newIndex < 0)
+	{
+		newIndex = mPlayers.size() - 1;
+	}
+	else if(newIndex >= mPlayers.size())
+	{
+		newIndex = 0;
+	}
+	changeSelectedPawn(newIndex);
+}
+
 void Board::handleEvent(const Event &theEvent)
 {
 	const Gamestate gameState = Game::getInstance()->getGamestate();
@@ -529,7 +572,7 @@ void Board::handleEvent(const Event &theEvent)
 		{
 			if(ev.getButton() == MOUSE_LEFT)
 			{
-
+				// TODO: add logic for active vs. selected pawn. eg if active pawn is different than selected pawn, then active card can't be used for a charter flight etc.
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
@@ -593,6 +636,21 @@ void Board::handleEvent(const Event &theEvent)
 				mpActivePawn->moveCity(ev.getCity());
 				gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
 			}
+		}
+	}
+	else if(theEvent.getType() == KEY_PRESSED_EVENT)
+	{
+		const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
+		switch(ev.getKey())
+		{
+		case D:
+			incrementSelectedPawn();
+			break;
+		case A:
+			incrementSelectedPawn(-1);
+			break;
+		default:
+			break;
 		}
 	}
 }

@@ -7,6 +7,8 @@ enum Key
 	RIGHT,
 	UP,
 	DOWN,
+	A,
+	D,
 	SPACE
 };
 

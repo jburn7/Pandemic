@@ -106,6 +106,7 @@ void UIBox::move(const Vector2D & delta)
 
 void UIBox::resizeToFitWidth(const float boundsWidth)
 {
+	// TODO: move down to accomodate for shrinkage?
 	std::vector<int> whitespaceIndeces;
 	std::vector<float> wordWidths;
 	int index = 0;

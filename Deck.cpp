@@ -93,7 +93,7 @@ UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 		Vector2D(mPosition.getX(), mPosition.getY() + deckNamePadding + cardSize),
 		deckNameFontSize,
 		Vector2D(0, 0),
-		colorManager.color(doc["ui"]["defaultUIColor"].GetString()),
+		colorManager.color(doc["ui"]["darkUIColor"].GetString()),
 		deckNamePadding,
 		mDeckName,
 		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),

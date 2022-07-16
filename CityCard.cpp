@@ -10,12 +10,13 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	rapidjson::Value &c = doc["cityCard"];
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
 	const Color color = ColorManager::getInstance()->color(c["color"].GetString());
+	const Color textColor = ColorManager::getInstance()->color(c["textColor"].GetString());
 
 	mText = new UIBox(
 		Vector2D(0, 0), 
 		(int)(s->getHeight() * 0.15f), 
 		Vector2D(0, 0), 
-		color, 
+		textColor, 
 		0,
 		city->getName(), 
 		new Sprite(*graphics->getGraphicsBuffer("blank.png")), 

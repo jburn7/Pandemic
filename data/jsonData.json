@@ -117,14 +117,15 @@
 	},
 	"cityCard": {
 		"color": "white",
-		"highlightColor": "teal"
+		"highlightColor": "teal",
+		"textColor": "black"
 	},
 	"colors": [
 		{
 			"name": "black",
-			"r": 255,
-			"g": 255,
-			"b": 255
+			"r": 0,
+			"g": 0,
+			"b": 0
 		},
 		{
 			"name": "clear",
@@ -153,9 +154,9 @@
 		},
 		{
 			"name": "white",
-			"r": 0,
-			"g": 0,
-			"b": 0
+			"r": 255,
+			"g": 255,
+			"b": 255
 		}
 	],
 	"deck": {
@@ -168,6 +169,7 @@
 		"title": "Pandemic",
 		"movesPerTurn": 4,
 		"numPlayerCardsToDraw": 2,
+		"numPlayers": 2,
 		"playerDiscardLocation": [
 			1720,
 			900
@@ -235,6 +237,7 @@
 		"gColor": 255,
 		"bColor": 255,
 		"defaultUIColor": "white",
+		"darkUIColor": "black",
 		"startString": "",
 		"failedString": "",
 		"completeString": "",

@@ -141,7 +141,7 @@ void Game::init(const std::string &jsonPath)
 
 	gpEventSystem->addListener(QUIT_EVENT, this);
 
-	mBoard.init(1);
+	mBoard.init();
 }
 
 void Game::cleanup()
