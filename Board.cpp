@@ -118,7 +118,7 @@ void Board::init(unsigned int numPlayers)
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
 	// TODO: add support for more than 1 player (switch after each turn, display next player's hand, remove old player's hand from click handler, etc)
-	// TODO: wrap cards if player's hand goes off screen
+	// TODO: wrap cards if player's hand goes off screen (lower priority, screen has plenty of room)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
@@ -517,7 +517,6 @@ void Board::handleEvent(const Event &theEvent)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
 		// Two different coordinates for the two different views, will need to track both and then each unit here can decide which one to use based on whether it is a gui unit
-		// TODO: check which side of board outline the guiPos click fell on, then refactor this into handleGuiClick and handleBoardClick and handle based on side
 		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), BASE_VIEW);
 		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GUI_VIEW);
 		/*
@@ -525,8 +524,6 @@ void Board::handleEvent(const Event &theEvent)
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
 				if click landed on a card, set that card to active and resolve that in any future clicks(eg set card to active, then click on own city to perform charter flight action, or do trades if player clicks in card area of another player, etc)
 		*/
-
-		// TODO: add board outline as unit, then make it available here somehow, and call outline.contains on the click to determine gui vs. board click and call correct function
 
 		if(gameState == PLAYING)
 		{
@@ -584,7 +581,6 @@ void Board::handleEvent(const Event &theEvent)
 			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
 			bool isNeighbor = false;
 			City *const currentCity = mpActivePawn->getCurrentCity();
-			// TODO: utilize hashmap
 			for(auto &c : currentCity->getNeighbors())
 			{
 				if(c == ev.getCity())
