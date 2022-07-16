@@ -12,11 +12,11 @@ class Unit : public Trackable
 	friend class UnitManager;
 	friend class GraphicsSystem;
 public:
-	Unit();
-
 	Unit(Vector2D pos, Animation *a);
 
 	Unit(Vector2D pos, Sprite *s);
+
+	Unit(const Vector2D &pos, int width, int height);
 
 	virtual ~Unit();
 
@@ -62,6 +62,7 @@ public:
 
 	bool squareCollision(Unit *other);
 protected:
+	Unit();
 	virtual bool tryRemove(){ return true; } //returns true if the object is removable such as a powerup, false if it's something like a wall
 
 	bool mAnimating;

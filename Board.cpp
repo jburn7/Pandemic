@@ -147,6 +147,17 @@ void Board::init(unsigned int numPlayers)
 	mMaxMovesPerTurn = mMovesRemaining = doc["game"]["movesPerTurn"].GetInt();
 	mNumPlayerCardsToDraw = doc["game"]["numPlayerCardsToDraw"].GetInt();
 
+	// Board window outline
+	GraphicsSystem *graphics = &Game::getInstance()->getGraphics();
+	float boardStartX = doc["window"]["boardViewport"]["startX"].GetFloat() * graphics->getWidth();
+	float boardStartY = doc["window"]["boardViewport"]["startY"].GetFloat() * graphics->getHeight();
+	float boardWidth = doc["window"]["boardViewport"]["widthRatio"].GetFloat() * graphics->getWidth();
+	float boardHeight = doc["window"]["boardViewport"]["heightRatio"].GetFloat() * graphics->getHeight();
+	mBoardOutline = new Unit(Vector2D(boardStartX, boardStartY), boardWidth, boardHeight);
+	mBoardOutline->setOutline(Outline(colorManager.color(doc["window"]["boardOutline"]["color"].GetString()), doc["window"]["boardOutline"]["thickness"].GetInt()));
+	mBoardOutline->setIsGuiLayer(true);
+	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mBoardOutline));
+
 	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
 	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
@@ -449,6 +460,7 @@ void Board::handleGuiClick(Vector2D guiPos)
 
 void Board::handleBoardClick(Vector2D basePos)
 {
+	// TODO: move window when pawn moves?
 	// City click
 	//if no active card
 	if(mpActiveCard == nullptr)
@@ -514,88 +526,25 @@ void Board::handleEvent(const Event &theEvent)
 				if click landed on a card, set that card to active and resolve that in any future clicks(eg set card to active, then click on own city to perform charter flight action, or do trades if player clicks in card area of another player, etc)
 		*/
 
+		// TODO: add board outline as unit, then make it available here somehow, and call outline.contains on the click to determine gui vs. board click and call correct function
+
 		if(gameState == PLAYING)
 		{
 			if(ev.getButton() == MOUSE_LEFT)
 			{
+
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
 				std::cout << "\t World coords at " << "(" << basePos.getX() << ", " << basePos.getY() << ")" << std::endl;
 				std::cout << "\t GUI coords at " << "(" << guiPos.getX() << ", " << guiPos.getY() << ")" << std::endl;
-				if(mPlayerDrawDeck->checkDeckForClick(guiPos, "Player Draw contents:"))
+				if(mBoardOutline->contains(guiPos))
 				{
-					return;
-				}
-				if(mPlayerDiscardDeck->checkDeckForClick(guiPos, "Player Discard contents:"))
-				{
-					return;
-				}
-				if(mInfectionDrawDeck->checkDeckForClick(guiPos, "Infection Draw contents:"))
-				{
-					return;
-				}
-				if(mInfectionDiscardDeck->checkDeckForClick(guiPos, "Infection Discard contents:"))
-				{
-					return;
-				}
-
-				//if no active card
-				if(mpActiveCard == nullptr)
-				{
-				    //  if pawn's current city was clicked
-					if(mpActivePawn->getCurrentCity()->contains(basePos))
-					{
-						decrementDiseaseCubesMove(mpActivePawn->getCurrentCity());
-					}
-					else
-					{
-						//for each neighbor, if it was clicked, move pawn to it and break
-						for(auto &v : mpActivePawn->getCurrentCity()->getNeighbors())
-						{
-							if(v->contains(basePos))
-							{
-								mpActivePawn->moveCity(v);
-								gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
-								return;
-							}
-						}
-
-						// For each card player owns, if it was clicked, set it to active
-						for(auto &v : mpActivePawn->getHand())
-						{
-							if(v->contains(guiPos))
-							{
-								activatePlayerCard(v);
-								return;
-							}
-						}
-					}
+					handleBoardClick(basePos);
 				}
 				else
 				{
-					bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity());
-					// Poll each city, if it was clicked
-					    // If charter flight, then move pawn to city and discard card
-						// Else if city matches card's city
-							// Move pawn to city and discard card
-					for(auto &c : mCities)
-					{
-						City* const city = c.second;
-						if(city->contains(basePos))
-						{
-							if((isCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
-							{
-								flyToCity(city);
-								return;
-							}
-						}
-					}
-
-					// Bogus click, reset active card
-					mpActiveCard->setColor(ColorManager::getInstance()->black);
-					mpActiveCard = nullptr;
-					return;
+					handleGuiClick(guiPos);
 				}
 			}
 			else if(ev.getButton() == MOUSE_RIGHT)
@@ -635,6 +584,7 @@ void Board::handleEvent(const Event &theEvent)
 			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
 			bool isNeighbor = false;
 			City *const currentCity = mpActivePawn->getCurrentCity();
+			// TODO: utilize hashmap
 			for(auto &c : currentCity->getNeighbors())
 			{
 				if(c == ev.getCity())

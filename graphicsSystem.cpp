@@ -73,7 +73,13 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 
 void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale, const Outline &outline)
 {
-	sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
+	sf::Sprite temp;
+	GraphicsBuffer *texture = sprite.getTexture();
+	if(texture)
+	{
+		temp = sf::Sprite(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
+	}
+	//sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
 	double degrees = theta * 180.0 / 3.1415926;
 	const Vector2D offset(targetLoc.getX(), targetLoc.getY());
 	setPosition(temp, offset);
@@ -117,14 +123,14 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 void GraphicsSystem::flip()
 {
 	// TODO: move this outline, either make a RectangleShape: Unit class or give Units an optional outline
-	sf::RectangleShape boardOutline;
-	sf::FloatRect boardViewportInPixels = sf::FloatRect(mWidth * mBoardViewport.left, mHeight * mBoardViewport.top, mWidth * mBoardViewport.width, mHeight * mBoardViewport.height);
-	boardOutline.setSize(sf::Vector2f(boardViewportInPixels.width, boardViewportInPixels.height));
-	boardOutline.setPosition(sf::Vector2f(boardViewportInPixels.left, boardViewportInPixels.top));
-	boardOutline.setOutlineColor(sf::Color::White);
-	boardOutline.setOutlineThickness(5);
-	boardOutline.setFillColor(sf::Color::Transparent);
-	mDisplay.draw(boardOutline);
+	//sf::RectangleShape boardOutline;
+	//sf::FloatRect boardViewportInPixels = sf::FloatRect(mWidth * mBoardViewport.left, mHeight * mBoardViewport.top, mWidth * mBoardViewport.width, mHeight * mBoardViewport.height);
+	//boardOutline.setSize(sf::Vector2f(boardViewportInPixels.width, boardViewportInPixels.height));
+	//boardOutline.setPosition(sf::Vector2f(boardViewportInPixels.left, boardViewportInPixels.top));
+	//boardOutline.setOutlineColor(sf::Color::White);
+	//boardOutline.setOutlineThickness(5);
+	//boardOutline.setFillColor(sf::Color::Transparent);
+	//mDisplay.draw(boardOutline);
 
 	mDisplay.display();
 }

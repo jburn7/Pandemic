@@ -127,6 +127,13 @@
 			"b": 255
 		},
 		{
+			"name": "clear",
+			"r": 255,
+			"g": 255,
+			"b": 255,
+			"a": 0
+		},
+		{
 			"name": "orange",
 			"r": 255,
 			"g": 165,
@@ -158,8 +165,6 @@
 		"nameBackgroundImg": "menu_tile_simple.png"
 	},
 	"game": {
-		"width": 1920,
-		"height": 1080,
 		"title": "Pandemic",
 		"movesPerTurn": 4,
 		"numPlayerCardsToDraw": 2,
@@ -211,6 +216,9 @@
 			"pawn.png",
 			"plain_square.png"
 		],
+		"createGraphicsBuffersWithColor": [
+			"default"
+		],
 		"animations": [ ]
 	},
 	"pawn": {
@@ -234,11 +242,17 @@
 		"defaultUIPaddingImage": "plain_square.png"
 	},
 	"window": {
+		"width": 1920,
+		"height": 1080,
 		"boardViewport": {
 			"startX": 0.1,
 			"startY": 0.13,
 			"widthRatio": 0.8,
 			"heightRatio": 0.67
+		},
+		"boardOutline": {
+			"color": "orange",
+			"thickness": 5
 		}
 	}
 }

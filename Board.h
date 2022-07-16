@@ -52,6 +52,8 @@ private:
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
 	unsigned int mActivePawnIndex; //lets mpActivePawn switch to next pawn in array
 
+	Unit *mBoardOutline; // just draws an outline between the board and card area, explicitly tracked so that we can check whether mouse clicks fall inside its bounds
+
 	std::string mStartingCity;
 
 	Color mActiveCardColor;

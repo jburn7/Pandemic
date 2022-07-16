@@ -74,7 +74,7 @@ void Game::init(const std::string &jsonPath)
 	JSONData::init(jsonPath.c_str());
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	ColorManager::init(doc["colors"]);
-	int width = doc[JSONPATH]["width"].GetInt(), height = doc[JSONPATH]["height"].GetInt();
+	int width = doc["window"]["width"].GetInt(), height = doc["window"]["height"].GetInt();
 	mGraphics.init(doc, width, height, doc[JSONPATH]["title"].GetString());
 	mInputSystem.init();
 	mAISystem.init(doc["ai"]["ticksPerPlayerMove"].GetInt());
@@ -96,6 +96,22 @@ void Game::init(const std::string &jsonPath)
 	for(unsigned int i = 0; i < graphicsBuffersNames.size(); i++)
 	{
 		mGraphicsBufferManager.addGraphicsBuffer(graphicsBuffersNames[i], new GraphicsBuffer(assetsPath + graphicsBuffersNames[i]));
+	}
+
+	//add all names for plain graphics buffers to be created upon init, then loop through and create them
+	std::vector<std::string> createGraphicsBuffersNames;
+	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 
+	component = doc[JSONPATH]["createGraphicsBuffersWithColor"];
+	for(auto& v : component.GetArray())
+	{
+		createGraphicsBuffersNames.push_back(v.GetString());
+	}
+
+	ColorManager *colorManager = ColorManager::getInstance();
+	//add all names for animating graphics buffers, loop through and add
+	for(unsigned int i = 0; i < createGraphicsBuffersNames.size(); i++)
+	{
+		mGraphicsBufferManager.addGraphicsBuffer(createGraphicsBuffersNames[i], new GraphicsBuffer(Color(), 1, 1));
 	}
 
 	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 

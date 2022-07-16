@@ -29,6 +29,13 @@ Unit::Unit(Vector2D pos, Sprite *s) : Unit()
 	mAnimating = false;
 }
 
+Unit::Unit(const Vector2D &pos, int width, int height) : Unit()
+{
+	mPosition = pos;
+	mConstantFrame = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("default"));
+	setScale(width, height);
+}
+
 Unit::~Unit()
 {
 	cleanup();
@@ -180,7 +187,7 @@ int Unit::getWidth()
 		return mConstantFrame->getWidth() * (int)mScale.getX();
 	}
 
-	return 0;
+	return mScale.getX();
 }
 
 int Unit::getHeight()
@@ -194,7 +201,7 @@ int Unit::getHeight()
 		return mConstantFrame->getHeight() * (int)mScale.getY();
 	}
 
-	return 0;
+	return mScale.getY();
 }
 
 int Unit::getZLayer()
