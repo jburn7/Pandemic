@@ -103,14 +103,12 @@
 	],
 	"city": {
 		"initialCubes": 0,
-		"fontSize": 16,
-		"fontPadding": 6,
-		"infoBackgroundImg": "menu_tile_simple.png",
+		"fontSize": 20,
 		"infoTextPadding": 6,
 		"infoColor": {
-			"r": 55,
-			"g": 95,
-			"b": 105
+			"r": 240,
+			"g": 60,
+			"b": 120
 		},
 		"outbreakThreshold": 3,
 		"radius": 46
@@ -167,8 +165,7 @@
 	"deck": {
 		"cardHeight":  100,
 		"nameFontSize": 16,
-		"namePadding": 6,
-		"nameBackgroundImg": "menu_tile_simple.png"
+		"namePadding": 6
 	},
 	"game": {
 		"title": "Pandemic",

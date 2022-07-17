@@ -15,9 +15,7 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	mText = new UIBox(
 		Vector2D(0, 0), 
 		(int)(s->getHeight() * 0.15f), 
-		Vector2D(0, 0), 
 		textColor, 
-		0,
 		city->getName(),
 		&Game::getInstance()->getDefaultFont());
 	mText->resizeToFitWidth(s->getWidth());

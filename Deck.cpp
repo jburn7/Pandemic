@@ -92,12 +92,10 @@ UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 	UIBox *deckNameText = new UIBox(
 		Vector2D(mPosition.getX(), mPosition.getY() + deckNamePadding + cardSize),
 		deckNameFontSize,
-		Vector2D(0, 0),
 		colorManager.color(doc["ui"]["darkUIColor"].GetString()),
-		deckNamePadding,
 		mDeckName
 	);
-	deckNameText->setOutline(Outline(colorManager.clear, colorManager.white, 0));
+	deckNameText->setOutline(Outline(colorManager.white, colorManager.white, deckNamePadding));
 	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, deckNameText));
 
 	return deckNameText;

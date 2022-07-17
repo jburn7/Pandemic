@@ -2,7 +2,7 @@
 #include "game.h"
 #include "Glyph.h"
 
-UIBox::UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color& color, const float padding, const std::string &text, Font *font)
+UIBox::UIBox(const Vector2D pos, const int fontSize, const Color& color, const std::string &text, Font *font)
 {
 	mPosition = pos;
 	mFontSize = fontSize;
@@ -48,7 +48,7 @@ bool UIBox::contains(Vector2D pos)
 
 void UIBox::draw()
 {
-	Game::getInstance()->getGraphics().writeText(mPosition, mFontSize, *mFont, mColor, mText, mOutline);
+	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D(mOutline.thickness, mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline);
 }
 
 void UIBox::move(const Vector2D & delta)

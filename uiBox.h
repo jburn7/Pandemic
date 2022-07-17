@@ -7,7 +7,7 @@
 class UIBox : public Unit
 {
 public:
-	UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Font* font = nullptr);
+	UIBox(const Vector2D pos, const int fontSize, const Color &color, const std::string &text, Font* font = nullptr);
 	UIBox(const UIBox &other);
 	~UIBox();
 
