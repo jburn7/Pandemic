@@ -41,7 +41,7 @@ public:
 	//just updates the camera position, does NOT draw
 	void update(const GraphicsLayer layer);
 
-	void writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message);
+	void writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message, const Outline &background = Outline());
 
 	//setters and getters
 	void setHeight(int h);

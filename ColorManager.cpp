@@ -6,10 +6,11 @@ ColorManager::ColorManager(rapidjson::Value const& doc)
 {
 	for(auto &v : doc.GetArray())
 	{
-		mColors[v["name"].GetString()] = Color(v["r"].GetInt(), v["g"].GetInt(), v["b"].GetInt());
+		mColors[v["name"].GetString()] = Color(v["r"].GetInt(), v["g"].GetInt(), v["b"].GetInt(), v["a"].GetInt());
 	}
 
 	mBlack = mColors["black"];
+	mClear = mColors["clear"];
 	mOrange = mColors["orange"];
 	mPurple = mColors["purple"];
 	mTeal = mColors["teal"];

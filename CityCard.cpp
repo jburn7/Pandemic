@@ -18,15 +18,12 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 		Vector2D(0, 0), 
 		textColor, 
 		0,
-		city->getName(), 
-		new Sprite(*graphics->getGraphicsBuffer("blank.png")), 
-		nullptr, 
+		city->getName(),
 		&Game::getInstance()->getDefaultFont());
 	mText->resizeToFitWidth(s->getWidth());
 	setPosition(pos);
 	setIsHidden(true); // default not to draw until it has been "drawn" from deck (ha)
 	setIsGuiLayer(true); // For now, all cards will follow camera like this, not sure whether that will change
-	
 }
 
 CityCard::~CityCard()

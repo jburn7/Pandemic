@@ -1,4 +1,5 @@
 #include "City.h"
+#include "ColorManager.h"
 #include "game.h"
 #include "Player.h"
 
@@ -8,6 +9,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	rapidjson::Value &c = doc["city"];
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
 	const Color color = Color(c["infoColor"]["r"].GetInt(), c["infoColor"]["g"].GetInt(), c["infoColor"]["b"].GetInt());
+	const ColorManager &colorManager = *ColorManager::getInstance();
 
 	mCubeText = new UIBox(
 		Vector2D(pos.getX(), pos.getY() + s->getHeight()),
@@ -16,9 +18,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		color,
 		c["infoTextPadding"].GetFloat(), 
 		"0",
-		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
-		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString())),
-		&Game::getInstance()->getDefaultFont()); //deletes called in this dtor, UIBox dtor
+		&Game::getInstance()->getDefaultFont()); //delete called in this dtor
 	mNameText = new UIBox(
 		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
 		c["fontSize"].GetInt(), 
@@ -26,10 +26,10 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		color,
 		c["infoTextPadding"].GetFloat(),
 		"0",
-		new Sprite(*graphics->getGraphicsBuffer(c["infoBackgroundImg"].GetString())),
-		new Sprite(*graphics->getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString())),
-		&Game::getInstance()->getDefaultFont()); //deletes called in this dtor, UIBox dtor
+		&Game::getInstance()->getDefaultFont()); //delete called in this dtor
 
+	mCubeText->setOutline(Outline(colorManager.clear, colorManager.white, 0));
+	mNameText->setOutline(Outline(colorManager.clear, colorManager.white, 0));
 	mName = name;
 	mNameText->setText(mName);
 	mOutbreakThreshold = c["outbreakThreshold"].GetInt();

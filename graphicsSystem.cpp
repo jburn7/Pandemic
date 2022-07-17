@@ -65,9 +65,9 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	sf::RectangleShape boardOutline;
 	boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
 	boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
-	boardOutline.setOutlineColor(sf::Color(outline.color.mColor));
+	boardOutline.setOutlineColor(outline.borderColor.mColor);
 	boardOutline.setOutlineThickness(outline.thickness);
-	boardOutline.setFillColor(sf::Color::Transparent);
+	boardOutline.setFillColor(outline.fillColor.mColor);
 	mDisplay.draw(boardOutline);
 }
 
@@ -101,9 +101,8 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double thet
 	}
 	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
 
-	mDisplay.draw(temp);
-
 	drawOutlineForBounds(temp.getGlobalBounds(), outline);
+	mDisplay.draw(temp);
 }
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
@@ -160,23 +159,16 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 	}
 }
 
-void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message){
+void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message, const Outline &background){
 	sf::Text temp(message, font.mFont);
-	//temp.setOrigin(sf::Vector2f(temp.getLocalBounds().left, temp.getLocalBounds().top));
+	temp.setOrigin(sf::Vector2f(temp.getLocalBounds().left, temp.getLocalBounds().top));
 	setPosition(temp, targetLoc);
-	temp.move(0, -temp.getLocalBounds().top);
+	temp.move(0, temp.getLocalBounds().top);
 	temp.setFillColor(color.mColor);
 	temp.setCharacterSize(fontSize);
 
+	drawOutlineForBounds(temp.getGlobalBounds(), background);
 	mDisplay.draw(temp);
-
-	sf::RectangleShape outline;
-	outline.setSize(sf::Vector2f(temp.getLocalBounds().width, temp.getLocalBounds().height));
-	outline.setPosition(sf::Vector2f(targetLoc.getX(), targetLoc.getY()));
-	outline.setOutlineColor(sf::Color::Cyan);
-	outline.setOutlineThickness(5);
-	outline.setFillColor(sf::Color::Transparent);
-	mDisplay.draw(outline);
 }
 
 void GraphicsSystem::setHeight(int h)

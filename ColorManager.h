@@ -17,6 +17,7 @@ public:
 	// Get-only color names
 	const Color
 		&black = mBlack,
+		&clear = mClear,
 		&orange = mOrange,
 		&purple = mPurple,
 		&teal = mTeal,
@@ -32,6 +33,7 @@ protected:
 	// For convenience, you can also add its name here, and assign it by name in ctor.
 	Color
 		mBlack,
+		mClear,
 		mOrange,
 		mPurple,
 		mTeal,

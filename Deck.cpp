@@ -95,10 +95,9 @@ UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 		Vector2D(0, 0),
 		colorManager.color(doc["ui"]["darkUIColor"].GetString()),
 		deckNamePadding,
-		mDeckName,
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["deck"]["nameBackgroundImg"].GetString())),
-		new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["ui"]["defaultUIPaddingImage"].GetString()))
-	); //deletes called in unit manager dtor
+		mDeckName
+	);
+	deckNameText->setOutline(Outline(colorManager.clear, colorManager.white, 0));
 	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, deckNameText));
 
 	return deckNameText;

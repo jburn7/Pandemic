@@ -7,7 +7,7 @@
 class UIBox : public Unit
 {
 public:
-	UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Sprite *sprite, Sprite *background, Font* font = nullptr);
+	UIBox(const Vector2D pos, const int fontSize, const Vector2D textOffset, const Color &color, const float padding, const std::string &text, Font* font = nullptr);
 	UIBox(const UIBox &other);
 	~UIBox();
 
@@ -24,17 +24,11 @@ public:
 	void setPosition(Vector2D pos);
 	void setText(const std::string &text);
 private:
-	void resizeBackground();
-
 	Font *mFont;
 	Vector2D mPosition;
 	float mWidth, mHeight;
-	Vector2D mScale, mPaddingBackgroundScale;
+	Vector2D mScale;
 	int mFontSize;
 	std::string mText;
-	Sprite *mBackground;
-	Sprite *mPaddingBackground;
-	float mPaddingAmount;
-	Vector2D mTextOffset;
 	Color mColor;
 };

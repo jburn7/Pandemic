@@ -157,7 +157,7 @@ void Board::init()
 	float boardWidth = doc["window"]["boardViewport"]["widthRatio"].GetFloat() * graphics->getWidth();
 	float boardHeight = doc["window"]["boardViewport"]["heightRatio"].GetFloat() * graphics->getHeight();
 	mBoardOutline = new Unit(Vector2D(boardStartX, boardStartY), boardWidth, boardHeight);
-	mBoardOutline->setOutline(Outline(colorManager.color(doc["window"]["boardOutline"]["color"].GetString()), doc["window"]["boardOutline"]["thickness"].GetInt()));
+	mBoardOutline->setOutline(Outline(colorManager.color(doc["window"]["boardOutline"]["color"].GetString()), colorManager.clear, doc["window"]["boardOutline"]["thickness"].GetInt()));
 	mBoardOutline->setIsGuiLayer(true);
 	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mBoardOutline));
 
