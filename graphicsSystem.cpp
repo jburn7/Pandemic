@@ -162,10 +162,21 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 
 void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message){
 	sf::Text temp(message, font.mFont);
+	//temp.setOrigin(sf::Vector2f(temp.getLocalBounds().left, temp.getLocalBounds().top));
 	setPosition(temp, targetLoc);
+	temp.move(0, -temp.getLocalBounds().top);
 	temp.setFillColor(color.mColor);
 	temp.setCharacterSize(fontSize);
+
 	mDisplay.draw(temp);
+
+	sf::RectangleShape outline;
+	outline.setSize(sf::Vector2f(temp.getLocalBounds().width, temp.getLocalBounds().height));
+	outline.setPosition(sf::Vector2f(targetLoc.getX(), targetLoc.getY()));
+	outline.setOutlineColor(sf::Color::Cyan);
+	outline.setOutlineThickness(5);
+	outline.setFillColor(sf::Color::Transparent);
+	mDisplay.draw(outline);
 }
 
 void GraphicsSystem::setHeight(int h)

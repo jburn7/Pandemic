@@ -175,7 +175,7 @@ void UIBox::resizeBackground()
 		mPaddingBackgroundScale = Vector2D((textWidth + mPaddingAmount) / (mPaddingBackground->getWidth()), (textHeight + mPaddingAmount) / (mPaddingBackground->getHeight()));
 		backgroundWidth = std::floor(mBackground->getWidth() * mPaddingBackgroundScale.getX());
 		backgroundHeight = std::floor(mBackground->getHeight() * mPaddingBackgroundScale.getY());
-	} 
+	}
 	mWidth = backgroundWidth;
 	mHeight = backgroundHeight;
 	mTextOffset = Vector2D(backgroundWidth / 2, backgroundHeight / 2) - Vector2D((float)textWidth / 2, (float)textHeight);

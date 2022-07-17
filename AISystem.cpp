@@ -32,6 +32,14 @@ void AISystem::update(const Board &board)
 			Else move to adjacent city with cube
 			Else move to random adjacent city
 		*/
+		/*  TODO: AI v.02:
+			From active pawn's city, form a graph of every city that is 3 or fewer edges from city (ignore flights for now but we'll eventually consider those as one directed edge)
+			Run max cost algorithm on this mini-graph, using number of cubes that a given city has to represent the cost for all of its edges (or maybe increase this cost exponentially based on number of cubes)
+			Somewhere along the way in this algorithm, we'll need to account for potentially removing cubes, which would 1) lower the length of the graph and 2) adjust the cost of the city mid-traversal. So we're looking at some sort of recerusive max cost algorithm?
+		*/
+		/*  Alternatively, we could do a different algorithm where the end city is predetermined (e.g. if the pawn has that card and it needs to be traded, we know the  pawn needs to end there, or if not then the closest city with 3 cubes that can be drawn or something would be the next end city)
+			Then we can just do a single max cost algorithm rather than recursively doing one
+		*/
 		City *const currentCity = board.mpActivePawn->getCurrentCity();
 		if(currentCity->getNumberOfDiseaseCubes() > 0)
 		{

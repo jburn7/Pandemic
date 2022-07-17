@@ -24,8 +24,6 @@ void Board::init()
 	ColorManager& colorManager = *ColorManager::getInstance();
 	mActiveCardColor = colorManager.color(doc["cityCard"]["highlightColor"].GetString());
 
-	
-
 	//load cities
 	rapidjson::Value &c = doc["cities"];
 
@@ -120,7 +118,6 @@ void Board::init()
 	{
 		playerColors.push_back(Color(colorManager.color(v.GetString())));
 	}
-	// TODO: add support for more than 1 player (switch after each turn, display next player's hand, remove old player's hand from click handler, etc)
 	// TODO: wrap cards if player's hand goes off screen (lower priority, screen has plenty of room)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
 	unsigned int numPlayers = doc["game"]["numPlayers"].GetUint();
@@ -263,6 +260,7 @@ void Board::dealInitialPlayerCards()
 			dealTopPlayerCard(mpSelectedPawn, i == 0);
 		}
 	}
+	mpSelectedPawn = mpActivePawn;
 }
 
 void Board::dealTopPlayerCard(Player *player, bool showCard)
@@ -425,7 +423,7 @@ void Board::flyToCity(City* const city)
 	mpActivePawn->moveCity(city);
 	discardPlayerCard(mpActivePawn, mpActiveCard);
 	gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
-	mpActiveCard->setColor(ColorManager::getInstance()->black);
+	mpActiveCard->setColor(ColorManager::getInstance()->white);
 	mpActiveCard = nullptr;
 }
 
@@ -436,7 +434,7 @@ void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 
 void Board::resetActiveCard()
 {
-	mpActiveCard->setColor(ColorManager::getInstance()->black);
+	mpActiveCard->setColor(ColorManager::getInstance()->white);
 	mpActiveCard = nullptr;
 }
 
@@ -572,7 +570,6 @@ void Board::handleEvent(const Event &theEvent)
 		{
 			if(ev.getButton() == MOUSE_LEFT)
 			{
-				// TODO: add logic for active vs. selected pawn. eg if active pawn is different than selected pawn, then active card can't be used for a charter flight etc.
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
@@ -640,17 +637,20 @@ void Board::handleEvent(const Event &theEvent)
 	}
 	else if(theEvent.getType() == KEY_PRESSED_EVENT)
 	{
-		const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
-		switch(ev.getKey())
+		if(gameState == PLAYING)
 		{
-		case D:
-			incrementSelectedPawn();
-			break;
-		case A:
-			incrementSelectedPawn(-1);
-			break;
-		default:
-			break;
+			const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
+			switch(ev.getKey())
+			{
+			case D:
+				incrementSelectedPawn();
+				break;
+			case A:
+				incrementSelectedPawn(-1);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
