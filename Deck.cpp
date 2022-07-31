@@ -87,7 +87,7 @@ UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 {
 	ColorManager& colorManager = *ColorManager::getInstance();
 	int deckNameFontSize = doc["deck"]["nameFontSize"].GetInt();
-	float deckNamePadding = doc["deck"]["namePadding"].GetFloat();
+	int deckNamePadding = doc["deck"]["namePadding"].GetInt();
 	int cardSize = doc["deck"]["cardHeight"].GetInt();
 	UIBox *deckNameText = new UIBox(
 		Vector2D(mPosition.getX(), mPosition.getY() + deckNamePadding + cardSize),

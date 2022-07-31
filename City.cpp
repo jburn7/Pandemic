@@ -1,4 +1,5 @@
 #include "City.h"
+#include "CameraEvents.h"
 #include "ColorManager.h"
 #include "game.h"
 #include "Player.h"
@@ -43,6 +44,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth(), pos.getY() + s->getHeight() / 3));
 
 	gpEventSystem->addListener(OUTBREAK_EVENT, this);
+	gpEventSystem->addListener(ZOOM_CAMERA_EVENT, this);
 }
 
 City::~City()
@@ -58,9 +60,21 @@ bool City::contains(Vector2D &loc)
 void City::handleEvent(const Event &theEvent)
 {
 	//clear outbreak flags after an outbreak reaction
-	if(theEvent.getType() == OUTBREAK_EVENT)
+	switch(theEvent.getType())
 	{
+	case OUTBREAK_EVENT:
 		mOutbroke = false;
+		break;
+	case ZOOM_CAMERA_EVENT:
+	{
+		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
+		const double delta = ev.getDelta();
+		mCubeText->adjustScale(delta);
+		mNameText->adjustScale(delta);
+		break;
+	}
+	default:
+		break;
 	}
 }
 

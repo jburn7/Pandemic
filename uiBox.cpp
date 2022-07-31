@@ -17,8 +17,6 @@ UIBox::UIBox(const Vector2D pos, const int fontSize, const Color& color, const s
 		mFont = &Game::getInstance()->getDefaultFont();
 	}
 
-	mScale = Vector2D(1, 1);
-
 	setIsGuiLayer(true);
 
 	mWidth = 0;
@@ -48,10 +46,10 @@ bool UIBox::contains(Vector2D pos)
 
 void UIBox::draw()
 {
-	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D(mOutline.thickness, mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline);
+	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D((float)mOutline.thickness, (float)mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline, mScale);
 }
 
-void UIBox::move(const Vector2D & delta)
+void UIBox::move(const Vector2D &delta)
 {
 	setPosition(mPosition + delta);
 }
@@ -98,7 +96,7 @@ void UIBox::resizeToFitWidth(const float boundsWidth)
 	if(totalWidth > boundsWidth)
 	{
 		float ratio = totalWidth / boundsWidth;
-		mFontSize /= ratio;
+		mFontSize = (int)(mFontSize / ratio);
 	}
 }
 

@@ -27,7 +27,6 @@ private:
 	Font *mFont;
 	Vector2D mPosition;
 	float mWidth, mHeight;
-	Vector2D mScale;
 	int mFontSize;
 	std::string mText;
 	Color mColor;

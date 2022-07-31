@@ -31,7 +31,7 @@ void GraphicsSystem::init(const rapidjson::Document &doc, int w, int h, const st
  	mCameraPosition = Vector2D((float)mWidth / 2, (float)mHeight / 2);
 	mZoomPosition = sf::Vector2i((int)mCameraPosition.getX(), (int)mCameraPosition.getY());
 	oldOffsetCoords = sf::Vector2i(0, 0);
-	sf::View view = sf::View(sf::Vector2f(mWidth / 2, mHeight / 2), sf::Vector2f(mWidth, mHeight));
+	sf::View view = sf::View(sf::Vector2f((float)mWidth / 2.f, (float)mHeight / 2.f), sf::Vector2f((float)mWidth, (float)mHeight));
 	mBoardViewport = sf::FloatRect(
 		doc["window"]["boardViewport"]["startX"].GetFloat(),
 		doc["window"]["boardViewport"]["startY"].GetFloat(),
@@ -66,7 +66,7 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
 	boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
 	boardOutline.setOutlineColor(outline.borderColor.mColor);
-	boardOutline.setOutlineThickness(outline.thickness);
+	boardOutline.setOutlineThickness((float)outline.thickness);
 	boardOutline.setFillColor(outline.fillColor.mColor);
 	mDisplay.draw(boardOutline);
 }
@@ -159,13 +159,22 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 	}
 }
 
-void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message, const Outline &background){
+void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, std::string &message, const Outline &background, const Vector2D &scale){
 	sf::Text temp(message, font.mFont);
 	temp.setOrigin(sf::Vector2f(temp.getLocalBounds().left, temp.getLocalBounds().top));
 	setPosition(temp, targetLoc);
 	temp.move(0, temp.getLocalBounds().top);
 	temp.setFillColor(color.mColor);
 	temp.setCharacterSize(fontSize);
+	temp.scale(scale.getX(), scale.getY());
+	if(scale.getX() < 0)
+	{
+		temp.move((float)temp.getGlobalBounds().width, 0);
+	}
+	if(scale.getY() < 0)
+	{
+		temp.move(0, (float)temp.getGlobalBounds().height);
+	}
 
 	drawOutlineForBounds(temp.getGlobalBounds(), background);
 	mDisplay.draw(temp);

@@ -41,6 +41,7 @@ public:
 	void setPosition(Vector2D pos);
 	void setSprite(Sprite *s);
 	void setRotation(double theta);
+	void adjustScale(double delta);
 	void setScale(float x, float y);
 	void setOutline(const Outline &outline);
 	void setZLayer(int z);

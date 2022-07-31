@@ -156,7 +156,7 @@ void Board::init()
 	float boardStartY = doc["window"]["boardViewport"]["startY"].GetFloat() * graphics->getHeight();
 	float boardWidth = doc["window"]["boardViewport"]["widthRatio"].GetFloat() * graphics->getWidth();
 	float boardHeight = doc["window"]["boardViewport"]["heightRatio"].GetFloat() * graphics->getHeight();
-	mBoardOutline = new Unit(Vector2D(boardStartX, boardStartY), boardWidth, boardHeight);
+	mBoardOutline = new Unit(Vector2D(boardStartX, boardStartY), (int)boardWidth, (int)boardHeight);
 	mBoardOutline->setOutline(Outline(colorManager.color(doc["window"]["boardOutline"]["color"].GetString()), colorManager.clear, doc["window"]["boardOutline"]["thickness"].GetInt()));
 	mBoardOutline->setIsGuiLayer(true);
 	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mBoardOutline));
@@ -408,7 +408,7 @@ void Board::endTurn()
 	}
 
 	mActivePawnIndex++;
-	if(mActivePawnIndex >= mPlayers.size())
+	if((unsigned int)mActivePawnIndex >= mPlayers.size())
 	{
 		mActivePawnIndex = 0;
 	}
@@ -544,7 +544,7 @@ void Board::incrementSelectedPawn(int increment)
 	{
 		newIndex = mPlayers.size() - 1;
 	}
-	else if(newIndex >= mPlayers.size())
+	else if((unsigned int)newIndex >= mPlayers.size())
 	{
 		newIndex = 0;
 	}

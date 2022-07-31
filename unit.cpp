@@ -33,7 +33,7 @@ Unit::Unit(const Vector2D &pos, int width, int height) : Unit()
 {
 	mPosition = pos;
 	mConstantFrame = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("default"));
-	setScale(width, height);
+	setScale((float)width, (float)height);
 }
 
 Unit::~Unit()
@@ -136,6 +136,11 @@ void Unit::setRotation(double theta)
 	}
 }
 
+void Unit::adjustScale(double delta)
+{
+	setScale(mScale.getX() + (float)delta, mScale.getY() + (float)delta);
+}
+
 void Unit::setScale(float x, float y)
 {
 	mScale = Vector2D(x, y);
@@ -187,7 +192,7 @@ int Unit::getWidth()
 		return mConstantFrame->getWidth() * (int)mScale.getX();
 	}
 
-	return mScale.getX();
+	return (int)mScale.getX();
 }
 
 int Unit::getHeight()
@@ -201,7 +206,7 @@ int Unit::getHeight()
 		return mConstantFrame->getHeight() * (int)mScale.getY();
 	}
 
-	return mScale.getY();
+	return (int)mScale.getY();
 }
 
 int Unit::getZLayer()
