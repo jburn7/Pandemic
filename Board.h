@@ -25,6 +25,7 @@ public:
 	virtual void handleEvent(const Event& theEvent);
 
 	//getters
+	const int getNumEpidemicsHad();
 	const int getMovesRemaining();
 
 private:
@@ -64,6 +65,7 @@ private:
 	Color mActiveCardColor;
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
+	int mNumEpidemicsHad;
 
 	PlayerCardDeck *mPlayerDiscardDeck, *mPlayerDrawDeck;
 	InfectionCardDeck *mInfectionDiscardDeck, *mInfectionDrawDeck;

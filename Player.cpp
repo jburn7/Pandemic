@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "City.h"
 #include "game.h"
-#include "Deck.h"
+#include "PlayerCardDeck.h"
 
 Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s) : Unit(Vector2D(0, 0), s)
 {

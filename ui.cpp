@@ -55,7 +55,8 @@ void UI::draw()
 	int height = graphics.getHeight();
 	const Vector2D screenTopLeft = Vector2D(0, 0);//graphics.getTopLeft();
 	graphics.writeText(screenTopLeft + Vector2D(0, 0), DEF_UI_FONT_SIZE, *mFont, mUIColor, "FPS: " + std::to_string(mFps));
-	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
+	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 1), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
+	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Epidemics had: " + std::to_string(Game::getInstance()->getBoard().getNumEpidemicsHad()));
 	
 	Gamestate &gamestate = Game::getInstance()->getGamestate();
 	switch(gamestate)

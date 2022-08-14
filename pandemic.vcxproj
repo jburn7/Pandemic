@@ -127,6 +127,7 @@
     <ClInclude Include="ColorManager.h" />
     <ClInclude Include="Deck.h" />
     <ClInclude Include="DiseaseStages.h" />
+    <ClInclude Include="EpidemicCard.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="EventCard.h" />
     <ClInclude Include="EventListener.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="graphicsBufferManager.h" />
     <ClInclude Include="graphicsSystem.h" />
     <ClInclude Include="InfectionCard.h" />
+    <ClInclude Include="InfectionCardDeck.h" />
     <ClInclude Include="inputSystem.h" />
     <ClInclude Include="jsonData.h" />
     <ClInclude Include="KeyEvent.h" />
@@ -147,6 +149,7 @@
     <ClInclude Include="Outline.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCard.h" />
+    <ClInclude Include="PlayerCardDeck.h" />
     <ClInclude Include="quitEvent.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="startEvent.h" />
@@ -168,6 +171,7 @@
     <ClCompile Include="color.cpp" />
     <ClCompile Include="ColorManager.cpp" />
     <ClCompile Include="Deck.cpp" />
+    <ClCompile Include="EpidemicCard.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="EventListener.cpp" />
     <ClCompile Include="EventSystem.cpp" />
@@ -178,12 +182,14 @@
     <ClCompile Include="graphicsBufferManager.cpp" />
     <ClCompile Include="graphicsSystem.cpp" />
     <ClCompile Include="InfectionCard.cpp" />
+    <ClCompile Include="InfectionCardDeck.cpp" />
     <ClCompile Include="inputSystem.cpp" />
     <ClCompile Include="jsonData.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCard.cpp" />
+    <ClCompile Include="PlayerCardDeck.cpp" />
     <ClCompile Include="quitEvent.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="ui.cpp" />

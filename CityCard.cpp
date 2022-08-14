@@ -12,11 +12,21 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	const Color color = ColorManager::getInstance()->color(c["color"].GetString());
 	const Color textColor = ColorManager::getInstance()->color(c["textColor"].GetString());
 
+	std::string nameText;
+	if(city)
+	{
+		nameText = city->getName();
+	}
+	else
+	{
+		// Man this is bad...
+		nameText = "Epidemic";
+	}
 	mText = new UIBox(
 		Vector2D(0, 0), 
 		(int)(s->getHeight() * 0.15f), 
 		textColor, 
-		city->getName(),
+		nameText,
 		&Game::getInstance()->getDefaultFont());
 	mText->resizeToFitWidth((float)s->getWidth());
 	setPosition(pos);

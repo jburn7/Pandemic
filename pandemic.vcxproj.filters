@@ -138,6 +138,15 @@
     <ClInclude Include="Outline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerCardDeck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EpidemicCard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InfectionCardDeck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -240,6 +249,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Deck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerCardDeck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EpidemicCard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InfectionCardDeck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

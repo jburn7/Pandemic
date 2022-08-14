@@ -6,9 +6,12 @@
 #include "KeyEvent.h"
 #include "AIEvents.h"
 #include "Deck.h"
+#include "PlayerCardDeck.h"
+#include "InfectionCardDeck.h"
 
 Board::Board()
 {
+	mNumEpidemicsHad = 0;
 }
 
 Board::~Board()
@@ -55,7 +58,7 @@ void Board::init()
 	int numTypes = 0; // determine number of disease types based on highest city type seen in data loading
 	const Vector2D playerDrawLocation = mPlayerDrawDeck->getPosition();
 	const Vector2D infectionDrawLocation = mInfectionDrawDeck->getPosition();
-	// TODO: add more cities, then we can add epidemics
+	// TODO: add rest of cities
 	for(auto &v : c.GetArray())
 	{
 		int type = v["type"].GetInt();
@@ -161,11 +164,14 @@ void Board::init()
 	mBoardOutline->setIsGuiLayer(true);
 	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mBoardOutline));
 
+	mPlayerDrawDeck->completeInit();
+
 	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
 	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
 	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
+	gpEventSystem->addListener(EPIDEMIC_EVENT, this);
 }
 
 void Board::activatePlayerCard(PlayerCard* card)
@@ -269,7 +275,16 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 	if(pc)
 	{
 		pc->setIsHidden(!showCard);
-		player->dealCard(pc);
+		if(pc->getCardType() == EPIDEMIC_CARD)
+		{
+			// TODO: we might want to do stuff with the card later, but for now just fire an event and forget
+			gpEventSystem->fireEvent(new Event(EPIDEMIC_EVENT));
+			delete pc;
+		}
+		else
+		{
+			player->dealCard(pc);
+		}
 	}
 	else
 	{
@@ -282,6 +297,7 @@ bool Board::decrementDiseaseCubes(City* const city)
 	bool didDecrement = city->decrementDiseaseCubes(1);
 	if(didDecrement)
 	{
+		// TOD: this logic is wrong, needs to check all cities of that disease type
 		if(mDiseaseStages[city->getType()] == Cured)
 		{
 			mDiseaseStages[city->getType()] = Eradicated;
@@ -389,6 +405,8 @@ void Board::endGameAndRestart()
 	// reset activePawn to starting player
 	mpActivePawn = mPlayers[0];
 	// TODO: other functionality (eg resetting counters, epidemic states, etc)
+	mNumEpidemicsHad = 0;
+	mPlayerDrawDeck->completeInit();
 }
 
 void Board::endTurn()
@@ -412,7 +430,7 @@ void Board::endTurn()
 	{
 		mActivePawnIndex = 0;
 	}
-	changeActivePawn(mActivePawnIndex);
+	changeActivePawn(mActivePawnIndex); // TODO: add active pawn indicator (highlight or place icon in top left?)
 	changeSelectedPawn(mActivePawnIndex);
 	mMovesRemaining = mMaxMovesPerTurn;
 }
@@ -653,6 +671,44 @@ void Board::handleEvent(const Event &theEvent)
 			}
 		}
 	}
+	else if(theEvent.getType() == EPIDEMIC_EVENT)
+	{
+		if(gameState == PLAYING)
+		{
+			mNumEpidemicsHad++;
+			/*
+				The basic idea here is to draw a city from the bottom of the infection deck, place three cubes on it, then reshuffle it with all discarded infection cards, place on top of infect draw, then draw X infection cards and apply all cube/outbreak effects
+			*/
+			InfectionCard* outbreakCity = mInfectionDrawDeck->drawLastCard();
+			if(outbreakCity)
+			{
+				// Add three cubes to outbreak city
+				outbreakCity->getCity()->setDiseaseCubes(3); // TODO: get from json data
+				// add to infection discard
+				mInfectionDiscardDeck->addCard(outbreakCity);
+				// shuffle infection discard
+				mInfectionDiscardDeck->shuffle();
+				// add discarded cards to draw
+				mInfectionDiscardDeck->moveContentsToDeck(mInfectionDrawDeck);
+				// draw one at a time until X, resolving events for each (X varies based on game rules and epidemic count)
+				// TODO: Move epidemic draw count to json and change based on epidemic count
+				for(unsigned int i = 0; i < 2; i++)
+				{
+					drawInfectionCard(1); // TODO: test this event logic. Do we need to dispatch all events inside the loop, or can we just let the outreak events stack and handle them at the end of this game tick?
+				}
+			}
+			else
+			{
+				// This should be impossible
+				std::cerr << "Warning: infection draw deck is empty but received epidemic" << std::endl;
+			}
+		}
+	}
+}
+
+const int Board::getNumEpidemicsHad()
+{
+	return mNumEpidemicsHad;
 }
 
 const int Board::getMovesRemaining()

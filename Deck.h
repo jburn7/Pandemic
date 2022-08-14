@@ -15,9 +15,9 @@ class Deck : public Trackable
 public:
 	virtual ~Deck();
 
-	void addCard(T *card);
-	bool checkDeckForClick(Vector2D clickPosition, const std::string &opener) const;
-	T* dealTopCard();
+	void addCard(T *card, bool toBack = true);
+	virtual bool checkDeckForClick(Vector2D clickPosition, const std::string &opener) const;
+	virtual T* dealTopCard();
 	void shuffle();
 
 	// Getters
@@ -33,18 +33,4 @@ private:
 	const std::string mDeckName;
 	UIBox *mTextBox;
 	std::vector<T*> mCards;
-};
-
-class PlayerCardDeck : public Deck<PlayerCard>
-{
-public:
-	PlayerCardDeck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName) : Deck(doc, pos, deckName) {}
-	virtual ~PlayerCardDeck() {}
-};
-
-class InfectionCardDeck : public Deck<InfectionCard>
-{
-public:
-	InfectionCardDeck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName) : Deck(doc, pos, deckName) {}
-	virtual ~InfectionCardDeck() {}
 };

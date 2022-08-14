@@ -16,7 +16,7 @@ Deck<T>::~Deck()
 }
 
 template<typename T>
-void Deck<T>::addCard(T * card)
+void Deck<T>::addCard(T * card, bool toBack)
 {
 	card->setPosition(mPosition);
 	if(mCards.size() > 0)
@@ -24,7 +24,14 @@ void Deck<T>::addCard(T * card)
 		mCards[mCards.size() - 1]->setIsHidden(true);
 	}
 	card->setIsHidden(false);
-	mCards.push_back(card);
+	if(toBack)
+	{
+		mCards.push_back(card);
+	}
+	else
+	{
+		mCards.insert(mCards.begin(), card);
+	}
 }
 
 template<typename T>

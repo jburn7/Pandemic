@@ -169,6 +169,7 @@
 	},
 	"game": {
 		"title": "Pandemic",
+		"numEpidemics": 1,
 		"movesPerTurn": 4,
 		"numPlayerCardsToDraw": 2,
 		"numPlayers": 2,
