@@ -89,22 +89,22 @@ void Board::init()
 		PlayerCard *pc = new PlayerCard(playerDrawLocation, cityCardBackground, city);
 		pc->setZLayer(3);
 		mPlayerDrawDeck->addCard(pc);
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, pc));
+		gpEventSystem->fireEvent(new UnitAddEvent(pc));
 
 		// Also generate infection card deck here since each card is tied to a city
 		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 		InfectionCard *infectionCard = new InfectionCard(infectionDrawLocation, infectionCardBackground, city);
 		infectionCard->setZLayer(3);
 		mInfectionDrawDeck->addCard(infectionCard);
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, infectionCard));
+		gpEventSystem->fireEvent(new UnitAddEvent(infectionCard));
 
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, city));
+		gpEventSystem->fireEvent(new UnitAddEvent(city));
 	}
 
 	// Init disease type info
 	for(int i = 0; i <= numTypes; i++)
 	{
-		mDiseaseStages.push_back(Spreading);
+		mDiseaseStages.push_back(DiseaseStages::Spreading);
 		mDiseaseCubesRemainingByType.push_back(0);
 	}
 
@@ -140,7 +140,7 @@ void Board::init()
 			p->setColor(playerColors[i]);
 		}
 		mPlayers.push_back(p);
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, p));
+		gpEventSystem->fireEvent(new UnitAddEvent(p));
 	}
 
 	mpActiveCard = nullptr;
@@ -170,16 +170,16 @@ void Board::init()
 	mBoardOutline = new Unit(Vector2D(boardStartX, boardStartY), (int)boardWidth, (int)boardHeight);
 	mBoardOutline->setOutline(Outline(colorManager.color(doc["window"]["boardOutline"]["color"].GetString()), colorManager.clear, doc["window"]["boardOutline"]["thickness"].GetInt()));
 	mBoardOutline->setIsGuiLayer(true);
-	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, mBoardOutline));
+	gpEventSystem->fireEvent(new UnitAddEvent(mBoardOutline));
 
 	mPlayerDrawDeck->completeInit();
 
-	gpEventSystem->addListener(DECREMENT_MOVES_EVENT, this);
-	gpEventSystem->addListener(MOUSE_CLICK_EVENT, this);
-	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
-	gpEventSystem->addListener(AI_PLAYER_CUBE_EVENT, this);
-	gpEventSystem->addListener(AI_PLAYER_MOVE_EVENT, this);
-	gpEventSystem->addListener(EPIDEMIC_EVENT, this);
+	gpEventSystem->addListener(EventType::DECREMENT_MOVES_EVENT, this);
+	gpEventSystem->addListener(EventType::MOUSE_CLICK_EVENT, this);
+	gpEventSystem->addListener(EventType::KEY_PRESSED_EVENT, this);
+	gpEventSystem->addListener(EventType::AI_PLAYER_CUBE_EVENT, this);
+	gpEventSystem->addListener(EventType::AI_PLAYER_MOVE_EVENT, this);
+	gpEventSystem->addListener(EventType::EPIDEMIC_EVENT, this);
 }
 
 void Board::activatePlayerCard(PlayerCard* card)
@@ -228,7 +228,7 @@ void Board::changeActivePawn(int newIndex)
 {
 	mActivePawnIndex = newIndex;
 	mpActivePawn = mPlayers[mActivePawnIndex];
-	gpEventSystem->fireEvent(new ActivePawnChangeEvent(ACTIVE_PAWN_CHANGE_EVENT, *mpActivePawn));
+	gpEventSystem->fireEvent(new ActivePawnChangeEvent(*mpActivePawn));
 }
 
 void Board::changeSelectedPawn(int newIndex)
@@ -284,10 +284,10 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 	if(pc)
 	{
 		pc->setIsHidden(!showCard);
-		if(pc->getCardType() == EPIDEMIC_CARD)
+		if(pc->getCardType() == PlayerCardType::EPIDEMIC_CARD)
 		{
 			// TODO: we might want to do stuff with the card later, but for now just fire an event and forget
-			gpEventSystem->fireEvent(new Event(EPIDEMIC_EVENT));
+			gpEventSystem->fireEvent(new Event(EventType::EPIDEMIC_EVENT));
 			delete pc;
 		}
 		else
@@ -306,10 +306,10 @@ bool Board::decrementDiseaseCubes(City* const city)
 	bool didDecrement = city->decrementDiseaseCubes(1);
 	if(didDecrement)
 	{
-		// TOD: this logic is wrong, needs to check all cities of that disease type
-		if(mDiseaseStages[city->getType()] == Cured)
+		// TODO: this logic is wrong, needs to check all cities of that disease type
+		if(mDiseaseStages[city->getType()] == DiseaseStages::Cured)
 		{
-			mDiseaseStages[city->getType()] = Eradicated;
+			mDiseaseStages[city->getType()] = DiseaseStages::Eradicated;
 		}
 	}
 	return didDecrement;
@@ -319,7 +319,7 @@ void Board::decrementDiseaseCubesMove(City *const city)
 {
 	if(decrementDiseaseCubes(mpActivePawn->getCurrentCity()))
 	{
-		gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+		gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
 		return;
 	}
 }
@@ -449,7 +449,7 @@ void Board::flyToCity(City* const city)
 {
 	mpActivePawn->moveCity(city);
 	discardPlayerCard(mpActivePawn, mpActiveCard);
-	gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+	gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
 	mpActiveCard->setColor(ColorManager::getInstance()->white);
 	mpActiveCard = nullptr;
 }
@@ -532,7 +532,7 @@ void Board::handleBoardClick(Vector2D basePos)
 				if(v->contains(basePos))
 				{
 					mpActivePawn->moveCity(v);
-					gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
+					gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT)); //if we reached this point, the pawn is guaranteed to be able to move to any neighbor, so no need for return value
 					return;
 				}
 			}
@@ -581,21 +581,21 @@ void Board::incrementSelectedPawn(int increment)
 void Board::handleEvent(const Event &theEvent)
 {
 	const Gamestate gameState = Game::getInstance()->getGamestate();
-	if(theEvent.getType() == MOUSE_CLICK_EVENT)
+	if(theEvent.getType() == EventType::MOUSE_CLICK_EVENT)
 	{
 		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
 		// Two different coordinates for the two different views, will need to track both and then each unit here can decide which one to use based on whether it is a gui unit
-		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), BASE_VIEW);
-		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GUI_VIEW);
+		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::BASE_VIEW);
+		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::GUI_VIEW);
 		/*
 		if click landed on city adjacent to active pawn, move that pawn
 			if click landed on same city of active pawn and no active cards, reduce that city's disease cubes
 				if click landed on a card, set that card to active and resolve that in any future clicks(eg set card to active, then click on own city to perform charter flight action, or do trades if player clicks in card area of another player, etc)
 		*/
 
-		if(gameState == PLAYING)
+		if(gameState == Gamestate::PLAYING)
 		{
-			if(ev.getButton() == MOUSE_LEFT)
+			if(ev.getButton() == MouseButton::MOUSE_LEFT)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
@@ -611,7 +611,7 @@ void Board::handleEvent(const Event &theEvent)
 					handleGuiClick(guiPos);
 				}
 			}
-			else if(ev.getButton() == MOUSE_RIGHT)
+			else if(ev.getButton() == MouseButton::MOUSE_RIGHT)
 			{
 				//DEBUG
 				//if any city was clicked, increment its cubes
@@ -627,13 +627,13 @@ void Board::handleEvent(const Event &theEvent)
 			}
 		}
 	}
-	else if(theEvent.getType() == DECREMENT_MOVES_EVENT)
+	else if(theEvent.getType() == EventType::DECREMENT_MOVES_EVENT)
 	{
 		decrementRemainingMoves();
 	}
-	else if(theEvent.getType() == AI_PLAYER_CUBE_EVENT)
+	else if(theEvent.getType() == EventType::AI_PLAYER_CUBE_EVENT)
 	{
-		if(gameState == PLAYING) {
+		if(gameState == Gamestate::PLAYING) {
 			const AIPlayerCubeEvent &ev = static_cast<const AIPlayerCubeEvent&>(theEvent);
 			if(ev.getCity()->getNumberOfDiseaseCubes() > 0)
 			{
@@ -641,9 +641,9 @@ void Board::handleEvent(const Event &theEvent)
 			}
 		}
 	}
-	else if(theEvent.getType() == AI_PLAYER_MOVE_EVENT)
+	else if(theEvent.getType() == EventType::AI_PLAYER_MOVE_EVENT)
 	{
-		if(gameState == PLAYING)
+		if(gameState == Gamestate::PLAYING)
 		{
 			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
 			bool isNeighbor = false;
@@ -658,21 +658,21 @@ void Board::handleEvent(const Event &theEvent)
 			if(isNeighbor)
 			{
 				mpActivePawn->moveCity(ev.getCity());
-				gpEventSystem->fireEvent(new Event(DECREMENT_MOVES_EVENT));
+				gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
 			}
 		}
 	}
-	else if(theEvent.getType() == KEY_PRESSED_EVENT)
+	else if(theEvent.getType() == EventType::KEY_PRESSED_EVENT)
 	{
-		if(gameState == PLAYING)
+		if(gameState == Gamestate::PLAYING)
 		{
 			const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
 			switch(ev.getKey())
 			{
-			case D:
+			case Key::D:
 				incrementSelectedPawn();
 				break;
-			case A:
+			case Key::A:
 				incrementSelectedPawn(-1);
 				break;
 			default:
@@ -680,9 +680,9 @@ void Board::handleEvent(const Event &theEvent)
 			}
 		}
 	}
-	else if(theEvent.getType() == EPIDEMIC_EVENT)
+	else if(theEvent.getType() == EventType::EPIDEMIC_EVENT)
 	{
-		if(gameState == PLAYING)
+		if(gameState == Gamestate::PLAYING)
 		{
 			mNumEpidemicsHad++;
 			/*

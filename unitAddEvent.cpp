@@ -1,7 +1,7 @@
 #include "unitAddEvent.h"
 #include "game.h"
 
-UnitAddEvent::UnitAddEvent(EventType type, Unit *unit) : Event(type)
+UnitAddEvent::UnitAddEvent(Unit *unit) : Event(EventType::UNIT_ADD_EVENT)
 {
 	mpUnit = unit;
 }

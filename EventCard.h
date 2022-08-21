@@ -1,7 +1,7 @@
 #pragma once
 #include "Card.h"
 
-enum SpecialEvent
+enum class SpecialEvent
 {
 	ONE_QUIET_NIGHT,
 	RESILIENT_POP,

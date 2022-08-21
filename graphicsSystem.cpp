@@ -13,8 +13,8 @@ GraphicsSystem::GraphicsSystem()
 	mHeight = 0;
 	mCameraZoom = 1;
 
-	gpEventSystem->addListener(PAN_CAMERA_EVENT, this);
-	gpEventSystem->addListener(ZOOM_CAMERA_EVENT, this);
+	gpEventSystem->addListener(EventType::PAN_CAMERA_EVENT, this);
+	gpEventSystem->addListener(EventType::ZOOM_CAMERA_EVENT, this);
 }
 
 GraphicsSystem::~GraphicsSystem()
@@ -104,11 +104,11 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, doubl
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == PAN_CAMERA_EVENT)
+	if(theEvent.getType() == EventType::PAN_CAMERA_EVENT)
 	{
 		mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
 	}
-	else if(theEvent.getType() == ZOOM_CAMERA_EVENT)
+	else if(theEvent.getType() == EventType::ZOOM_CAMERA_EVENT)
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		mCameraZoom += ev.getDelta();
@@ -142,14 +142,14 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 {
 	switch(layer)
 	{
-	case BASE_VIEW:
+	case GraphicsLayer::BASE_VIEW:
 	{
 		zoomViewAt(mZoomPosition, mDisplay, (float)mCameraZoom);
 		sf::View view = mDisplay.getView();
 		mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
 	}
 		break;
-	case GUI_VIEW:
+	case GraphicsLayer::GUI_VIEW:
 		sf::View view(sf::Vector2f((float)mWidth / 2, (float)mHeight / 2), sf::Vector2f((float)mWidth, (float)mHeight));
 		mDisplay.setView(view);
 		break;

@@ -5,7 +5,7 @@
 
 class Event;
 class EventListener;
-enum EventType;
+enum class EventType;
 
 using namespace std;
 

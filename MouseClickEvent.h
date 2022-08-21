@@ -2,7 +2,8 @@
 #include "event.h"
 #include "Vector2D.h"
 
-enum MouseButton
+// TODO: Remove redundant prefixes from event names (eg MOUSE_)
+enum class MouseButton
 {
 	MOUSE_LEFT,
 	MOUSE_RIGHT
@@ -11,7 +12,7 @@ enum MouseButton
 class MouseClickEvent : public Event
 {
 public:
-	MouseClickEvent(EventType type, Vector2D pos, MouseButton mb) : Event(type)
+	MouseClickEvent(Vector2D pos, MouseButton mb) : Event(EventType::MOUSE_CLICK_EVENT)
 	{
 		mButton = mb;
 		mPosition = pos;
@@ -25,7 +26,7 @@ private:
 	Vector2D mPosition;
 };
 
-enum MouseWheel
+enum class MouseWheel
 {
 	MOUSE_WHEEL_DOWN,
 	MOUSE_WHEEL_UP
@@ -34,7 +35,7 @@ enum MouseWheel
 class MouseWheelEvent : public Event
 {
 public:
-	MouseWheelEvent(EventType type, MouseWheel direction, const Vector2D cursorLocation) : Event(type)
+	MouseWheelEvent(MouseWheel direction, const Vector2D cursorLocation) : Event(EventType::MOUSE_WHEEL_EVENT)
 	{
 		mDirection = direction;
 		mCursorLocation = cursorLocation;

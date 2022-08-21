@@ -4,8 +4,8 @@
 
 UnitManager::UnitManager()
 {
-	gpEventSystem->addListener(UNIT_ADD_EVENT, this);
-	gpEventSystem->addListener(UNIT_REMOVE_EVENT, this);
+	gpEventSystem->addListener(EventType::UNIT_ADD_EVENT, this);
+	gpEventSystem->addListener(EventType::UNIT_REMOVE_EVENT, this);
 }
 
 UnitManager::~UnitManager()
@@ -63,7 +63,7 @@ void UnitManager::draw(const GraphicsLayer layer)
 	{
 		for(unsigned int i = 0; i < mUnits.size(); i++)
 		{
-			if(mUnits[i]->getZLayer() == j && !(mUnits[i]->getIsHidden()) && ((mUnits[i]->getIsGuiLayer() && layer == GUI_VIEW) || (!mUnits[i]->getIsGuiLayer() && layer == BASE_VIEW)))
+			if(mUnits[i]->getZLayer() == j && !(mUnits[i]->getIsHidden()) && ((mUnits[i]->getIsGuiLayer() && layer == GraphicsLayer::GUI_VIEW) || (!mUnits[i]->getIsGuiLayer() && layer == GraphicsLayer::BASE_VIEW)))
 			{
 				mUnits[i]->draw();
 			}
@@ -87,14 +87,14 @@ void UnitManager::update(double timeElapsed)
 
 void UnitManager::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == UNIT_ADD_EVENT)
+	if(theEvent.getType() == EventType::UNIT_ADD_EVENT)
 	{
 		const UnitAddEvent &ev = static_cast<const UnitAddEvent&>(theEvent);
 		Unit *unit = ev.getUnit();
 		assert(unit);
 		addUnit(unit);
 	}
-	else if(theEvent.getType() == UNIT_REMOVE_EVENT)
+	else if(theEvent.getType() == EventType::UNIT_REMOVE_EVENT)
 	{
 		const UnitRemoveEvent &ev = static_cast<const UnitRemoveEvent&>(theEvent);
 		std::vector<int> removables;

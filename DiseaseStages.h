@@ -1,6 +1,6 @@
 #pragma once
 
-enum EnumDiseaseStages
+enum class DiseaseStages
 {
 	Spreading,
 	Cured,

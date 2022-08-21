@@ -5,7 +5,7 @@
 class PanCameraEvent : public Event
 {
 public:
-	PanCameraEvent(EventType type, const Vector2D delta) : Event(type)
+	PanCameraEvent(const Vector2D delta) : Event(EventType::PAN_CAMERA_EVENT)
 	{
 		mDelta = delta;
 	}
@@ -19,7 +19,7 @@ private:
 class ZoomCameraEvent : public Event
 {
 public:
-	ZoomCameraEvent(EventType type, const double delta, const Vector2D zoomLocation) : Event(type)
+	ZoomCameraEvent(const double delta, const Vector2D zoomLocation) : Event(EventType::ZOOM_CAMERA_EVENT)
 	{
 		mDelta = delta;
 		mZoomLocation = zoomLocation;

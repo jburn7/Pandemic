@@ -3,7 +3,7 @@
 
 PlayerCard::PlayerCard(Vector2D pos, Sprite *s, City *city) : CityCard(pos, s, city)
 {
-	mCardType = CITY_CARD;
+	mCardType = PlayerCardType::CITY_CARD;
 }
 
 PlayerCard::~PlayerCard()

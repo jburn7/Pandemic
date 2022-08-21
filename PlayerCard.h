@@ -1,7 +1,7 @@
 #pragma once
 #include "CityCard.h"
 
-enum PlayerCardType
+enum class PlayerCardType
 {
 	CITY_CARD,
 	EPIDEMIC_CARD,

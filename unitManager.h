@@ -3,7 +3,7 @@
 #include "EventListener.h"
 #include <map>
 
-enum GraphicsLayer;
+enum class GraphicsLayer;
 
 class UnitManager : public EventListener
 {

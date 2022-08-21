@@ -5,7 +5,7 @@
 class ActivePawnChangeEvent : public Event
 {
 public:
-	ActivePawnChangeEvent(EventType type, const Player &pawn) : Event(type), mPawn(pawn) { }
+	ActivePawnChangeEvent(const Player &pawn) : Event(EventType::ACTIVE_PAWN_CHANGE_EVENT), mPawn(pawn) { }
 
 	const Player &getPawn() const { return mPawn; }
 

@@ -25,8 +25,8 @@ UI::UI()
 
 	mActivePawnSprite = nullptr;
 
-	gpEventSystem->addListener(UPDATE_FPS_EVENT, this);
-	gpEventSystem->addListener(ACTIVE_PAWN_CHANGE_EVENT, this);
+	gpEventSystem->addListener(EventType::UPDATE_FPS_EVENT, this);
+	gpEventSystem->addListener(EventType::ACTIVE_PAWN_CHANGE_EVENT, this);
 }
 
 UI::~UI()
@@ -45,12 +45,12 @@ void UI::handleEvent(const Event& theEvent)
 	//	const IncrementScoreEvent &ev = static_cast<const IncrementScoreEvent&>(theEvent);
 	//	mScore += ev.getScore();
 	//}
-	if(theEvent.getType() == UPDATE_FPS_EVENT)
+	if(theEvent.getType() == EventType::UPDATE_FPS_EVENT)
 	{
 		const UpdateFPSEvent &ev = static_cast<const UpdateFPSEvent&>(theEvent);
 		mFps = ev.getFPS();
 	}
-	else if(theEvent.getType() == ACTIVE_PAWN_CHANGE_EVENT)
+	else if(theEvent.getType() == EventType::ACTIVE_PAWN_CHANGE_EVENT)
 	{
 		const ActivePawnChangeEvent &ev = static_cast<const ActivePawnChangeEvent&>(theEvent);
 		mActivePawnSprite = ev.getPawn().getSprite();
@@ -67,12 +67,12 @@ void UI::draw()
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 1), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Epidemics had: " + std::to_string(Game::getInstance()->getBoard().getNumEpidemicsHad()));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 3), DEF_UI_FONT_SIZE, *mFont, mUIColor, std::string("Active pawn: "));
-	graphics.draw(screenTopLeft + Vector2D(100, (float)DEF_UI_FONT_SIZE * 3), *mActivePawnSprite, 0, Vector2D(0.5, 0.5));
+	graphics.draw(screenTopLeft + Vector2D(150, (float)DEF_UI_FONT_SIZE * 3 + 5), *mActivePawnSprite, 0, Vector2D(0.35f, 0.35f)); // TODO: compute text width, height, sprite scale, etc. Basically remove this hardcoded crap
 	
 	Gamestate &gamestate = Game::getInstance()->getGamestate();
 	switch(gamestate)
 	{
-	case START:
+	case Gamestate::START:
 		//need to center this
 		graphics.writeText(Vector2D((float)width / 2 - mFont->getWidth(mStartString, DEF_UI_FONT_SIZE) / 2, (float)height / 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, mStartString);
 		break;
@@ -84,7 +84,7 @@ void UI::draw()
 	//	graphics.writeText(Vector2D(width / 2 - mFont->getWidth(mReplayString) / 2, height / 2 + mFont->getFontSize()), *mFont, mUIColor, mReplayString);
 	//	graphics.writeText(Vector2D(width / 2 - mFont->getWidth(mReplayStringLine2) / 2, height / 2 + 2 * mFont->getFontSize()), *mFont, mUIColor, mReplayStringLine2);
 	//	break;
-	case COMPLETE:
+	case Gamestate::COMPLETE:
 		graphics.writeText(Vector2D((float)width / 2 - mFont->getWidth(mCompleteString, DEF_UI_FONT_SIZE) / 2, (float)height / 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, mCompleteString);
 		graphics.writeText(Vector2D((float)width / 2 - mFont->getWidth(mReplayString, DEF_UI_FONT_SIZE) / 2, (float)height / 2 + DEF_UI_FONT_SIZE), DEF_UI_FONT_SIZE, *mFont, mUIColor, mReplayString);
 		break;

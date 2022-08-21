@@ -13,7 +13,7 @@
 #include "ui.h"
 #include "Board.h"
 
-enum Gamestate
+enum class Gamestate
 {
 	START,
 	PLAYING,

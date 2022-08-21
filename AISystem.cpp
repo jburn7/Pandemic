@@ -17,7 +17,7 @@ void AISystem::init(int ticksPerPlayerMove)
 	mTicksCounter = 0;
 	mShouldMakePlayerMove = false;
 
-	gpEventSystem->addListener(KEY_PRESSED_EVENT, this);
+	gpEventSystem->addListener(EventType::KEY_PRESSED_EVENT, this);
 }
 
 void AISystem::update(const Board &board)
@@ -43,7 +43,7 @@ void AISystem::update(const Board &board)
 		City *const currentCity = board.mpActivePawn->getCurrentCity();
 		if(currentCity->getNumberOfDiseaseCubes() > 0)
 		{
-			gpEventSystem->fireEvent(new AIPlayerCubeEvent(AI_PLAYER_CUBE_EVENT, currentCity));
+			gpEventSystem->fireEvent(new AIPlayerCubeEvent(currentCity));
 			return;
 		}
 		std::vector<City*> neighbors = currentCity->getNeighbors();
@@ -52,7 +52,7 @@ void AISystem::update(const Board &board)
 		{
 			if(n->getNumberOfDiseaseCubes() > 0)
 			{
-				gpEventSystem->fireEvent(new AIPlayerMoveEvent(AI_PLAYER_MOVE_EVENT, n));
+				gpEventSystem->fireEvent(new AIPlayerMoveEvent(n));
 				moved = true;
 				return;
 			}
@@ -60,7 +60,7 @@ void AISystem::update(const Board &board)
 		if(!moved)
 		{
 			int randomCity = rand() % neighbors.size();
-			gpEventSystem->fireEvent(new AIPlayerMoveEvent(AI_PLAYER_MOVE_EVENT, neighbors[randomCity]));
+			gpEventSystem->fireEvent(new AIPlayerMoveEvent(neighbors[randomCity]));
 			return;
 		}
 	}
@@ -69,12 +69,12 @@ void AISystem::update(const Board &board)
 
 void AISystem::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == KEY_PRESSED_EVENT)
+	if(theEvent.getType() == EventType::KEY_PRESSED_EVENT)
 	{
 		const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
 		switch(ev.getKey())
 		{
-		case SPACE:
+		case Key::SPACE:
 			mShouldMakePlayerMove = true;
 			break;
 		default:

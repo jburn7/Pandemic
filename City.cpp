@@ -43,8 +43,8 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	pawnPositions.push_back(Vector2D(pos.getX() + 2 * s->getWidth() / 3, pos.getY()));
 	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth(), pos.getY() + s->getHeight() / 3));
 
-	gpEventSystem->addListener(OUTBREAK_EVENT, this);
-	gpEventSystem->addListener(ZOOM_CAMERA_EVENT, this);
+	gpEventSystem->addListener(EventType::OUTBREAK_EVENT, this);
+	gpEventSystem->addListener(EventType::ZOOM_CAMERA_EVENT, this);
 }
 
 City::~City()
@@ -62,10 +62,10 @@ void City::handleEvent(const Event &theEvent)
 	//clear outbreak flags after an outbreak reaction
 	switch(theEvent.getType())
 	{
-	case OUTBREAK_EVENT:
+	case EventType::OUTBREAK_EVENT:
 		mOutbroke = false;
 		break;
-	case ZOOM_CAMERA_EVENT:
+	case EventType::ZOOM_CAMERA_EVENT:
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		const double delta = ev.getDelta();
@@ -141,7 +141,7 @@ void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::
 		Unit *u = new Unit(getCenter(), s); //delete called in unit manager dtor
 		u->setRotation(theta);
 		u->setZLayer(0); // We definitely want these lines to render below everything else in the game, at least until/if we add a background image
-		gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, u));
+		gpEventSystem->fireEvent(new UnitAddEvent(u));
 	}
 }
 
@@ -173,7 +173,7 @@ void City::incrementDiseaseCubes(const int increment)
 		{
 			v->incrementDiseaseCubes(1);	
 		}
-		gpEventSystem->fireEvent(new Event(OUTBREAK_EVENT));
+		gpEventSystem->fireEvent(new Event(EventType::OUTBREAK_EVENT));
 	}
 }
 

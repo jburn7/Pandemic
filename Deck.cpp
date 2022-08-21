@@ -103,7 +103,7 @@ UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 		mDeckName
 	);
 	deckNameText->setOutline(Outline(colorManager.white, colorManager.white, deckNamePadding));
-	gpEventSystem->fireEvent(new UnitAddEvent(UNIT_ADD_EVENT, deckNameText));
+	gpEventSystem->fireEvent(new UnitAddEvent(deckNameText));
 
 	return deckNameText;
 }

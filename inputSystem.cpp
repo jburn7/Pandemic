@@ -26,7 +26,7 @@ void InputSystem::checkForInput()
 	{
 		if(e.type == sf::Event::Closed)
 		{
-			gpEventSystem->fireEvent(new QuitEvent(QUIT_EVENT));
+			gpEventSystem->fireEvent(new QuitEvent());
 		}
 		else if(e.type == sf::Event::MouseButtonPressed)
 		{
@@ -34,41 +34,41 @@ void InputSystem::checkForInput()
 			switch(e.mouseButton.button)
 			{
 			case sf::Mouse::Button::Left:
-				mb = MOUSE_LEFT;
+				mb = MouseButton::MOUSE_LEFT;
 				break;
 			case sf::Mouse::Button::Right:
-				mb = MOUSE_RIGHT;
+				mb = MouseButton::MOUSE_RIGHT;
 				break;
 			default:
-				mb = MOUSE_LEFT;
+				mb = MouseButton::MOUSE_LEFT;
 			}
 			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::getInstance()->getGraphics().mDisplay);
-			gpEventSystem->fireEvent(new MouseClickEvent(MOUSE_CLICK_EVENT, Vector2D((float)mousePos.x, (float)mousePos.y), mb));
+			gpEventSystem->fireEvent(new MouseClickEvent(Vector2D((float)mousePos.x, (float)mousePos.y), mb));
 		}
 		else if(e.type == sf::Event::KeyPressed)
 		{
 			switch(e.key.code)
 			{
 			case sf::Keyboard::Left:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, LEFT));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::LEFT));
 				break;
 			case sf::Keyboard::Right:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, RIGHT));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::RIGHT));
 				break;
 			case sf::Keyboard::Up:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, UP));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::UP));
 				break;
 			case sf::Keyboard::Down:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, DOWN));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::DOWN));
 				break;
 			case sf::Keyboard::D:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, D));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::D));
 				break;
 			case sf::Keyboard::A:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, A));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::A));
 				break;
 			case sf::Keyboard::Space:
-				gpEventSystem->fireEvent(new KeyPressedEvent(KEY_PRESSED_EVENT, SPACE));
+				gpEventSystem->fireEvent(new KeyPressedEvent(Key::SPACE));
 				break;
 			default:
 				break;
@@ -79,22 +79,22 @@ void InputSystem::checkForInput()
 			switch(e.key.code)
 			{
 			case sf::Keyboard::Left:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, LEFT));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::LEFT));
 				break;
 			case sf::Keyboard::Right:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, RIGHT));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::RIGHT));
 				break;
 			case sf::Keyboard::Up:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, UP));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::UP));
 				break;
 			case sf::Keyboard::D:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, D));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::D));
 				break;
 			case sf::Keyboard::A:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, A));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::A));
 				break;
 			case sf::Keyboard::Down:
-				gpEventSystem->fireEvent(new KeyReleasedEvent(KEY_RELEASED_EVENT, DOWN));
+				gpEventSystem->fireEvent(new KeyReleasedEvent(Key::DOWN));
 				break;
 			default:
 				break;
@@ -106,15 +106,15 @@ void InputSystem::checkForInput()
 			switch(e.mouseWheel.delta)
 			{
 			case 1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_UP, cursorLocation));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::MOUSE_WHEEL_UP, cursorLocation));
 				break;
 			case -1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MOUSE_WHEEL_EVENT, MOUSE_WHEEL_DOWN, cursorLocation));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::MOUSE_WHEEL_DOWN, cursorLocation));
 				break;
 			}
 		}
 	}
-	if(Game::getInstance()->getGamestate() == PLAYING)
+	if(Game::getInstance()->getGamestate() == Gamestate::PLAYING)
 	{
 		/*
 		if mouse is clicked
@@ -133,6 +133,6 @@ void InputSystem::checkForInput()
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		gpEventSystem->fireEvent(new QuitEvent(QUIT_EVENT));
+		gpEventSystem->fireEvent(new QuitEvent());
 	}
 }

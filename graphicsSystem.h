@@ -10,7 +10,7 @@
 #include "document.h"
 #include "Outline.h"
 
-enum GraphicsLayer
+enum class GraphicsLayer
 {
 	BASE_VIEW,
 	GUI_VIEW

@@ -5,7 +5,7 @@
 class UnitAddEvent : public Event
 {
 public:
-	UnitAddEvent(EventType type, Unit *unit);
+	UnitAddEvent(Unit *unit);
 	~UnitAddEvent();
 
 	Unit *getUnit() const;

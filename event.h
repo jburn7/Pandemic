@@ -2,7 +2,7 @@
 #include <string>
 #include <Trackable.h>
 
-enum EventType
+enum class EventType
 {
 	INVALID_EVENT_TYPE = -1,
 	UNIT_ADD_EVENT,

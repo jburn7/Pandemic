@@ -1,7 +1,7 @@
 #pragma once
 #include "event.h"
 
-enum Key
+enum class Key
 {
 	LEFT,
 	RIGHT,
@@ -15,7 +15,7 @@ enum Key
 class KeyPressedEvent : public Event
 {
 public:
-	KeyPressedEvent(EventType type, Key key) : Event(type)
+	KeyPressedEvent(Key key) : Event(EventType::KEY_PRESSED_EVENT)
 	{
 		mKey = key;
 	}
@@ -29,7 +29,7 @@ private:
 class KeyReleasedEvent : public Event
 {
 public:
-	KeyReleasedEvent(EventType type, Key key) : Event(type)
+	KeyReleasedEvent(Key key) : Event(EventType::KEY_RELEASED_EVENT)
 	{
 		mKey = key;
 	}

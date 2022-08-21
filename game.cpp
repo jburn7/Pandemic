@@ -7,7 +7,7 @@ Game *Game::msInstance = NULL;
 Game::Game()
 {
 	mQuit = mJustReset = false;
-	mGamestate = PLAYING;
+	mGamestate = Gamestate::PLAYING;
 }
 
 Game::~Game()
@@ -139,7 +139,7 @@ void Game::init(const std::string &jsonPath)
 	mFont.loadFont(std::string(doc[JSONPATH]["assetsPath"].GetString()) + "\\" + doc[JSONPATH]["uiFont"].GetString(), doc[JSONPATH]["fontSize"].GetInt());
 	mUi->setFont(&mFont);
 
-	gpEventSystem->addListener(QUIT_EVENT, this);
+	gpEventSystem->addListener(EventType::QUIT_EVENT, this);
 
 	mBoard.init();
 }
@@ -165,7 +165,7 @@ void Game::cleanup()
 
 void Game::complete()
 {
-	mGamestate = COMPLETE;
+	mGamestate = Gamestate::COMPLETE;
 }
 
 void Game::loop()
@@ -185,7 +185,7 @@ void Game::loop()
 		render();
 		frames++;
 		double fps = frames / mClock.getElapsedTime() * 1000;
-		gpEventSystem->fireEvent(new UpdateFPSEvent(UPDATE_FPS_EVENT, (int)fps));
+		gpEventSystem->fireEvent(new UpdateFPSEvent(EventType::UPDATE_FPS_EVENT, (int)fps));
 		fpsTimer.sleepUntilElapsed(timePerFrame);
 		timeOfLastFrame = mClock.getElapsedTime();
 	}
@@ -194,17 +194,17 @@ void Game::loop()
 
 void Game::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == QUIT_EVENT)
+	if(theEvent.getType() == EventType::QUIT_EVENT)
 	{
 		mQuit = true;
 	}
-	else if(theEvent.getType() == START_EVENT)
+	else if(theEvent.getType() == EventType::START_EVENT)
 	{
-		if(mGamestate == COMPLETE)
+		if(mGamestate == Gamestate::COMPLETE)
 		{
 			restartGame();
 		}
-		mGamestate = PLAYING;
+		mGamestate = Gamestate::PLAYING;
 	}
 }
 
@@ -236,7 +236,7 @@ void Game::processInput()
 
 void Game::update(double timeElapsed)
 {
-	if(mGamestate == PLAYING && !mJustReset)
+	if(mGamestate == Gamestate::PLAYING && !mJustReset)
 	{
 		//mLevelManager.update(timeElapsed);
 		mUnitManager.update(timeElapsed);
@@ -246,10 +246,10 @@ void Game::update(double timeElapsed)
 void Game::render()
 {
 	mGraphics.clear();
-	mGraphics.update(BASE_VIEW);
-	mUnitManager.draw(BASE_VIEW);
-	mGraphics.update(GUI_VIEW);
-	mUnitManager.draw(GUI_VIEW);
+	mGraphics.update(GraphicsLayer::BASE_VIEW);
+	mUnitManager.draw(GraphicsLayer::BASE_VIEW);
+	mGraphics.update(GraphicsLayer::GUI_VIEW);
+	mUnitManager.draw(GraphicsLayer::GUI_VIEW);
 	mUi->draw();
 	mGraphics.flip();
 	//if(mJustReset)
