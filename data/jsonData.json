@@ -198,6 +198,14 @@
 			0,
 			0
 		],
+		"infectionsAfterEpidemic": [
+			2,
+			2,
+			3,
+			3,
+			4,
+			4
+		],
 		"camera": {
 			"boundsWidth": 1200,
 			"boundsHeight": 700,

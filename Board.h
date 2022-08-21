@@ -65,7 +65,8 @@ private:
 	Color mActiveCardColor;
 
 	int mMovesRemaining, mMaxMovesPerTurn, mNumPlayerCardsToDraw;
-	int mNumEpidemicsHad;
+	int mNumEpidemicsHad, mOutbreakThreshold;
+	std::vector<int> mInfectionsAfterEpidemic;
 
 	PlayerCardDeck *mPlayerDiscardDeck, *mPlayerDrawDeck;
 	InfectionCardDeck *mInfectionDiscardDeck, *mInfectionDrawDeck;

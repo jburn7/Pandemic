@@ -11,6 +11,7 @@ class Unit : public Trackable
 {
 	friend class UnitManager;
 	friend class GraphicsSystem;
+	friend class UI;
 public:
 	Unit(Vector2D pos, Animation *a);
 
@@ -65,6 +66,9 @@ public:
 protected:
 	Unit();
 	virtual bool tryRemove(){ return true; } //returns true if the object is removable such as a powerup, false if it's something like a wall
+
+	// We want to abstract the sprite as much as possible, but there are some cases where a direct sprite reference is needed (eg UI pawn info)
+	const Sprite *getSprite() const;
 
 	bool mAnimating;
 	double mTheta; //for storing rotation data

@@ -43,7 +43,6 @@ PlayerCard *PlayerCardDeck::dealTopCard()
 	if(mEpidemicIndeces.size() > 0 && mInitialDeckSize - mCards.size() >= mEpidemicIndeces.front())
 	{
 		mEpidemicIndeces.erase(mEpidemicIndeces.begin());
-		// TODO: epidemic card background
 		return new EpidemicCard(Vector2D(0, 0), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png")));
 	}
 	else

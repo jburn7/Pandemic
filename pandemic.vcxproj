@@ -116,6 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActivePawnChangeEvent.h" />
     <ClInclude Include="AIEvents.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="animation.h" />

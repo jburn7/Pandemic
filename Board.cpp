@@ -8,6 +8,7 @@
 #include "Deck.h"
 #include "PlayerCardDeck.h"
 #include "InfectionCardDeck.h"
+#include "ActivePawnChangeEvent.h"
 
 Board::Board()
 {
@@ -27,10 +28,17 @@ void Board::init()
 	ColorManager& colorManager = *ColorManager::getInstance();
 	mActiveCardColor = colorManager.color(doc["cityCard"]["highlightColor"].GetString());
 
+	rapidjson::Value &epidemicInfectionCounts = doc["game"]["infectionsAfterEpidemic"];
+	for(auto &v : epidemicInfectionCounts.GetArray())
+	{
+		mInfectionsAfterEpidemic.push_back(v.GetInt());
+	}
+
 	//load cities
 	rapidjson::Value &c = doc["cities"];
 
 	mStartingCity = doc["game"]["startingCity"].GetString();
+	mOutbreakThreshold = doc["city"]["outbreakThreshold"].GetInt();
 
 	mPlayerDrawDeck = new PlayerCardDeck(
 		doc,
@@ -220,6 +228,7 @@ void Board::changeActivePawn(int newIndex)
 {
 	mActivePawnIndex = newIndex;
 	mpActivePawn = mPlayers[mActivePawnIndex];
+	gpEventSystem->fireEvent(new ActivePawnChangeEvent(ACTIVE_PAWN_CHANGE_EVENT, *mpActivePawn));
 }
 
 void Board::changeSelectedPawn(int newIndex)
@@ -683,7 +692,7 @@ void Board::handleEvent(const Event &theEvent)
 			if(outbreakCity)
 			{
 				// Add three cubes to outbreak city
-				outbreakCity->getCity()->setDiseaseCubes(3); // TODO: get from json data
+				outbreakCity->getCity()->setDiseaseCubes(mOutbreakThreshold);
 				// add to infection discard
 				mInfectionDiscardDeck->addCard(outbreakCity);
 				// shuffle infection discard
@@ -691,8 +700,7 @@ void Board::handleEvent(const Event &theEvent)
 				// add discarded cards to draw
 				mInfectionDiscardDeck->moveContentsToDeck(mInfectionDrawDeck);
 				// draw one at a time until X, resolving events for each (X varies based on game rules and epidemic count)
-				// TODO: Move epidemic draw count to json and change based on epidemic count
-				for(unsigned int i = 0; i < 2; i++)
+				for(unsigned int i = 0; i < mInfectionsAfterEpidemic[mNumEpidemicsHad]; i++)
 				{
 					drawInfectionCard(1); // TODO: test this event logic. Do we need to dispatch all events inside the loop, or can we just let the outreak events stack and handle them at the end of this game tick?
 				}

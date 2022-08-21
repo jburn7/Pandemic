@@ -5,6 +5,7 @@
 #include "Vector2D.h"
 #include "font.h"
 #include "color.h"
+#include "sprite.h"
 
 class UI : public EventListener
 {
@@ -27,6 +28,8 @@ protected:
 	Vector2D mPos;
 	Font *mFont;
 	Color mUIColor;
+	const Sprite *mActivePawnSprite;
+
 
 	std::string mStartString, mFailedString, mCompleteString, mReplayString;
 };

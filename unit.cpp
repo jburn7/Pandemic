@@ -214,6 +214,20 @@ int Unit::getZLayer()
 	return mZLayer;
 }
 
+const Sprite *Unit::getSprite() const
+{
+	if(mAnimation)
+	{
+		return mAnimation->getCurrentSprite();
+	}
+	else if(mConstantFrame)
+	{
+		return mConstantFrame;
+	}
+
+	return nullptr;
+}
+
 void Unit::collide(Unit * o)
 {
 	o->collide(this);

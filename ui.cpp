@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "game.h"
+#include "ActivePawnChangeEvent.h"
 
 const int DEF_UI_FONT_SIZE = 20;
 
@@ -22,7 +23,10 @@ UI::UI()
 	mCompleteString = ui["completeString"].GetString();
 	mReplayString = ui["replayString"].GetString();
 
+	mActivePawnSprite = nullptr;
+
 	gpEventSystem->addListener(UPDATE_FPS_EVENT, this);
+	gpEventSystem->addListener(ACTIVE_PAWN_CHANGE_EVENT, this);
 }
 
 UI::~UI()
@@ -46,6 +50,11 @@ void UI::handleEvent(const Event& theEvent)
 		const UpdateFPSEvent &ev = static_cast<const UpdateFPSEvent&>(theEvent);
 		mFps = ev.getFPS();
 	}
+	else if(theEvent.getType() == ACTIVE_PAWN_CHANGE_EVENT)
+	{
+		const ActivePawnChangeEvent &ev = static_cast<const ActivePawnChangeEvent&>(theEvent);
+		mActivePawnSprite = ev.getPawn().getSprite();
+	}
 }
 
 void UI::draw()
@@ -57,6 +66,8 @@ void UI::draw()
 	graphics.writeText(screenTopLeft + Vector2D(0, 0), DEF_UI_FONT_SIZE, *mFont, mUIColor, "FPS: " + std::to_string(mFps));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 1), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Epidemics had: " + std::to_string(Game::getInstance()->getBoard().getNumEpidemicsHad()));
+	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 3), DEF_UI_FONT_SIZE, *mFont, mUIColor, std::string("Active pawn: "));
+	graphics.draw(screenTopLeft + Vector2D(100, (float)DEF_UI_FONT_SIZE * 3), *mActivePawnSprite, 0, Vector2D(0.5, 0.5));
 	
 	Gamestate &gamestate = Game::getInstance()->getGamestate();
 	switch(gamestate)
