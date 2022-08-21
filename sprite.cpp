@@ -62,42 +62,42 @@ void Sprite::setTexture(GraphicsBuffer *g)
 	mTexture = g;
 }
 
-Color *Sprite::getColor()
+Color Sprite::getColor() const
 {
-	return &mColor;
+	return mColor;
 }
 
-int Sprite::getHeight()
+int Sprite::getHeight() const
 {
 	return mHeight;
 }
 
-double Sprite::getRotation()
+double Sprite::getRotation() const
 {
 	return mTheta;
 }
 
-Vector2D Sprite::getOrigin()
+Vector2D Sprite::getOrigin() const
 {
 	return mOrigin;
 }
 
-int Sprite::getTransparency()
+int Sprite::getTransparency() const
 {
 	return mAlpha;
 }
 
-int Sprite::getWidth()
+int Sprite::getWidth() const
 {
 	return mWidth;
 }
 
-Vector2D Sprite::getSourceLoc()
+Vector2D Sprite::getSourceLoc() const
 {
 	return mSourceLoc;
 }
 
-GraphicsBuffer *Sprite::getTexture()
+GraphicsBuffer *Sprite::getTexture() const
 {
 	return mTexture;
 }

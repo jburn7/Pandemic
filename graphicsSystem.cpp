@@ -71,7 +71,7 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	mDisplay.draw(boardOutline);
 }
 
-void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double theta, const Vector2D &scale, const Outline &outline)
+void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, double theta, const Vector2D &scale, const Outline &outline)
 {
 	sf::Sprite temp;
 	GraphicsBuffer *texture = sprite.getTexture();
@@ -95,10 +95,7 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, Sprite &sprite, double thet
 	{
 		temp.move(0, (float)temp.getGlobalBounds().height);
 	}
-	if(sprite.getColor())
-	{
-		temp.setColor(sf::Color(sprite.getColor()->mColor));
-	}
+	temp.setColor(sf::Color(sprite.getColor().mColor));
 	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
 
 	drawOutlineForBounds(temp.getGlobalBounds(), outline);

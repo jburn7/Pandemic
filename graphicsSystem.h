@@ -32,7 +32,7 @@ public:
 
 	Vector2D convertToWorldCoordinates(Vector2D pos, const GraphicsLayer layer);
 
-	void draw(const Vector2D &targetLoc, Sprite &sprite, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
+	void draw(const Vector2D &targetLoc, const Sprite &sprite, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
 
 	virtual void handleEvent(const Event &theEvent);
 

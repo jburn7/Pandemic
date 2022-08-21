@@ -21,16 +21,16 @@ public:
 	void setTexture(GraphicsBuffer *g);
 
 	//getters
-	Color *getColor();
-	int getHeight();
-	double getRotation();
-	Vector2D getOrigin();
-	int getTransparency();
-	int getWidth();
+	Color getColor() const;
+	int getHeight() const;
+	double getRotation() const;
+	Vector2D getOrigin() const;
+	int getTransparency() const;
+	int getWidth() const;
 
-	Vector2D getSourceLoc();
+	Vector2D getSourceLoc() const;
 
-	GraphicsBuffer *getTexture();
+	GraphicsBuffer *getTexture() const;
 protected:
 	Vector2D mSourceLoc;
 	Vector2D mOrigin; //used to rotate about a specific point/accomodate for certain graphics libraries that are pedantic about rotations cough SFML cough
