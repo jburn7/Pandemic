@@ -3,6 +3,15 @@
 #include "CameraEvents.h"
 #include "game.h"
 
+CameraManager::CameraManager()
+{
+	mCameraPanLeft = mCameraPanRight = mCameraPanUp = mCameraPanDown = false;
+	mPanSpeed = mMaxPanSpeed = mPanAcceleration = 0.f;
+	mZoomAmount = mMaxZoom = mMinZoom = mCurrentZoom = 0.f;
+	mBounds = Vector2D();
+	mCenter = Vector2D();
+}
+
 void CameraManager::init(const Vector2D bounds, const float panSpeed, const float panAcceleration, const float zoomAmount, const float maxZoom, const float minZoom)
 {
 	mCameraPanDown = mCameraPanLeft = mCameraPanRight = mCameraPanUp = false;

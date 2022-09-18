@@ -14,7 +14,7 @@ Font::~Font()
 {
 }
 
-void Font::loadFont(std::string &fontPath, int fs)
+void Font::loadFont(const std::string &fontPath, int fs)
 {
 	mFont.loadFromFile(fontPath);
 }

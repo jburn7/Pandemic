@@ -51,7 +51,7 @@ public:
 	GraphicsSystem &getGraphics();
 	InputSystem &getInputSystem();
 	//LevelManager &getLevelManager(){ return mLevelManager; }
-	UnitManager &Game::getUnitManager();
+	UnitManager &getUnitManager();
 protected:
 	Game();
 	~Game();

@@ -13,7 +13,7 @@ UnitManager::~UnitManager()
 	cleanup();
 }
 
-void UnitManager::setUnitAnimations(std::map<std::string, Animation*> &animations)
+void UnitManager::setUnitAnimations(const std::map<std::string, Animation*> &animations)
 {
 	mUnitAnimations = animations;
 }

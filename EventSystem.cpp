@@ -26,7 +26,7 @@ EventSystem::~EventSystem()
 
 void EventSystem::addListener(EventType type, EventListener* pListener)
 {
-	mListenerMap.insert(pair< EventType, EventListener* >(type, pListener));
+	mListenerMap.insert(std::pair< EventType, EventListener* >(type, pListener));
 }
 
 //void EventSystem::fireAll()
@@ -41,10 +41,10 @@ void EventSystem::addListener(EventType type, EventListener* pListener)
 
 void EventSystem::removeListener(EventType type, EventListener *pListener)
 {
-	pair<multimap<EventType, EventListener*>::iterator, multimap<EventType, EventListener*>::iterator> ret;
+	std::pair<std::multimap<EventType, EventListener*>::iterator, std::multimap<EventType, EventListener*>::iterator> ret;
 
 	ret = mListenerMap.equal_range(type);
-	multimap<EventType, EventListener*>::iterator iter;
+	std::multimap<EventType, EventListener*>::iterator iter;
 
 	for(iter = ret.first; iter != ret.second; ++iter)
 	{
@@ -58,7 +58,7 @@ void EventSystem::removeListener(EventType type, EventListener *pListener)
 
 void EventSystem::removeListenerFromAllEvents(EventListener* pListener)
 {
-	multimap<EventType, EventListener*>::iterator iter;
+	std::multimap<EventType, EventListener*>::iterator iter;
 
 	bool allTheWayThrough = false;
 
@@ -97,8 +97,8 @@ void EventSystem::dispatchAllEvents()
 		mQueue.push_back(a);
 	}
 	mSecondaryQueue.clear();
-	pair<multimap<EventType, EventListener*>::iterator, multimap<EventType, EventListener*>::const_iterator> ret;
-	multimap<EventType, EventListener*>::const_iterator iter;
+	std::pair<std::multimap<EventType, EventListener*>::iterator, std::multimap<EventType, EventListener*>::const_iterator> ret;
+	std::multimap<EventType, EventListener*>::const_iterator iter;
 	mDispatching = true;
 	for(const Event* theEvent : mQueue)
 	{

@@ -15,7 +15,7 @@ public:
 
 	~Font();
 
-	void loadFont(std::string &fontPath, int fs);
+	void loadFont(const std::string &fontPath, int fs);
 
 	Glyph getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 

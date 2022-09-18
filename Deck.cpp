@@ -2,6 +2,7 @@
 #include "ColorManager.h"
 #include "game.h"
 #include "EventSystem.h"
+#include <random>
 
 template<typename T>
 Deck<T>::Deck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName) : mPosition(pos), mDeckName(deckName)
@@ -80,7 +81,9 @@ T * Deck<T>::dealTopCard()
 template<typename T>
 void Deck<T>::shuffle()
 {
-	std::random_shuffle(mCards.begin(), mCards.end());
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::shuffle(mCards.begin(), mCards.end(), g);
 }
 
 template<typename T>

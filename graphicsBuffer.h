@@ -10,9 +10,9 @@ class GraphicsBuffer : public Trackable
 public:
 	GraphicsBuffer();
 
-	GraphicsBuffer(Color &color, int w, int h);
+	GraphicsBuffer(int w, int h);
 
-	GraphicsBuffer(std::string &resource);
+	GraphicsBuffer(const std::string &resource);
 
 	~GraphicsBuffer();
 

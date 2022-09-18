@@ -5,14 +5,14 @@ GraphicsBuffer::GraphicsBuffer()
 	mWidth = mHeight = 0;
 }
 
-GraphicsBuffer::GraphicsBuffer(Color &color, int w, int h)
+GraphicsBuffer::GraphicsBuffer(int w, int h)
 {
 	create(w, h);
 	mWidth = w;
 	mHeight = h;
 }
 
-GraphicsBuffer::GraphicsBuffer(std::string &resource)
+GraphicsBuffer::GraphicsBuffer(const std::string &resource)
 {
 	mBitmap.loadFromFile(resource);
 

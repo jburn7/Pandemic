@@ -1,6 +1,8 @@
 #pragma once
 #include "document.h"
+#pragma warning(push, 0)
 #include "rapidjson.h"
+#pragma warning(pop)
 #include "Trackable.h"
 #include <fstream>
 #include <string>

@@ -12,7 +12,7 @@ public:
 	~UnitManager();
 
 	//handling animations for units
-	void setUnitAnimations(std::map<std::string, Animation*> &animations);
+	void setUnitAnimations(const std::map<std::string, Animation*> &animations);
 
 	//getters
 	std::map<std::string, Animation*> &getUnitAnimations();

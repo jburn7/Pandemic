@@ -700,7 +700,7 @@ void Board::handleEvent(const Event &theEvent)
 				// add discarded cards to draw
 				mInfectionDiscardDeck->moveContentsToDeck(mInfectionDrawDeck);
 				// draw one at a time until X, resolving events for each (X varies based on game rules and epidemic count)
-				for(unsigned int i = 0; i < mInfectionsAfterEpidemic[mNumEpidemicsHad]; i++)
+				for(int i = 0; i < mInfectionsAfterEpidemic[mNumEpidemicsHad]; i++)
 				{
 					drawInfectionCard(1); // TODO: test this event logic. Do we need to dispatch all events inside the loop, or can we just let the outreak events stack and handle them at the end of this game tick?
 				}

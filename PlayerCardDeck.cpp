@@ -20,7 +20,7 @@ bool PlayerCardDeck::checkDeckForClick(Vector2D clickPosition, const std::string
 		{
 			std::cout << opener << std::endl;
 
-			int numEpidemicsCounted = 0;
+			unsigned int numEpidemicsCounted = 0;
 			for(unsigned int i = 0; i < mCards.size(); i++)
 			{
 				if(mEpidemicIndeces.size() > numEpidemicsCounted && (mInitialDeckSize - mCards.size() + i) == mEpidemicIndeces[numEpidemicsCounted])
@@ -40,7 +40,7 @@ bool PlayerCardDeck::checkDeckForClick(Vector2D clickPosition, const std::string
 
 PlayerCard *PlayerCardDeck::dealTopCard()
 {
-	if(mEpidemicIndeces.size() > 0 && mInitialDeckSize - mCards.size() >= mEpidemicIndeces.front())
+	if(mEpidemicIndeces.size() > 0 && mInitialDeckSize - (int)mCards.size() >= mEpidemicIndeces.front())
 	{
 		mEpidemicIndeces.erase(mEpidemicIndeces.begin());
 		return new EpidemicCard(Vector2D(0, 0), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png")));

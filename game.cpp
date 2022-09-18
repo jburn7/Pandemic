@@ -6,6 +6,7 @@ Game *Game::msInstance = NULL;
 //private functions
 Game::Game()
 {
+	mUi = NULL;
 	mQuit = mJustReset = false;
 	mGamestate = Gamestate::PLAYING;
 }
@@ -111,7 +112,7 @@ void Game::init(const std::string &jsonPath)
 	//add all names for animating graphics buffers, loop through and add
 	for(unsigned int i = 0; i < createGraphicsBuffersNames.size(); i++)
 	{
-		mGraphicsBufferManager.addGraphicsBuffer(createGraphicsBuffersNames[i], new GraphicsBuffer(Color(), 1, 1));
+		mGraphicsBufferManager.addGraphicsBuffer(createGraphicsBuffersNames[i], new GraphicsBuffer(1, 1));
 	}
 
 	//http://rapidjson.org/md_doc_tutorial.html#QueryObject 

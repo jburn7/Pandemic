@@ -8,6 +8,8 @@
 class CameraManager : public EventListener
 {
 public:
+	CameraManager();
+
 	void init(const Vector2D bounds, const float panSpeed, const float panAcceleration, const float zoomAmount, const float maxZoom, const float minZoom);
 
 	// Read pan/zoom states and tell graphics system to react accordingly
