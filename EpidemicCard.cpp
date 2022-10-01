@@ -2,5 +2,5 @@
 
 EpidemicCard::EpidemicCard(Vector2D pos, Sprite *s) : PlayerCard(pos, s, nullptr)
 {
-	mCardType = PlayerCardType::EPIDEMIC_CARD;
+	mCardType = PlayerCardType::EPIDEMIC;
 }

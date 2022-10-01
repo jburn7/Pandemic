@@ -139,14 +139,14 @@ void CameraManager::handleEvent(const Event &theEvent)
 		{
 			switch(ev.getDirection())
 			{
-			case MouseWheel::MOUSE_WHEEL_DOWN:
+			case MouseWheel::DOWN:
 				if(mCurrentZoom < mMaxZoom)
 				{
 					gpEventSystem->fireEvent(new ZoomCameraEvent(mZoomAmount, zoomLocation));
 					mCurrentZoom = std::min(mCurrentZoom + mZoomAmount, mMaxZoom);
 				}
 				break;
-			case MouseWheel::MOUSE_WHEEL_UP:
+			case MouseWheel::UP:
 				if(mCurrentZoom > mMinZoom)
 				{
 					gpEventSystem->fireEvent(new ZoomCameraEvent(-mZoomAmount, zoomLocation));

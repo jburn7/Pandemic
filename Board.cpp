@@ -284,7 +284,7 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 	if(pc)
 	{
 		pc->setIsHidden(!showCard);
-		if(pc->getCardType() == PlayerCardType::EPIDEMIC_CARD)
+		if(pc->getCardType() == PlayerCardType::EPIDEMIC)
 		{
 			// TODO: we might want to do stuff with the card later, but for now just fire an event and forget
 			gpEventSystem->fireEvent(new Event(EventType::EPIDEMIC_EVENT));
@@ -595,7 +595,7 @@ void Board::handleEvent(const Event &theEvent)
 
 		if(gameState == Gamestate::PLAYING)
 		{
-			if(ev.getButton() == MouseButton::MOUSE_LEFT)
+			if(ev.getButton() == MouseButton::LEFT)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
 				// TODO: find a way to show this graphically
@@ -611,7 +611,7 @@ void Board::handleEvent(const Event &theEvent)
 					handleGuiClick(guiPos);
 				}
 			}
-			else if(ev.getButton() == MouseButton::MOUSE_RIGHT)
+			else if(ev.getButton() == MouseButton::RIGHT)
 			{
 				//DEBUG
 				//if any city was clicked, increment its cubes

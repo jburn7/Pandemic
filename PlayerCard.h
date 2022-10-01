@@ -3,9 +3,9 @@
 
 enum class PlayerCardType
 {
-	CITY_CARD,
-	EPIDEMIC_CARD,
-	EVENT_CARD // TODO: add events
+	CITY,
+	EPIDEMIC,
+	EVENT // TODO: add events
 };
 
 class PlayerCard : public CityCard

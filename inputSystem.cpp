@@ -34,13 +34,13 @@ void InputSystem::checkForInput()
 			switch(e.mouseButton.button)
 			{
 			case sf::Mouse::Button::Left:
-				mb = MouseButton::MOUSE_LEFT;
+				mb = MouseButton::LEFT;
 				break;
 			case sf::Mouse::Button::Right:
-				mb = MouseButton::MOUSE_RIGHT;
+				mb = MouseButton::RIGHT;
 				break;
 			default:
-				mb = MouseButton::MOUSE_LEFT;
+				mb = MouseButton::LEFT;
 			}
 			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::getInstance()->getGraphics().mDisplay);
 			gpEventSystem->fireEvent(new MouseClickEvent(Vector2D((float)mousePos.x, (float)mousePos.y), mb));
@@ -106,10 +106,10 @@ void InputSystem::checkForInput()
 			switch(e.mouseWheel.delta)
 			{
 			case 1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::MOUSE_WHEEL_UP, cursorLocation));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::UP, cursorLocation));
 				break;
 			case -1:
-				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::MOUSE_WHEEL_DOWN, cursorLocation));
+				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::DOWN, cursorLocation));
 				break;
 			}
 		}

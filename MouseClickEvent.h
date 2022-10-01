@@ -5,8 +5,8 @@
 // TODO: Remove redundant prefixes from event names (eg MOUSE_)
 enum class MouseButton
 {
-	MOUSE_LEFT,
-	MOUSE_RIGHT
+	LEFT,
+	RIGHT
 };
 
 class MouseClickEvent : public Event
@@ -28,8 +28,8 @@ private:
 
 enum class MouseWheel
 {
-	MOUSE_WHEEL_DOWN,
-	MOUSE_WHEEL_UP
+	DOWN,
+	UP
 };
 
 class MouseWheelEvent : public Event
