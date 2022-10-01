@@ -19,6 +19,8 @@ public:
 
 	Glyph getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
+	float getUnderlineSpacing(const int fontSize) const;
+
 	//getters
 	int getWidth(const std::string message, const int fontSize);
 	int getHeight(const std::string message, const int fontSize);

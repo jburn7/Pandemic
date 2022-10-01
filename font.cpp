@@ -24,6 +24,11 @@ Glyph Font::getGlyph(uint32_t codePoint, unsigned int characterSize, bool bold, 
 	return Glyph(mFont.getGlyph(codePoint, characterSize, bold, outlineThickness));
 }
 
+float Font::getUnderlineSpacing(const int fontSize) const
+{
+	return mFont.getUnderlinePosition(fontSize);
+}
+
 int Font::getWidth(const std::string message, const int fontSize)
 {
 	sf::Text text(message, mFont, fontSize);

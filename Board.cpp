@@ -12,7 +12,21 @@
 
 Board::Board()
 {
+	mActivePawnIndex = 0;
+	mBoardOutline = nullptr;
+	mInfectionDiscardDeck = nullptr;
+	mInfectionDrawDeck = nullptr;
+	mMaxMovesPerTurn = 0;
+	mMovesRemaining = 0;
 	mNumEpidemicsHad = 0;
+	mNumPlayerCardsToDraw = 0;
+	mOutbreakThreshold = 0;
+	mPlayerDiscardDeck = nullptr;
+	mPlayerDrawDeck = nullptr;
+	mSelectedPawnIndex = 0;
+	mpActiveCard = nullptr;
+	mpActivePawn = nullptr;
+	mpSelectedPawn = nullptr;
 }
 
 Board::~Board()
@@ -439,7 +453,7 @@ void Board::endTurn()
 	{
 		mActivePawnIndex = 0;
 	}
-	changeActivePawn(mActivePawnIndex); // TODO: add active pawn indicator (highlight or place icon in top left?)
+	changeActivePawn(mActivePawnIndex);
 	changeSelectedPawn(mActivePawnIndex);
 	mMovesRemaining = mMaxMovesPerTurn;
 }
