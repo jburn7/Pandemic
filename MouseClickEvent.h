@@ -2,7 +2,6 @@
 #include "event.h"
 #include "Vector2D.h"
 
-// TODO: Remove redundant prefixes from event names (eg MOUSE_)
 enum class MouseButton
 {
 	LEFT,

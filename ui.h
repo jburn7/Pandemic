@@ -25,11 +25,9 @@ public:
 	void setFont(Font *font);
 protected:
 	int mFps;
-	Vector2D mPos;
 	Font *mFont;
 	Color mUIColor;
 	const Sprite *mActivePawnSprite;
-
 
 	std::string mStartString, mFailedString, mCompleteString, mReplayString;
 };

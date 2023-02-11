@@ -11,6 +11,16 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
 	const Color color = ColorManager::getInstance()->color(c["color"].GetString());
 	const Color textColor = ColorManager::getInstance()->color(c["textColor"].GetString());
+	mpColorIndicator = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("blank.png"));
+	mpColorIndicator->setHeight(s->getHeight() / 6);
+	mpColorIndicator->setWidth(s->getWidth());
+	if(city) // Man this is still bad...
+	{
+		const int cityType = (int)city->getType();
+		const rapidjson::Value& colorObject = doc["city"]["infoColorByType"].GetArray()[cityType];
+		const Color typeColor = Color(colorObject["r"].GetInt(), colorObject["g"].GetInt(), colorObject["b"].GetInt());
+		mpColorIndicator->setColor(typeColor);
+	}
 
 	std::string nameText;
 	if(city)
@@ -42,12 +52,19 @@ CityCard::~CityCard()
 		delete mText;
 		mText = nullptr;
 	}
+	if(mpColorIndicator)
+	{
+		delete mpColorIndicator;
+		mpColorIndicator = nullptr;
+	}
 }
 
 void CityCard::draw()
 {
 	Unit::draw();
 	mText->draw();
+	// TODO: blank graphics buffer sprite won't draw unless outline fill color is provided, why?
+	Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX(), mPosition.getY() + getHeight() - mpColorIndicator->getHeight() * 1.5f), *mpColorIndicator, mTheta, mScale, Outline(mpColorIndicator->getColor(), mpColorIndicator->getColor()));
 }
 
 std::string CityCard::debugDescription()

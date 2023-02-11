@@ -31,7 +31,7 @@
 			"name": "Los Angeles",
 			"posX": -250,
 			"posY": 700,
-			"type": 0,
+			"type": 1,
 			"neighbors": [
 				"Chicago",
 				"San Francisco"
@@ -41,7 +41,7 @@
 			"name": "Mexico City",
 			"posX": -100,
 			"posY": 1200,
-			"type": 0,
+			"type": 1,
 			"neighbors": [
 				"Chicago",
 				"Los Angeles"
@@ -51,7 +51,7 @@
 			"name": "Miami",
 			"posX": 900,
 			"posY": 900,
-			"type": 0,
+			"type": 1,
 			"neighbors": [
 				"Atlanta",
 				"Washington"
@@ -105,11 +105,28 @@
 		"initialCubes": 0,
 		"fontSize": 20,
 		"infoTextPadding": 6,
-		"infoColor": {
-			"r": 240,
-			"g": 60,
-			"b": 120
-		},
+		"infoColorByType": [
+			{
+				"r": 31,
+				"g": 87,
+				"b": 240
+			},
+			{
+				"r": 163,
+				"g": 173,
+				"b": 45
+			},
+			{
+				"r": 6,
+				"g": 1,
+				"b": 18
+			},
+			{
+				"r": 163,
+				"g": 44,
+				"b": 36
+			}
+		],
 		"outbreakThreshold": 3,
 		"radius": 46
 	},

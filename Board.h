@@ -71,8 +71,8 @@ private:
 	PlayerCardDeck *mPlayerDiscardDeck, *mPlayerDrawDeck;
 	InfectionCardDeck *mInfectionDiscardDeck, *mInfectionDrawDeck;
 
-	std::vector<DiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
-	std::vector<int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
+	std::map<const CityType, DiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
+	std::map<const CityType, int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
 	std::vector<int> mInitNumCitiesCubes; // stores ratio of disease cubes to dole out for each infection card draw in setup phase
 
 	std::map<std::string, City*> mCities;

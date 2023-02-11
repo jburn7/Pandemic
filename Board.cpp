@@ -118,8 +118,8 @@ void Board::init()
 	// Init disease type info
 	for(int i = 0; i <= numTypes; i++)
 	{
-		mDiseaseStages.push_back(DiseaseStages::Spreading);
-		mDiseaseCubesRemainingByType.push_back(0);
+		mDiseaseStages.insert(std::pair(CityType(i), DiseaseStages::Spreading));
+		mDiseaseCubesRemainingByType.insert(std::pair(CityType(i), 0));
 	}
 
 	//now that all cities neighbors are loaded, find their neighbors and set the pointers

@@ -3,6 +3,7 @@
 #include "unit.h"
 #include "EventListener.h"
 #include "uiBox.h"
+#include "CityType.h"
 
 class Player;
 
@@ -24,8 +25,10 @@ public:
 	void loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors);
 
 	bool decrementDiseaseCubes(const int decrement); //return true if cubes were above 0 beforehand
+	bool decrementDiseaseCubes(const int decrement, const CityType type);
 	void clearAllCubes();
 	void incrementDiseaseCubes(const int increment);
+	void incrementDiseaseCubes(const int increment, const CityType type);
 
 	//getters
 	std::string getName();
@@ -33,23 +36,25 @@ public:
 	std::vector<City*> getNeighbors();
 
 	int getNumberOfDiseaseCubes() const;
+	int getNumberOfDiseaseCubes(const CityType type) const;
 
-	int getType() const;
+	CityType getType() const;
 
 	//setters
 	void setDiseaseCubes(const int cubes);
+	void setDiseaseCubes(const int cubes, const CityType type);
 private:
 	void cleanup();
 
 	int mRadius; //radius in pixels to help with collision detection. load in with json. this can also be extended to resize sprite if I want to add that functionality
 
-	int mDiseaseCubes;
+	std::map<const CityType, int> mDiseaseCubes;
 	int mOutbreakThreshold; //when num cubes hits this, outbreak occurs
 	bool mOutbroke; //set to true upon outbreak, clear upon receiving outbreak event (meaning that outbreak has resolved). lets cities avoid chain outbreaks
-	int mType; // typically there are 4 city types corresponding with 4 disease types
+	CityType mType; // typically there are 4 city types corresponding with 4 disease types
 	std::string mName;
 
-	UIBox *mCubeText;
+	std::map<const CityType, UIBox*> mCubeTexts;
 	UIBox *mNameText;
 
 	std::vector<City*> mNeighbors;

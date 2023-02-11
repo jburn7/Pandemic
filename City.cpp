@@ -9,31 +9,39 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["city"];
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
-	const Color color = Color(c["infoColor"]["r"].GetInt(), c["infoColor"]["g"].GetInt(), c["infoColor"]["b"].GetInt());
+	const rapidjson::Value &typeColors = c["infoColorByType"].GetArray();
+	const rapidjson::Value &colorObject = typeColors[type];
+	const Color color = Color(colorObject["r"].GetInt(), colorObject["g"].GetInt(), colorObject["b"].GetInt());
 	const ColorManager &colorManager = *ColorManager::getInstance();
 	const int padding = c["infoTextPadding"].GetInt();
 
-	mCubeText = new UIBox(
-		Vector2D(pos.getX(), pos.getY() + s->getHeight()),
-		c["fontSize"].GetInt(),
-		color,
-		"0",
-		&Game::getInstance()->getDefaultFont()); //delete called in this dtor
+	for(int i = (int)CityType::BLUE; i < (int)CityType::LAST; i++)
+	{
+		const Color typeColor = Color(typeColors[i]["r"].GetInt(), typeColors[i]["g"].GetInt(), typeColors[i]["b"].GetInt());
+		UIBox *cubeText = new UIBox(
+			Vector2D(pos.getX() - 30 * i, pos.getY() + s->getHeight()), // TODO: remove hardcoded value
+			c["fontSize"].GetInt(),
+			typeColor,
+			"0",
+			&Game::getInstance()->getDefaultFont()); //delete called in this dtor
+		cubeText->setIsHidden(true);
+		cubeText->setOutline(Outline(colorManager.white, colorManager.white, padding));
+		mCubeTexts.insert(std::pair(CityType(i), cubeText));
+	}
+
 	mNameText = new UIBox(
 		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
 		c["fontSize"].GetInt(), 
 		color,
 		"0",
-		&Game::getInstance()->getDefaultFont()); //delete called in this dtor
-
-	mCubeText->setOutline(Outline(colorManager.white, colorManager.white, padding));
+		&Game::getInstance()->getDefaultFont()); //delete called in this dtor	
 	mNameText->setOutline(Outline(colorManager.white, colorManager.white, padding));
 	mName = name;
 	mNameText->setText(mName);
 	mOutbreakThreshold = c["outbreakThreshold"].GetInt();
 	setDiseaseCubes(c["initialCubes"].GetInt());
 	mOutbroke = false;
-	mType = type;
+	mType = CityType(type);
 
 	mRadius = c["radius"].GetInt();
 
@@ -69,7 +77,10 @@ void City::handleEvent(const Event &theEvent)
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		const double delta = ev.getDelta();
-		mCubeText->adjustScale(delta);
+		for(auto& cubeText : mCubeTexts)
+		{
+			cubeText.second->adjustScale(delta);
+		}
 		mNameText->adjustScale(delta);
 		break;
 	}
@@ -102,18 +113,28 @@ void City::cleanup()
 		delete mNameText;
 		mNameText = nullptr;
 	}
-	if(mCubeText)
+	for(auto& text : mCubeTexts)
 	{
-		delete mCubeText;
-		mCubeText = nullptr;
+		if(text.second)
+		{
+			delete text.second;
+			text.second = nullptr;
+		}
 	}
+	mCubeTexts.clear();
 }
 
 void City::draw()
 {
 	//draw city sprite and city info in text
 	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
-	mCubeText->draw();
+	for(auto& text : mCubeTexts)
+	{
+		if(!text.second->getIsHidden())
+		{
+			text.second->draw();
+		}
+	}
 	mNameText->draw();
 }
 
@@ -147,12 +168,16 @@ void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::
 
 bool City::decrementDiseaseCubes(const int decrement)
 {
-	mDiseaseCubes;
-	if(mDiseaseCubes == 0)
+	return decrementDiseaseCubes(decrement, mType);
+}
+
+bool City::decrementDiseaseCubes(const int decrement, const CityType type)
+{
+	if(mDiseaseCubes[type] == 0)
 	{
 		return false;
 	}
-	setDiseaseCubes(mDiseaseCubes - decrement);
+	setDiseaseCubes(mDiseaseCubes[type] - decrement);
 	return true;
 }
 
@@ -163,15 +188,20 @@ void City::clearAllCubes()
 
 void City::incrementDiseaseCubes(const int increment)
 {
-	int prevCubes = mDiseaseCubes;
-	setDiseaseCubes(mDiseaseCubes + increment);
+	return incrementDiseaseCubes(increment, mType);
+}
+
+void City::incrementDiseaseCubes(const int increment, const CityType type)
+{
+	int prevCubes = mDiseaseCubes[type];
+	setDiseaseCubes(mDiseaseCubes[type] + increment);
 	if(prevCubes + increment > mOutbreakThreshold && !mOutbroke)
 	{
 		//spread a cube to each neighbor and fire outbreak event
 		mOutbroke = true;
-		for(auto &v : mNeighbors)
+		for(auto& v : mNeighbors)
 		{
-			v->incrementDiseaseCubes(1);	
+			v->incrementDiseaseCubes(1);
 		}
 		gpEventSystem->fireEvent(new Event(EventType::OUTBREAK_EVENT));
 	}
@@ -189,20 +219,47 @@ std::vector<City*> City::getNeighbors()
 
 int City::getNumberOfDiseaseCubes() const
 {
-	return mDiseaseCubes;
+	return getNumberOfDiseaseCubes(mType);
 }
 
-int City::getType() const
+int City::getNumberOfDiseaseCubes(const CityType type) const
+{
+	return mDiseaseCubes.at(type);
+}
+
+CityType City::getType() const
 {
 	return mType;
 }
 
 void City::setDiseaseCubes(const int cubes)
 {
-	mDiseaseCubes = cubes;
-	if(mDiseaseCubes > mOutbreakThreshold)
+	return setDiseaseCubes(cubes, mType);
+}
+
+void City::setDiseaseCubes(const int cubes, const CityType type)
+{
+	mDiseaseCubes[type] = cubes;
+	if(mDiseaseCubes[type] > mOutbreakThreshold)
 	{
-		mDiseaseCubes = mOutbreakThreshold;
+		mDiseaseCubes[type] = mOutbreakThreshold;
 	}
-	mCubeText->setText(std::to_string(mDiseaseCubes));
+	mCubeTexts[type]->setText(std::to_string(mDiseaseCubes[type]));
+	// TODO: fix placement of boxes, we want a queue where the longest existing cube texts will be closest to city name
+	if(mDiseaseCubes[type] == 0)
+	{
+		mCubeTexts[type]->setIsHidden(true);
+		//mCubeTexts[type]->move(Vector2D(-30 * ((int)mCubeTexts.size() - 1), 0));
+		//for(auto& text : mCubeTexts)
+		//{
+		//	if(text.first != type)
+		//	{
+		//		text.second->move(Vector2D(30, 0)); // TODO: remove hardcoded value
+		//	}
+		//}
+	}
+	else
+	{
+		mCubeTexts[type]->setIsHidden(false);
+	}
 }

@@ -23,5 +23,6 @@ public:
 	City* getCity();
 protected:
 	City *mpCity; //pointer to city that this card corresponds to
+	Sprite *mpColorIndicator;
 	UIBox *mText;
 };

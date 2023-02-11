@@ -6,8 +6,6 @@ const int DEF_UI_FONT_SIZE = 20;
 
 UI::UI()
 {
-	mPos.setX(200);
-	mPos.setY(200);
 	mFps = 0;
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	int r, g, b;
@@ -53,12 +51,15 @@ void UI::draw()
 	int width = graphics.getWidth();
 	int height = graphics.getHeight();
 	const Vector2D screenTopLeft = Vector2D(0, 0);
+
 	// TODO: Convert these to UIBoxes and draw them that way instead
 	graphics.writeText(screenTopLeft + Vector2D(0, 0), DEF_UI_FONT_SIZE, *mFont, mUIColor, "FPS: " + std::to_string(mFps));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 1), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Epidemics had: " + std::to_string(Game::getInstance()->getBoard().getNumEpidemicsHad()));
+
 	const std::string activePawnString = std::string("Active pawn: ");
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 3), DEF_UI_FONT_SIZE, *mFont, mUIColor, activePawnString);
+
 	const int activePawnStringWidth = mFont->getWidth(activePawnString, DEF_UI_FONT_SIZE);
 	const int spriteHeight = mActivePawnSprite->getHeight();
 	const int desiredSpriteHeight = DEF_UI_FONT_SIZE;

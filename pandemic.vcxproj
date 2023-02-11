@@ -140,6 +140,7 @@
     <ClInclude Include="graphicsBuffer.h" />
     <ClInclude Include="graphicsBufferManager.h" />
     <ClInclude Include="graphicsSystem.h" />
+    <ClInclude Include="CityType.h" />
     <ClInclude Include="InfectionCard.h" />
     <ClInclude Include="InfectionCardDeck.h" />
     <ClInclude Include="inputSystem.h" />
