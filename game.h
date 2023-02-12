@@ -12,6 +12,7 @@
 #include "updateFPSEvent.h"
 #include "ui.h"
 #include "Board.h"
+#include "MovementManager.h"
 
 enum class Gamestate
 {
@@ -50,6 +51,7 @@ public:
 	GraphicsBufferManager &getGraphicsBufferManager();
 	GraphicsSystem &getGraphics();
 	InputSystem &getInputSystem();
+	MovementManager &getMovementManager();
 	//LevelManager &getLevelManager(){ return mLevelManager; }
 	UnitManager &getUnitManager();
 protected:
@@ -71,6 +73,7 @@ protected:
 	GraphicsBufferManager mGraphicsBufferManager;
 	InputSystem mInputSystem;
 	GraphicsSystem mGraphics;
+	MovementManager mMovementManager;
 	//LevelManager mLevelManager;
 	UnitManager mUnitManager;
 

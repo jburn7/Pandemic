@@ -69,13 +69,7 @@
     <ClInclude Include="ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="unitAddEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="unitManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unitRemoveEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="updateFPSEvent.h">
@@ -153,6 +147,12 @@
     <ClInclude Include="CityType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MovementManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -194,9 +194,6 @@
     <ClCompile Include="quitEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unitAddEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="updateFPSEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -213,9 +210,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="color.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unitRemoveEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EventSystem.cpp">
@@ -264,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InfectionCardDeck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

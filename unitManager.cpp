@@ -100,7 +100,7 @@ void UnitManager::handleEvent(const Event &theEvent)
 		std::vector<int> removables;
 		for(int i = mUnits.size() - 1; i >= 0; i--) //walk backwards to easily remove Units
 		{
-			if(mUnits[i] == ev.getToRemove()) //this code for deciding removal belongs in the function calling this one
+			if(mUnits[i] == ev.getUnit()) //this code for deciding removal belongs in the function calling this one
 			{
 				delete mUnits[i];
 				mUnits.erase(mUnits.begin() + i);

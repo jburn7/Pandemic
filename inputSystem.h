@@ -3,8 +3,7 @@
 #include "SFML\Window\Event.hpp"
 #include "EventSystem.h"
 #include "quitEvent.h"
-#include "unitAddEvent.h"
-#include "unitRemoveEvent.h"
+#include "UnitEvents.h"
 #include "startEvent.h"
 #include "MouseClickEvent.h"
 

@@ -123,6 +123,7 @@ void Game::init(const std::string &jsonPath)
 	//load animations for mUnitManager
 	mUnitManager.setUnitAnimations(loadUnitAnimations(component, tileSize));
 
+	mMovementManager.init();
 	//mLevelManager.init();
 
 	// Init camera with json values for bounds/speed
@@ -224,6 +225,11 @@ InputSystem &Game::getInputSystem()
 	return mInputSystem;
 }
 
+MovementManager& Game::getMovementManager()
+{
+	return mMovementManager;
+}
+
 UnitManager &Game::getUnitManager()
 {
 	return mUnitManager;
@@ -241,6 +247,7 @@ void Game::update(double timeElapsed)
 	{
 		//mLevelManager.update(timeElapsed);
 		mUnitManager.update(timeElapsed);
+		mMovementManager.update(timeElapsed);
 	}
 }
 

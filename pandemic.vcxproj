@@ -79,7 +79,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\shared\SFML\lib;..\shared\DeanLib\Debug2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\shared\SFML\lib;..\shared\DeanLib\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>legacy_stdio_definitions.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;sfml-system-s-d.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;DeanLib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -149,6 +149,7 @@
     <ClInclude Include="level.h" />
     <ClInclude Include="MouseClickEvent.h" />
     <ClInclude Include="CameraEvents.h" />
+    <ClInclude Include="MovementManager.h" />
     <ClInclude Include="Outline.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCard.h" />
@@ -159,9 +160,8 @@
     <ClInclude Include="ui.h" />
     <ClInclude Include="uiBox.h" />
     <ClInclude Include="unit.h" />
-    <ClInclude Include="unitAddEvent.h" />
+    <ClInclude Include="UnitEvents.h" />
     <ClInclude Include="unitManager.h" />
-    <ClInclude Include="unitRemoveEvent.h" />
     <ClInclude Include="updateFPSEvent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +190,7 @@
     <ClCompile Include="jsonData.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MovementManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCard.cpp" />
     <ClCompile Include="PlayerCardDeck.cpp" />
@@ -198,9 +199,7 @@
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="uiBox.cpp" />
     <ClCompile Include="unit.cpp" />
-    <ClCompile Include="unitAddEvent.cpp" />
     <ClCompile Include="unitManager.cpp" />
-    <ClCompile Include="unitRemoveEvent.cpp" />
     <ClCompile Include="updateFPSEvent.cpp" />
   </ItemGroup>
   <ItemGroup>

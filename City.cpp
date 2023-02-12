@@ -3,6 +3,7 @@
 #include "ColorManager.h"
 #include "game.h"
 #include "Player.h"
+#include "UnitEvents.h"
 
 City::City(const std::string &name, const int type, const Vector2D &pos, Sprite *s) : Unit(pos, s)
 {
@@ -93,7 +94,9 @@ void City::addPlayer(Player *player)
 {
 	mPlayersHere.push_back(player);
 	//set player position off to side of city based on number of players
-	player->setPosition(pawnPositions.front());
+	// TODO: make same movement substitution everywhere that is necessary to show Board "animations"
+	//player->setPosition(pawnPositions.front());
+	gpEventSystem->fireEvent(new UnitMoveEvent(player, pawnPositions.front(), 17));
 	pawnPositions.erase(pawnPositions.begin());
 
 	//handle movement effects (eg medic clearing cubes on touch after disease has been cured)
