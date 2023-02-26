@@ -172,7 +172,8 @@ void Game::complete()
 
 void Game::loop()
 {
-	double timePerFrame = 16.7777777777; //should be accurate enough
+	//double timePerFrame = 16.7777777777; //should be accurate enough
+	double timePerFrame = 4; //should be accurate enough
 	double timeOfLastFrame = 0;
 	int frames = 0;
 	mClock.start();
@@ -183,7 +184,8 @@ void Game::loop()
 		gpEventSystem->dispatchAllEvents();
 		processInput();
 		mCameraManager.update();
-		update(mClock.getElapsedTime());
+		const double updateTime = mClock.getElapsedTime();
+		update(updateTime, (updateTime - timeOfLastFrame) * 1000);
 		render();
 		frames++;
 		double fps = frames / mClock.getElapsedTime() * 1000;
@@ -241,13 +243,13 @@ void Game::processInput()
 	mAISystem.update(mBoard);
 }
 
-void Game::update(double timeElapsed)
+void Game::update(double timeElapsed, double timeSinceLastUpdate)
 {
 	if(mGamestate == Gamestate::PLAYING && !mJustReset)
 	{
 		//mLevelManager.update(timeElapsed);
 		mUnitManager.update(timeElapsed);
-		mMovementManager.update(timeElapsed);
+		mMovementManager.update(timeSinceLastUpdate);
 	}
 }
 

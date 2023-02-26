@@ -4,30 +4,28 @@
 #include "Vector2D.h"
 #include <map>
 
-struct MovementCommand
+class MovementCommand
 {
 	friend class MovementManager;
 private:
-	MovementCommand(const Vector2D start, const Vector2D destination, const float milliseconds, const double acceleration = 0.0) : 
+	MovementCommand(const Vector2D start, const Vector2D destination, const float milliseconds) : 
 		destination(destination), 
-		milliseconds(milliseconds), 
-		acceleration(acceleration)
+		distance(absDistance(destination, start)),
+		milliseconds(milliseconds)
 	{
 		// TODO: redo this to take acceleration into account (velocity starts at 0 and increments on updates until it reaches determined velocity)
 		// Maybe for v1 we just ignore acceleration...
-		if(milliseconds != 0)
-		{
-			velocity = (destination - start) / milliseconds;
-		}
-		else
-		{
-			velocity = destination - start;
-		}
+		velocity = Vector2D(0.f, 0.f);
+	}
+
+	static const Vector2D absDistance(const Vector2D end, const Vector2D start)
+	{
+		return (end - start);
 	}
 
 	const Vector2D destination;
+	const Vector2D distance;
 	const float milliseconds;
-	const double acceleration;
 	Vector2D velocity;
 };
 
@@ -48,7 +46,7 @@ public:
 
 	virtual void handleEvent(const Event& theEvent);
 
-	void initiateMovement(Unit * const unit, const Vector2D destination, const double milliseconds);
+	void initiateMovement(Unit * const unit, const Vector2D destination, const float milliseconds);
 
 	void update(double timeElapsed);
 

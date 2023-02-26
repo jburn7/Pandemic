@@ -65,7 +65,7 @@ protected:
 	std::map<std::string, Animation*> loadUnitAnimations(rapidjson::Value &a, int tileSize);
 
 	void processInput(); //OR
-	void update(double timeElapsed);
+	void update(double timeElapsed, double timeSinceLastUpdate);
 	void render();
 
 	AISystem mAISystem;

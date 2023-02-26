@@ -16,16 +16,12 @@ public:
 	// Can either be manually drawn if another unit owns it or draw itself if it is added to UnitManager
 	virtual void draw();
 
-	void move(const Vector2D &delta);
-
 	void resizeToFitWidth(const float boundsWidth);
 
 	//setters
-	void setPosition(Vector2D pos);
 	void setText(const std::string &text);
 private:
 	Font *mFont;
-	Vector2D mPosition;
 	float mWidth, mHeight;
 	int mFontSize;
 	std::string mText;

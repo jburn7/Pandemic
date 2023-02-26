@@ -19,7 +19,7 @@ Deck<T>::~Deck()
 template<typename T>
 void Deck<T>::addCard(T * card, bool toBack)
 {
-	card->setPosition(mPosition);
+	gpEventSystem->fireEvent(new UnitMoveEvent(card, mPosition, 1000));
 	if(mCards.size() > 0)
 	{
 		mCards[mCards.size() - 1]->setIsHidden(true);

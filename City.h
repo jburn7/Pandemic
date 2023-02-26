@@ -55,6 +55,7 @@ private:
 	std::string mName;
 
 	std::map<const CityType, UIBox*> mCubeTexts;
+	Vector2D mStartingCubeTextsPosition;
 	UIBox *mNameText;
 
 	std::vector<City*> mNeighbors;

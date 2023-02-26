@@ -76,5 +76,5 @@ std::vector<PlayerCard*>& Player::getHand()
 void Player::positionCard(int index, PlayerCard *pc)
 {
 	const Vector2D offset = Vector2D(0, 0);
-	pc->setPosition(offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index));
+	gpEventSystem->fireEvent(new UnitMoveEvent(pc, offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index), 1500));
 }

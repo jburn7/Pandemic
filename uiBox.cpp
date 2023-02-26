@@ -49,11 +49,6 @@ void UIBox::draw()
 	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D((float)mOutline.thickness, (float)mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline, mScale);
 }
 
-void UIBox::move(const Vector2D &delta)
-{
-	setPosition(mPosition + delta);
-}
-
 void UIBox::resizeToFitWidth(const float boundsWidth)
 {
 	std::vector<int> whitespaceIndeces;
@@ -98,11 +93,6 @@ void UIBox::resizeToFitWidth(const float boundsWidth)
 		float ratio = totalWidth / boundsWidth;
 		mFontSize = (int)(mFontSize / ratio);
 	}
-}
-
-void UIBox::setPosition(Vector2D pos)
-{
-	mPosition = pos;
 }
 
 void UIBox::setText(const std::string & text)

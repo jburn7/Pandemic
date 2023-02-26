@@ -15,12 +15,13 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	const Color color = Color(colorObject["r"].GetInt(), colorObject["g"].GetInt(), colorObject["b"].GetInt());
 	const ColorManager &colorManager = *ColorManager::getInstance();
 	const int padding = c["infoTextPadding"].GetInt();
+	mStartingCubeTextsPosition = Vector2D(pos.getX(), pos.getY() + s->getHeight());
 
 	for(int i = (int)CityType::BLUE; i < (int)CityType::LAST; i++)
 	{
 		const Color typeColor = Color(typeColors[i]["r"].GetInt(), typeColors[i]["g"].GetInt(), typeColors[i]["b"].GetInt());
 		UIBox *cubeText = new UIBox(
-			Vector2D(pos.getX() - 30 * i, pos.getY() + s->getHeight()), // TODO: remove hardcoded value
+			mStartingCubeTextsPosition - Vector2D(30 * (float)i, 0), // TODO: remove hardcoded value
 			c["fontSize"].GetInt(),
 			typeColor,
 			"0",
@@ -45,6 +46,8 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mType = CityType(type);
 
 	mRadius = c["radius"].GetInt();
+
+	s->setColor(color);
 
 	//calculate potential positions for pawns
 	pawnPositions.push_back(Vector2D(pos.getX(), pos.getY() - s->getHeight()));
@@ -94,9 +97,7 @@ void City::addPlayer(Player *player)
 {
 	mPlayersHere.push_back(player);
 	//set player position off to side of city based on number of players
-	// TODO: make same movement substitution everywhere that is necessary to show Board "animations"
-	//player->setPosition(pawnPositions.front());
-	gpEventSystem->fireEvent(new UnitMoveEvent(player, pawnPositions.front(), 17));
+	gpEventSystem->fireEvent(new UnitMoveEvent(player, pawnPositions.front(), 1500));
 	pawnPositions.erase(pawnPositions.begin());
 
 	//handle movement effects (eg medic clearing cubes on touch after disease has been cured)
@@ -248,21 +249,18 @@ void City::setDiseaseCubes(const int cubes, const CityType type)
 		mDiseaseCubes[type] = mOutbreakThreshold;
 	}
 	mCubeTexts[type]->setText(std::to_string(mDiseaseCubes[type]));
-	// TODO: fix placement of boxes, we want a queue where the longest existing cube texts will be closest to city name
-	if(mDiseaseCubes[type] == 0)
+	int numDifferentDiseaseCubes = 0;
+	for(auto& v: mDiseaseCubes)
 	{
-		mCubeTexts[type]->setIsHidden(true);
-		//mCubeTexts[type]->move(Vector2D(-30 * ((int)mCubeTexts.size() - 1), 0));
-		//for(auto& text : mCubeTexts)
-		//{
-		//	if(text.first != type)
-		//	{
-		//		text.second->move(Vector2D(30, 0)); // TODO: remove hardcoded value
-		//	}
-		//}
-	}
-	else
-	{
-		mCubeTexts[type]->setIsHidden(false);
+		if(v.second > 0)
+		{
+			mCubeTexts[v.first]->setIsHidden(false);
+			gpEventSystem->fireEvent(new UnitMoveEvent(mCubeTexts[v.first], mStartingCubeTextsPosition - Vector2D(30 * (float)numDifferentDiseaseCubes, 0), 0));
+			numDifferentDiseaseCubes++;
+		}
+		else
+		{
+			mCubeTexts[v.first]->setIsHidden(true);
+		}
 	}
 }
