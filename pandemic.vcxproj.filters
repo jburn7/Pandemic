@@ -141,7 +141,7 @@
     <ClInclude Include="InfectionCardDeck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ActivePawnChangeEvent.h">
+    <ClInclude Include="PawnChangeEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CityType.h">
@@ -151,6 +151,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -261,6 +264,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MovementManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

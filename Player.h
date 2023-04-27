@@ -8,6 +8,7 @@ class PlayerCardDeck;
 
 class Player : public Unit
 {
+	friend class PlayerInfo;
 public:
 	Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s);
 
@@ -16,6 +17,10 @@ public:
 	void dealCard(PlayerCard *pc);
 
 	void discardCard(PlayerCard* pc);
+
+	bool hasCard(PlayerCard *pc) const;
+
+	bool tradeCard(PlayerCard *pc, Player* to);
 
 	void replaceHandIntoDeck(PlayerCardDeck *deck);
 

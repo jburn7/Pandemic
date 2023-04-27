@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "game.h"
-#include "ActivePawnChangeEvent.h"
+#include "PawnChangeEvents.h"
 
 const int DEF_UI_FONT_SIZE = 20;
 
@@ -59,6 +59,9 @@ void UI::draw()
 
 	const std::string activePawnString = std::string("Active pawn: ");
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)DEF_UI_FONT_SIZE * 3), DEF_UI_FONT_SIZE, *mFont, mUIColor, activePawnString);
+
+	// TODO: remove hardcoded values
+	graphics.writeText(screenTopLeft + Vector2D(300, (float)DEF_UI_FONT_SIZE * 2), DEF_UI_FONT_SIZE, *mFont, mUIColor, "Player Details: ");
 
 	const int activePawnStringWidth = mFont->getWidth(activePawnString, DEF_UI_FONT_SIZE);
 	const int spriteHeight = mActivePawnSprite->getHeight();

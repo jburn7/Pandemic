@@ -210,6 +210,11 @@
 			"x": 100,
 			"y": 910
 		},
+		"playerInfoLocation": {
+			"x": 500,
+			"y": 0
+		},
+		"playerInfoSpriteScale": 1.2,
 		"initNumCitiesCubes": [
 			3,
 			0,
@@ -249,7 +254,7 @@
 		"createGraphicsBuffersWithColor": [
 			"default"
 		],
-		"animations": [ ]
+		"animations": []
 	},
 	"pawn": {
 		"pawnSprite": "pawn.png",

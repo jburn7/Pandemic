@@ -77,4 +77,5 @@ private:
 
 	std::map<std::string, City*> mCities;
 	std::vector<Player*> mPlayers;
+	std::vector<PlayerInfo*> mPlayerInfos;
 };

@@ -19,8 +19,6 @@ void MovementManager::handleEvent(const Event& theEvent)
 
 void MovementManager::initiateMovement(Unit* const unit, const Vector2D destination, const float milliseconds)
 {
-	// TODO: how to handle chained movements for same unit?
-	// Right now, later commands are ignored, obviously we want to change that
 	auto existing = mMovements.find(unit);
 	if(existing != mMovements.end())
 	{

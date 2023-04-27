@@ -60,6 +60,7 @@ Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsL
 	return Vector2D(worldPos.x, worldPos.y);
 }
 
+// TODO: rotation
 void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline)
 {
 	sf::RectangleShape boardOutline;
@@ -100,6 +101,13 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, doubl
 
 	drawOutlineForBounds(temp.getGlobalBounds(), outline);
 	mDisplay.draw(temp);
+}
+
+// TODO: rotation
+void GraphicsSystem::drawOutline(const Vector2D& targetLoc, const Vector2D& size, const Outline& outline, double theta)
+{
+	sf::FloatRect bounds(sf::Vector2f(targetLoc.getX(), targetLoc.getY()), sf::Vector2f(size.getX(), size.getY()));
+	drawOutlineForBounds(bounds, outline);
 }
 
 void GraphicsSystem::handleEvent(const Event &theEvent)

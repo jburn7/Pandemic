@@ -38,6 +38,33 @@ void Player::discardCard(PlayerCard *pc)
 	}
 }
 
+bool Player::hasCard(PlayerCard* pc) const
+{
+	for(auto& v : mHand)
+	{
+		if(v == pc)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Player::tradeCard(PlayerCard* pc, Player* to)
+{
+	// TODO: remove true to enable city check
+	if(true || to->getCurrentCity() == getCurrentCity() && getCurrentCity() == pc->getCity())
+	{
+		to->dealCard(pc);
+		discardCard(pc);
+
+		return true;
+	}
+
+	return false;
+}
+
 void Player::replaceHandIntoDeck(PlayerCardDeck *deck)
 {
 	for(auto &v : mHand)

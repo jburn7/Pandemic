@@ -34,6 +34,8 @@ public:
 
 	void draw(const Vector2D &targetLoc, const Sprite &sprite, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
 
+	void drawOutline(const Vector2D& targetLoc, const Vector2D &size, const Outline& outline, double theta = 0);
+
 	virtual void handleEvent(const Event &theEvent);
 
 	void flip();

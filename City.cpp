@@ -29,6 +29,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		cubeText->setIsHidden(true);
 		cubeText->setOutline(Outline(colorManager.white, colorManager.white, padding));
 		mCubeTexts.insert(std::pair(CityType(i), cubeText));
+		setDiseaseCubes(c["initialCubes"].GetInt(), CityType(i));
 	}
 
 	mNameText = new UIBox(
@@ -40,8 +41,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mNameText->setOutline(Outline(colorManager.white, colorManager.white, padding));
 	mName = name;
 	mNameText->setText(mName);
-	mOutbreakThreshold = c["outbreakThreshold"].GetInt();
-	setDiseaseCubes(c["initialCubes"].GetInt());
+	mOutbreakThreshold = c["outbreakThreshold"].GetInt();	
 	mOutbroke = false;
 	mType = CityType(type);
 
@@ -223,7 +223,12 @@ std::vector<City*> City::getNeighbors()
 
 int City::getNumberOfDiseaseCubes() const
 {
-	return getNumberOfDiseaseCubes(mType);
+	int totalCubes = 0;
+	for(int i = 0; i < (int)CityType::LAST; i++)
+	{
+		totalCubes += getNumberOfDiseaseCubes(CityType(i));
+	}
+	return totalCubes;
 }
 
 int City::getNumberOfDiseaseCubes(const CityType type) const
@@ -238,7 +243,7 @@ CityType City::getType() const
 
 void City::setDiseaseCubes(const int cubes)
 {
-	return setDiseaseCubes(cubes, mType);
+	setDiseaseCubes(cubes, mType);
 }
 
 void City::setDiseaseCubes(const int cubes, const CityType type)

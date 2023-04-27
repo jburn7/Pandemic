@@ -8,7 +8,8 @@
 #include "Deck.h"
 #include "PlayerCardDeck.h"
 #include "InfectionCardDeck.h"
-#include "ActivePawnChangeEvent.h"
+#include "PawnChangeEvents.h"
+#include "PlayerInfo.h"
 
 Board::Board()
 {
@@ -145,17 +146,30 @@ void Board::init()
 	}
 	// TODO: wrap cards if player's hand goes off screen (lower priority, screen has plenty of room)
 	const Vector2D playerHandLocation = Vector2D(doc["game"]["playerHandLocation"]["x"].GetFloat(), doc["game"]["playerHandLocation"]["y"].GetFloat());
+	const Vector2D playerInfoLocation = Vector2D(doc["game"]["playerInfoLocation"]["x"].GetFloat(), doc["game"]["playerInfoLocation"]["y"].GetFloat());
+	const float playerInfoSpriteScale = doc["game"]["playerInfoSpriteScale"].GetFloat();
 	unsigned int numPlayers = doc["game"]["numPlayers"].GetUint();
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
-		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString())));
+		Sprite* pawnSprite = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString()));
+		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, pawnSprite);
 		if(playerColors.size() > i)
 		{
 			p->setColor(playerColors[i]);
 		}
 		mPlayers.push_back(p);
 		gpEventSystem->fireEvent(new UnitAddEvent(p));
+
+		PlayerInfo *playerInfo = new PlayerInfo(
+			p,
+			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + 80) * i, 0),
+			playerInfoSpriteScale,
+			Outline(Color(200, 100, 69), Color(0, 0, 0), 5)); // TODO: remove hardcoded values
+		playerInfo->setIsGuiLayer(true);
+		mPlayerInfos.push_back(playerInfo);
+		gpEventSystem->fireEvent(new UnitAddEvent(playerInfo));
 	}
+	mPlayerInfos[0]->setSelected(true);
 
 	mpActiveCard = nullptr;
 	changeActivePawn(0);
@@ -257,6 +271,12 @@ void Board::changeSelectedPawn(int newIndex)
 	{
 		v->setIsHidden(false);
 	}
+	for(auto& v : mPlayerInfos)
+	{
+		v->setSelected(false);
+	}
+	mPlayerInfos[mSelectedPawnIndex]->setSelected(true);
+	gpEventSystem->fireEvent(new SelectedPawnChangeEvent(*mpActivePawn));
 }
 
 void Board::dealInitialPlayerCards()
@@ -487,6 +507,7 @@ void Board::shuffleDrawPiles()
 
 void Board::handleGuiClick(Vector2D guiPos)
 {
+	// TODO: card trading (drag and drop onto PlayerInfo, context menu on card click, what other options are there?
 	// Hand click, deck click
 	if(mPlayerDrawDeck->checkDeckForClick(guiPos, "Player Draw contents:"))
 	{
@@ -505,11 +526,33 @@ void Board::handleGuiClick(Vector2D guiPos)
 		return;
 	}
 
+	// TODO: allow selecting of other hands's cards for things like trading, but check whether player actually owns card before playing it
+
+	// Selected hand click
+	for(unsigned int i = 0; i < mPlayerInfos.size(); i++)
+	{
+		if(mPlayerInfos[i]->contains(guiPos))
+		{
+			// If player has an active card selected and it can be traded to the selected player, then trade it
+			// TODO: modify to allow for taking cards as well as giving away
+			Player *targetPlayer = mPlayerInfos[i]->getPlayer();
+			if(mpActiveCard &&
+			   (mpActivePawn != targetPlayer && mpActivePawn->hasCard(mpActiveCard) && mpActivePawn->tradeCard(mpActiveCard, targetPlayer) ||
+			   (mpActivePawn == targetPlayer && mpActivePawn != mpSelectedPawn && mpSelectedPawn->hasCard(mpActiveCard) && mpSelectedPawn->tradeCard(mpActiveCard, targetPlayer))))
+			{
+				resetActiveCard();
+				gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
+			}
+			changeSelectedPawn(i);
+			return;
+		}
+	}
+
 	// If no active card
 	if(mpActiveCard == nullptr)
 	{
-		// For each card player owns, if it was clicked, set it to active
-		for(auto &v : mpActivePawn->getHand())
+		// For each card that selected player owns, if it was clicked, set it to active
+		for(auto &v : mpSelectedPawn->getHand())
 		{
 			if(v->contains(guiPos))
 			{
@@ -552,7 +595,7 @@ void Board::handleBoardClick(Vector2D basePos)
 			}
 		}
 	}
-	else
+	else if(mpActivePawn->hasCard(mpActiveCard))
 	{
 		bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity());
 		// Poll each city, if it was clicked
@@ -673,24 +716,6 @@ void Board::handleEvent(const Event &theEvent)
 			{
 				mpActivePawn->moveCity(ev.getCity());
 				gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
-			}
-		}
-	}
-	else if(theEvent.getType() == EventType::KEY_PRESSED_EVENT)
-	{
-		if(gameState == Gamestate::PLAYING)
-		{
-			const KeyPressedEvent &ev = static_cast<const KeyPressedEvent&>(theEvent);
-			switch(ev.getKey())
-			{
-			case Key::D:
-				incrementSelectedPawn();
-				break;
-			case Key::A:
-				incrementSelectedPawn(-1);
-				break;
-			default:
-				break;
 			}
 		}
 	}

@@ -117,7 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ActivePawnChangeEvent.h" />
+    <ClInclude Include="PawnChangeEvents.h" />
     <ClInclude Include="AIEvents.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="animation.h" />
@@ -154,6 +154,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCard.h" />
     <ClInclude Include="PlayerCardDeck.h" />
+    <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="quitEvent.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="startEvent.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCard.cpp" />
     <ClCompile Include="PlayerCardDeck.cpp" />
+    <ClCompile Include="PlayerInfo.cpp" />
     <ClCompile Include="quitEvent.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="ui.cpp" />

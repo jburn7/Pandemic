@@ -25,6 +25,7 @@ enum class EventType
 	OUTBREAK_EVENT,
 	EPIDEMIC_EVENT,
 	ACTIVE_PAWN_CHANGE_EVENT,
+	SELECTED_PAWN_CHANGE_EVENT
 };
 
 class Event:public Trackable
