@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\events">
+      <UniqueIdentifier>{6229e533-1a2d-4951-9d9b-c3bb3ffb39cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="event.h">
@@ -117,9 +120,6 @@
     <ClInclude Include="AISystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ColorManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -155,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="PlayerInfo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvents.h">
+      <Filter>Header Files\events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

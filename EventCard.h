@@ -1,5 +1,5 @@
 #pragma once
-#include "Card.h"
+#include "unit.h"
 
 enum class SpecialEvent
 {
@@ -10,7 +10,7 @@ enum class SpecialEvent
 	FORECAST
 };
 
-class EventCard : public Card
+class EventCard : public Unit
 {
 public:
 	EventCard(SpecialEvent eid)

@@ -53,8 +53,7 @@ bool Player::hasCard(PlayerCard* pc) const
 
 bool Player::tradeCard(PlayerCard* pc, Player* to)
 {
-	// TODO: remove true to enable city check
-	if(true || to->getCurrentCity() == getCurrentCity() && getCurrentCity() == pc->getCity())
+	if(to->getCurrentCity() == getCurrentCity() && getCurrentCity() == pc->getCity())
 	{
 		to->dealCard(pc);
 		discardCard(pc);

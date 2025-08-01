@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DiseaseEvents.h" />
     <ClInclude Include="PawnChangeEvents.h" />
     <ClInclude Include="AIEvents.h" />
     <ClInclude Include="AISystem.h" />

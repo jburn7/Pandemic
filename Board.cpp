@@ -162,9 +162,9 @@ void Board::init()
 
 		PlayerInfo *playerInfo = new PlayerInfo(
 			p,
-			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + 80) * i, 0),
+			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + 80) * i, 0),  // TODO: remove hardcoded values+
 			playerInfoSpriteScale,
-			Outline(Color(200, 100, 69), Color(0, 0, 0), 5)); // TODO: remove hardcoded values
+			Outline(colorManager.color(doc["ui"]["selectedHandHighlight"]["color"].GetString()), Color(0, 0, 0), doc["ui"]["selectedHandHighlight"]["thickness"].GetInt()));
 		playerInfo->setIsGuiLayer(true);
 		mPlayerInfos.push_back(playerInfo);
 		gpEventSystem->fireEvent(new UnitAddEvent(playerInfo));
@@ -341,9 +341,14 @@ bool Board::decrementDiseaseCubes(City* const city)
 	if(didDecrement)
 	{
 		// TODO: this logic is wrong, needs to check all cities of that disease type
-		if(mDiseaseStages[city->getType()] == DiseaseStages::Cured)
+		const CityType cityType = city->getType();
+		if(mDiseaseCubesRemainingByType[cityType])
 		{
-			mDiseaseStages[city->getType()] = DiseaseStages::Eradicated;
+
+		}
+		if(mDiseaseStages[cityType] == DiseaseStages::Cured)
+		{
+			mDiseaseStages[cityType] = DiseaseStages::Eradicated;
 		}
 	}
 	return didDecrement;
@@ -507,7 +512,6 @@ void Board::shuffleDrawPiles()
 
 void Board::handleGuiClick(Vector2D guiPos)
 {
-	// TODO: card trading (drag and drop onto PlayerInfo, context menu on card click, what other options are there?
 	// Hand click, deck click
 	if(mPlayerDrawDeck->checkDeckForClick(guiPos, "Player Draw contents:"))
 	{
@@ -526,15 +530,12 @@ void Board::handleGuiClick(Vector2D guiPos)
 		return;
 	}
 
-	// TODO: allow selecting of other hands's cards for things like trading, but check whether player actually owns card before playing it
-
 	// Selected hand click
 	for(unsigned int i = 0; i < mPlayerInfos.size(); i++)
 	{
 		if(mPlayerInfos[i]->contains(guiPos))
 		{
 			// If player has an active card selected and it can be traded to the selected player, then trade it
-			// TODO: modify to allow for taking cards as well as giving away
 			Player *targetPlayer = mPlayerInfos[i]->getPlayer();
 			if(mpActiveCard &&
 			   (mpActivePawn != targetPlayer && mpActivePawn->hasCard(mpActiveCard) && mpActivePawn->tradeCard(mpActiveCard, targetPlayer) ||

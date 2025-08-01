@@ -158,6 +158,13 @@
 			"a": 255
 		},
 		{
+			"name": "dark-orange",
+			"r": 200,
+			"g": 100,
+			"b": 69,
+			"a": 255
+		},
+		{
 			"name": "purple",
 			"r": 128,
 			"g": 0,
@@ -271,6 +278,10 @@
 		"bColor": 255,
 		"defaultUIColor": "white",
 		"darkUIColor": "black",
+		"selectedHandHighlight": {
+			"color": "dark-orange",
+			"thickness": 5
+		},
 		"startString": "",
 		"failedString": "",
 		"completeString": "",

@@ -16,7 +16,6 @@ PlayerInfo::~PlayerInfo()
 {
 }
 
-// TODO: add highlights for active pawn/viewing player's hand, and add click handler to show player's hand (will probably be 99% in Board)
 void PlayerInfo::draw()
 {
 	GraphicsSystem& graphics = Game::getInstance()->getGraphics();

@@ -22,7 +22,7 @@ enum class EventType
 	AI_SHOULD_MOVE_EVENT,
 	AI_PLAYER_MOVE_EVENT,
 	AI_PLAYER_CUBE_EVENT,
-	OUTBREAK_EVENT,
+	OUTBREAK_EVENT, // TODO: make object because it needs to be associated with cube color
 	EPIDEMIC_EVENT,
 	ACTIVE_PAWN_CHANGE_EVENT,
 	SELECTED_PAWN_CHANGE_EVENT

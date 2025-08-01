@@ -63,8 +63,7 @@ void CityCard::draw()
 {
 	Unit::draw();
 	mText->draw();
-	// TODO: blank graphics buffer sprite won't draw unless outline fill color is provided, why?
-	Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX(), mPosition.getY() + getHeight() - mpColorIndicator->getHeight() * 1.5f), *mpColorIndicator, mTheta, mScale, Outline(mpColorIndicator->getColor(), mpColorIndicator->getColor()));
+	Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX(), mPosition.getY() + getHeight() - mpColorIndicator->getHeight() * 1.5f), *mpColorIndicator, mTheta, mScale, Outline(Color(), mpColorIndicator->getColor()));
 }
 
 std::string CityCard::debugDescription()

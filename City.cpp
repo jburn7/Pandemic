@@ -197,17 +197,20 @@ void City::incrementDiseaseCubes(const int increment)
 
 void City::incrementDiseaseCubes(const int increment, const CityType type)
 {
-	int prevCubes = mDiseaseCubes[type];
-	setDiseaseCubes(mDiseaseCubes[type] + increment);
+	int prevCubes = getNumberOfDiseaseCubes();
 	if(prevCubes + increment > mOutbreakThreshold && !mOutbroke)
 	{
 		//spread a cube to each neighbor and fire outbreak event
 		mOutbroke = true;
 		for(auto& v : mNeighbors)
 		{
-			v->incrementDiseaseCubes(1);
+			v->incrementDiseaseCubes(1, mType);
 		}
 		gpEventSystem->fireEvent(new Event(EventType::OUTBREAK_EVENT));
+	}
+	else
+	{
+		setDiseaseCubes(mDiseaseCubes[type] + increment);
 	}
 }
 
