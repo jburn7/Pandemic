@@ -2,6 +2,7 @@
 #include "game.h"
 #include "CameraEvents.h"
 #include "ColorManager.h"
+#include "DiseaseEvents.h"
 #include "graphicsSystem.h"
 #include "KeyEvent.h"
 #include "AIEvents.h"
@@ -208,6 +209,8 @@ void Board::init()
 	gpEventSystem->addListener(EventType::AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(EventType::AI_PLAYER_MOVE_EVENT, this);
 	gpEventSystem->addListener(EventType::EPIDEMIC_EVENT, this);
+	gpEventSystem->addListener(EventType::DECREMENT_CUBES_EVENT, this);
+	gpEventSystem->addListener(EventType::INCREMENT_CUBES_EVENT, this);
 }
 
 void Board::activatePlayerCard(PlayerCard* card)
@@ -337,21 +340,7 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 
 bool Board::decrementDiseaseCubes(City* const city)
 {
-	bool didDecrement = city->decrementDiseaseCubes(1);
-	if(didDecrement)
-	{
-		// TODO: this logic is wrong, needs to check all cities of that disease type
-		const CityType cityType = city->getType();
-		if(mDiseaseCubesRemainingByType[cityType])
-		{
-
-		}
-		if(mDiseaseStages[cityType] == DiseaseStages::Cured)
-		{
-			mDiseaseStages[cityType] = DiseaseStages::Eradicated;
-		}
-	}
-	return didDecrement;
+	return city->decrementDiseaseCubes(1);
 }
 
 void Board::decrementDiseaseCubesMove(City *const city)
@@ -750,6 +739,22 @@ void Board::handleEvent(const Event &theEvent)
 				// This should be impossible
 				std::cerr << "Warning: infection draw deck is empty but received epidemic" << std::endl;
 			}
+		}
+	}
+	else if(theEvent.getType() == EventType::INCREMENT_CUBES_EVENT)
+	{
+		const IncrementCubesEvent& ev = static_cast<const IncrementCubesEvent&>(theEvent);
+		mDiseaseCubesRemainingByType[*ev.mpCityType] += ev.mIncrement;
+	}
+	else if(theEvent.getType() == EventType::DECREMENT_CUBES_EVENT)
+	{
+		const DecrementCubesEvent& ev = static_cast<const DecrementCubesEvent&>(theEvent);
+		const CityType &cityType = *ev.mpCityType;
+
+		mDiseaseCubesRemainingByType[cityType] -= ev.mDecrement;
+		if(mDiseaseCubesRemainingByType[cityType] == 0 && mDiseaseStages[cityType] == DiseaseStages::Cured)
+		{
+			mDiseaseStages[cityType] = DiseaseStages::Eradicated;
 		}
 	}
 }

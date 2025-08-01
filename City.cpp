@@ -1,6 +1,7 @@
 #include "City.h"
 #include "CameraEvents.h"
 #include "ColorManager.h"
+#include "DiseaseEvents.h"
 #include "game.h"
 #include "Player.h"
 #include "UnitEvents.h"
@@ -206,7 +207,7 @@ void City::incrementDiseaseCubes(const int increment, const CityType type)
 		{
 			v->incrementDiseaseCubes(1, mType);
 		}
-		gpEventSystem->fireEvent(new Event(EventType::OUTBREAK_EVENT));
+		gpEventSystem->fireEvent(new OutbreakEvent(&type));
 	}
 	else
 	{
@@ -246,7 +247,7 @@ CityType City::getType() const
 
 void City::setDiseaseCubes(const int cubes)
 {
-	setDiseaseCubes(cubes, mType);
+	setDiseaseCubes(cubes, mType);	
 }
 
 void City::setDiseaseCubes(const int cubes, const CityType type)
@@ -256,6 +257,17 @@ void City::setDiseaseCubes(const int cubes, const CityType type)
 	{
 		mDiseaseCubes[type] = mOutbreakThreshold;
 	}
+
+	const int difference = mDiseaseCubes[type] > cubes;
+	if(difference < 0)
+	{
+		gpEventSystem->fireEvent(new DecrementCubesEvent(&type, difference * -1));
+	}
+	else if(difference > 0)
+	{
+		gpEventSystem->fireEvent(new IncrementCubesEvent(&type, difference));
+	}
+
 	mCubeTexts[type]->setText(std::to_string(mDiseaseCubes[type]));
 	int numDifferentDiseaseCubes = 0;
 	for(auto& v: mDiseaseCubes)
