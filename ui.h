@@ -21,10 +21,15 @@ public:
 
 	void reset();
 
+	// getters
+	int getFontSize();
+
 	//setters
 	void setFont(Font *font);
 protected:
 	int mFps;
+	int mFontSize;
+	int mPlayerDetailsXOffset;
 	Font *mFont;
 	Color mUIColor;
 	const Sprite *mActivePawnSprite;

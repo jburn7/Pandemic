@@ -187,9 +187,12 @@
 		}
 	],
 	"deck": {
-		"cardHeight":  100,
+		"cardHeight": 100,
 		"nameFontSize": 16,
 		"namePadding": 6
+	},
+	"diseaseCube": {
+		"width": 30
 	},
 	"game": {
 		"title": "Pandemic",
@@ -276,6 +279,7 @@
 		"rColor": 255,
 		"gColor": 255,
 		"bColor": 255,
+		"defaultFontSize": 20,
 		"defaultUIColor": "white",
 		"darkUIColor": "black",
 		"selectedHandHighlight": {
@@ -286,7 +290,9 @@
 		"failedString": "",
 		"completeString": "",
 		"replayString": "",
-		"defaultUIPaddingImage": "plain_square.png"
+		"defaultUIPaddingImage": "plain_square.png",
+		"playerDetailsXOffset":  300,
+		"playerInfoOffset": 80
 	},
 	"window": {
 		"width": 1920,

@@ -163,7 +163,7 @@ void Board::init()
 
 		PlayerInfo *playerInfo = new PlayerInfo(
 			p,
-			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + 80) * i, 0),  // TODO: remove hardcoded values+
+			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + doc["ui"]["playerInfoOffset"].GetInt()) * i, 0),
 			playerInfoSpriteScale,
 			Outline(colorManager.color(doc["ui"]["selectedHandHighlight"]["color"].GetString()), Color(0, 0, 0), doc["ui"]["selectedHandHighlight"]["thickness"].GetInt()));
 		playerInfo->setIsGuiLayer(true);
@@ -205,6 +205,7 @@ void Board::init()
 
 	gpEventSystem->addListener(EventType::DECREMENT_MOVES_EVENT, this);
 	gpEventSystem->addListener(EventType::MOUSE_CLICK_EVENT, this);
+	gpEventSystem->addListener(EventType::MOUSE_MOVE_EVENT, this);
 	gpEventSystem->addListener(EventType::KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(EventType::AI_PLAYER_CUBE_EVENT, this);
 	gpEventSystem->addListener(EventType::AI_PLAYER_MOVE_EVENT, this);
@@ -340,6 +341,7 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 
 bool Board::decrementDiseaseCubes(City* const city)
 {
+	// TODO: if type is cured, then remove all cubes. This logic should all be inside of city and then decrementDiseaseCubes won't need to accept an int
 	return city->decrementDiseaseCubes(1);
 }
 
@@ -493,6 +495,23 @@ void Board::resetActiveCard()
 	mpActiveCard = nullptr;
 }
 
+void Board::setMouseHighlightedUnit(Unit* unit)
+{
+	const ColorManager& colorManager = *ColorManager::getInstance();
+
+	if(unit)
+	{
+		unit->setOutline(Outline(colorManager.orange, colorManager.orange, 4)); // TODO: configurable outline color, outline size
+	}
+
+	if(mpMouseHighlightedUnit != unit && mpMouseHighlightedUnit != nullptr)
+	{
+		mpMouseHighlightedUnit->clearOutline();
+	}
+
+	mpMouseHighlightedUnit = unit;
+}
+
 void Board::shuffleDrawPiles()
 {
 	mPlayerDrawDeck->shuffle();
@@ -537,6 +556,10 @@ void Board::handleGuiClick(Vector2D guiPos)
 			return;
 		}
 	}
+	
+	// TODO: allow for selection of 4-5 cards, which will cure a disease if pawn at city with research station
+	// TODO: build research station
+	// TODO: option list for actions (e.g. card selected, do you charter flight or build research station?)
 
 	// If no active card
 	if(mpActiveCard == nullptr)
@@ -611,6 +634,29 @@ void Board::handleBoardClick(Vector2D basePos)
 	}
 }
 
+void Board::handleMouseMove(Vector2D basePos, Vector2D guiPos)
+{
+	for(auto const& card : mpSelectedPawn->getHand())
+	{
+		if(card->contains(guiPos))
+		{
+			setMouseHighlightedUnit(card);
+			return;
+		}
+	}
+
+	for(auto const& [key, city] : mCities)
+	{
+		if(city->contains(basePos))
+		{
+			setMouseHighlightedUnit(city);
+			return;
+		}
+	}
+
+	setMouseHighlightedUnit(nullptr);
+}
+
 void Board::incrementSelectedPawn(int increment)
 {
 	int newIndex = mSelectedPawnIndex + increment;
@@ -628,9 +674,11 @@ void Board::incrementSelectedPawn(int increment)
 void Board::handleEvent(const Event &theEvent)
 {
 	const Gamestate gameState = Game::getInstance()->getGamestate();
-	if(theEvent.getType() == EventType::MOUSE_CLICK_EVENT)
+	switch(theEvent.getType())
 	{
-		const MouseClickEvent &ev = static_cast<const MouseClickEvent&>(theEvent);
+	case EventType::MOUSE_CLICK_EVENT:
+	{
+		const MouseClickEvent& ev = static_cast<const MouseClickEvent&>(theEvent);
 		// Two different coordinates for the two different views, will need to track both and then each unit here can decide which one to use based on whether it is a gui unit
 		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::BASE_VIEW);
 		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::GUI_VIEW);
@@ -662,7 +710,7 @@ void Board::handleEvent(const Event &theEvent)
 			{
 				//DEBUG
 				//if any city was clicked, increment its cubes
-				for(auto &c : mCities)
+				for(auto& c : mCities)
 				{
 					City* const city = c.second;
 					if(city->contains(basePos))
@@ -672,30 +720,42 @@ void Board::handleEvent(const Event &theEvent)
 					}
 				}
 			}
+			break;
 		}
 	}
-	else if(theEvent.getType() == EventType::DECREMENT_MOVES_EVENT)
+	case EventType::MOUSE_MOVE_EVENT:
+	{
+		const MouseMoveEvent& ev = static_cast<const MouseMoveEvent&>(theEvent);
+		Vector2D basePos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::BASE_VIEW);
+		Vector2D guiPos = Game::getInstance()->getGraphics().convertToWorldCoordinates(ev.getPosition(), GraphicsLayer::GUI_VIEW);
+		handleMouseMove(basePos, guiPos);
+		break;
+	}
+	case EventType::DECREMENT_MOVES_EVENT:
 	{
 		decrementRemainingMoves();
+		break;
 	}
-	else if(theEvent.getType() == EventType::AI_PLAYER_CUBE_EVENT)
+	case EventType::AI_PLAYER_CUBE_EVENT:
 	{
-		if(gameState == Gamestate::PLAYING) {
-			const AIPlayerCubeEvent &ev = static_cast<const AIPlayerCubeEvent&>(theEvent);
+		if(gameState == Gamestate::PLAYING)
+		{
+			const AIPlayerCubeEvent& ev = static_cast<const AIPlayerCubeEvent&>(theEvent);
 			if(ev.getCity()->getNumberOfDiseaseCubes() > 0)
 			{
 				decrementDiseaseCubesMove(ev.getCity());
 			}
 		}
+		break;
 	}
-	else if(theEvent.getType() == EventType::AI_PLAYER_MOVE_EVENT)
+	case EventType::AI_PLAYER_MOVE_EVENT:
 	{
 		if(gameState == Gamestate::PLAYING)
 		{
-			const AIPlayerMoveEvent &ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
+			const AIPlayerMoveEvent& ev = static_cast<const AIPlayerMoveEvent&>(theEvent);
 			bool isNeighbor = false;
-			City *const currentCity = mpActivePawn->getCurrentCity();
-			for(auto &c : currentCity->getNeighbors())
+			City* const currentCity = mpActivePawn->getCurrentCity();
+			for(auto& c : currentCity->getNeighbors())
 			{
 				if(c == ev.getCity())
 				{
@@ -708,8 +768,9 @@ void Board::handleEvent(const Event &theEvent)
 				gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
 			}
 		}
+		break;
 	}
-	else if(theEvent.getType() == EventType::EPIDEMIC_EVENT)
+	case EventType::EPIDEMIC_EVENT:
 	{
 		if(gameState == Gamestate::PLAYING)
 		{
@@ -740,22 +801,26 @@ void Board::handleEvent(const Event &theEvent)
 				std::cerr << "Warning: infection draw deck is empty but received epidemic" << std::endl;
 			}
 		}
+		break;
 	}
-	else if(theEvent.getType() == EventType::INCREMENT_CUBES_EVENT)
+	case EventType::INCREMENT_CUBES_EVENT:
 	{
 		const IncrementCubesEvent& ev = static_cast<const IncrementCubesEvent&>(theEvent);
 		mDiseaseCubesRemainingByType[*ev.mpCityType] += ev.mIncrement;
+		break;
 	}
-	else if(theEvent.getType() == EventType::DECREMENT_CUBES_EVENT)
+	case EventType::DECREMENT_CUBES_EVENT:
 	{
 		const DecrementCubesEvent& ev = static_cast<const DecrementCubesEvent&>(theEvent);
-		const CityType &cityType = *ev.mpCityType;
+		const CityType& cityType = *ev.mpCityType;
 
 		mDiseaseCubesRemainingByType[cityType] -= ev.mDecrement;
 		if(mDiseaseCubesRemainingByType[cityType] == 0 && mDiseaseStages[cityType] == DiseaseStages::Cured)
 		{
 			mDiseaseStages[cityType] = DiseaseStages::Eradicated;
 		}
+		break;
+	}
 	}
 }
 

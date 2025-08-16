@@ -2,6 +2,7 @@
 #include "unit.h"
 #include "UnitEvents.h"
 #include "EventSystem.h"
+#include "Vector2Di.h"
 
 void MovementManager::init()
 {
@@ -35,9 +36,8 @@ void MovementManager::update(double timeElapsed)
 		nextIt++;
 		const float millisecondsToTravel = it->second.milliseconds == 0 ? 1 : it->second.milliseconds;
 		const Vector2D desiredVelocityThisFrame = it->second.distance * ((float)timeElapsed / millisecondsToTravel);
-		// TODO: remove reference to sf:: members (either cast to int or make Vector2i wrapper)
-		sf::Vector2i pos = sf::Vector2i((int)it->first->getPosition().getX(), (int)it->first->getPosition().getY());
-		sf::Vector2i dest = sf::Vector2i((int)it->second.destination.getX(), (int)it->second.destination.getY());
+		Vector2Di pos = Vector2Di((int)it->first->getPosition().getX(), (int)it->first->getPosition().getY());
+		Vector2Di dest = Vector2Di((int)it->second.destination.getX(), (int)it->second.destination.getY());
 		if(pos == dest)
 		{
 			// TODO: fire unit arrived event

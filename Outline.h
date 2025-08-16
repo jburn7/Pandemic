@@ -7,4 +7,6 @@ struct Outline
 	Color borderColor;
 	Color fillColor;
 	int thickness;
+	// TODO: custom shape. At the very least, should support a circle
+	// Graphics System will need to read this custom shape and draw the correct shape/vertices
 };

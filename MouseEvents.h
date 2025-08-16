@@ -25,6 +25,20 @@ private:
 	Vector2D mPosition;
 };
 
+class MouseMoveEvent : public Event
+{
+public:
+	MouseMoveEvent(Vector2D pos) : Event(EventType::MOUSE_MOVE_EVENT)
+	{
+		mPosition = pos;
+	}
+	~MouseMoveEvent() {}
+
+	Vector2D getPosition() const { return mPosition; }
+private:
+	Vector2D mPosition;
+};
+
 enum class MouseWheel
 {
 	DOWN,

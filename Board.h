@@ -47,9 +47,11 @@ private:
 	void flyToCity(City* const city);
 	void handleGuiClick(Vector2D guiPos);
 	void handleBoardClick(Vector2D basePos);
+	void handleMouseMove(Vector2D basePos, Vector2D guiPos);
 	void incrementSelectedPawn(int increment = 1);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
 	void resetActiveCard();
+	void setMouseHighlightedUnit(Unit* unit);
 	void shuffleDrawPiles();
 
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
@@ -59,6 +61,7 @@ private:
 	int mSelectedPawnIndex; //lets mpSelectedPawn switch to next pawn in array
 
 	Unit *mBoardOutline; // just draws an outline between the board and card area, explicitly tracked so that we can check whether mouse clicks fall inside its bounds
+	Unit* mpMouseHighlightedUnit;
 
 	std::string mStartingCity;
 
@@ -73,6 +76,7 @@ private:
 
 	std::map<const CityType, DiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
 	std::map<const CityType, int> mDiseaseCubesRemainingByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
+	// TODO: store total amount of disease cubes by type and "pull" from it each time one is allocated. If would go negative, lose the game
 	std::vector<int> mInitNumCitiesCubes; // stores ratio of disease cubes to dole out for each infection card draw in setup phase
 
 	std::map<std::string, City*> mCities;

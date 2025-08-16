@@ -232,6 +232,11 @@ MovementManager& Game::getMovementManager()
 	return mMovementManager;
 }
 
+UI& Game::getUI()
+{
+	return *mUi;
+}
+
 UnitManager &Game::getUnitManager()
 {
 	return mUnitManager;

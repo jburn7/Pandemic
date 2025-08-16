@@ -5,7 +5,7 @@
 #include "quitEvent.h"
 #include "UnitEvents.h"
 #include "startEvent.h"
-#include "MouseClickEvent.h"
+#include "MouseEvents.h"
 
 class InputSystem
 {

@@ -53,6 +53,7 @@ public:
 	InputSystem &getInputSystem();
 	MovementManager &getMovementManager();
 	//LevelManager &getLevelManager(){ return mLevelManager; }
+	UI &getUI();
 	UnitManager &getUnitManager();
 protected:
 	Game();

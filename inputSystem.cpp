@@ -24,11 +24,14 @@ void InputSystem::checkForInput()
 	sf::Event e;
 	while(Game::getInstance()->getGraphics().mDisplay.pollEvent(e))
 	{
-		if(e.type == sf::Event::Closed)
+		switch(e.type)
+		{
+		case sf::Event::Closed:
 		{
 			gpEventSystem->fireEvent(new QuitEvent());
+			break;
 		}
-		else if(e.type == sf::Event::MouseButtonPressed)
+		case sf::Event::MouseButtonPressed:
 		{
 			MouseButton mb;
 			switch(e.mouseButton.button)
@@ -44,8 +47,15 @@ void InputSystem::checkForInput()
 			}
 			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::getInstance()->getGraphics().mDisplay);
 			gpEventSystem->fireEvent(new MouseClickEvent(Vector2D((float)mousePos.x, (float)mousePos.y), mb));
+			break;
 		}
-		else if(e.type == sf::Event::KeyPressed)
+		case sf::Event::MouseMoved:
+		{
+			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::getInstance()->getGraphics().mDisplay);
+			gpEventSystem->fireEvent(new MouseMoveEvent(Vector2D((float)mousePos.x, (float)mousePos.y)));
+			break;
+		}
+		case sf::Event::KeyPressed:
 		{
 			switch(e.key.code)
 			{
@@ -73,8 +83,9 @@ void InputSystem::checkForInput()
 			default:
 				break;
 			}
+			break;
 		}
-		else if(e.type == sf::Event::KeyReleased)
+		case sf::Event::KeyReleased:
 		{
 			switch(e.key.code)
 			{
@@ -99,8 +110,9 @@ void InputSystem::checkForInput()
 			default:
 				break;
 			}
+			break;
 		}
-		else if(e.type == sf::Event::MouseWheelMoved)
+		case sf::Event::MouseWheelMoved:
 		{
 			const Vector2D cursorLocation = Vector2D((float)e.mouseWheel.x, (float)e.mouseWheel.y);
 			switch(e.mouseWheel.delta)
@@ -112,8 +124,11 @@ void InputSystem::checkForInput()
 				gpEventSystem->fireEvent(new MouseWheelEvent(MouseWheel::DOWN, cursorLocation));
 				break;
 			}
+			break;
+		}
 		}
 	}
+
 	if(Game::getInstance()->getGamestate() == Gamestate::PLAYING)
 	{
 		/*

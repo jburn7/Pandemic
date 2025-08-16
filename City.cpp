@@ -22,7 +22,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	{
 		const Color typeColor = Color(typeColors[i]["r"].GetInt(), typeColors[i]["g"].GetInt(), typeColors[i]["b"].GetInt());
 		UIBox *cubeText = new UIBox(
-			mStartingCubeTextsPosition - Vector2D(30 * (float)i, 0), // TODO: remove hardcoded value
+			mStartingCubeTextsPosition - Vector2D(doc["diseaseCube"]["width"].GetInt() * (float)i, 0),
 			c["fontSize"].GetInt(),
 			typeColor,
 			"0",
@@ -132,7 +132,7 @@ void City::cleanup()
 void City::draw()
 {
 	//draw city sprite and city info in text
-	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale);
+	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale, mOutline);
 	for(auto& text : mCubeTexts)
 	{
 		if(!text.second->getIsHidden())

@@ -1,14 +1,14 @@
 #include "PlayerInfo.h"
 #include "game.h"
 
-const int DEF_UI_FONT_SIZE = 20; // TODO: remove hardcoded value
-
 PlayerInfo::PlayerInfo(Player* player, const Vector2D &position, const float playerSpriteScale, const Outline& selectedIndicator) :
 	Unit(position, (int)((player->getSprite()->getWidth()) * playerSpriteScale), (int)(player->getSprite()->getHeight() * playerSpriteScale)),
 	mpPlayer(player),
 	mPlayerSpriteScale(playerSpriteScale),
 	mSelectedIndicator(selectedIndicator)
 {
+	rapidjson::Document& doc = JSONData::getInstance()->getJSON();
+
 	mSelected = false;
 }
 
@@ -26,7 +26,7 @@ void PlayerInfo::draw()
 	}
 	graphics.draw(mPosition, *mpPlayer->mConstantFrame, 0, Vector2D(mPlayerSpriteScale, mPlayerSpriteScale));
 	Color color = Color();
-	graphics.writeText(mPosition + Vector2D(0, mpPlayer->mConstantFrame->getHeight() * mPlayerSpriteScale), DEF_UI_FONT_SIZE, Game::getInstance()->getDefaultFont(), color, "Role: TODO");
+	graphics.writeText(mPosition + Vector2D(0, mpPlayer->mConstantFrame->getHeight() * mPlayerSpriteScale), Game::getInstance()->getUI().getFontSize(), Game::getInstance()->getDefaultFont(), color, "Role: TODO");
 }
 
 void PlayerInfo::setSelected(const bool &selected)

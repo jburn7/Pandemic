@@ -16,11 +16,11 @@
     <Filter Include="Header Files\events">
       <UniqueIdentifier>{6229e533-1a2d-4951-9d9b-c3bb3ffb39cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\events">
+      <UniqueIdentifier>{280dab9e-f4da-48c4-80f0-d6772123c93b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -37,12 +37,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EventListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EventSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
@@ -75,9 +69,6 @@
     <ClInclude Include="unitManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="updateFPSEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -90,16 +81,7 @@
     <ClInclude Include="InfectionCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="startEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="quitEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="uiBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseClickEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DiseaseStages.h">
@@ -108,13 +90,7 @@
     <ClInclude Include="CityCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KeyEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AISystem.h">
@@ -141,22 +117,52 @@
     <ClInclude Include="InfectionCardDeck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PawnChangeEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CityType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MovementManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UnitEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AIEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="EventListener.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyEvent.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="PawnChangeEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="quitEvent.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="startEvent.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="updateFPSEvent.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="DiseaseEvents.h">
+      <Filter>Header Files\events</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
       <Filter>Header Files\events</Filter>
     </ClInclude>
   </ItemGroup>
@@ -194,18 +200,6 @@
     <ClCompile Include="level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="quitEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="updateFPSEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphicsBufferManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -216,9 +210,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="color.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EventSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Board.cpp">
@@ -271,6 +262,21 @@
     </ClCompile>
     <ClCompile Include="PlayerInfo.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="event.cpp">
+      <Filter>Source Files\events</Filter>
+    </ClCompile>
+    <ClCompile Include="EventListener.cpp">
+      <Filter>Source Files\events</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem.cpp">
+      <Filter>Source Files\events</Filter>
+    </ClCompile>
+    <ClCompile Include="quitEvent.cpp">
+      <Filter>Source Files\events</Filter>
+    </ClCompile>
+    <ClCompile Include="updateFPSEvent.cpp">
+      <Filter>Source Files\events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

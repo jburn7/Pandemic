@@ -148,7 +148,7 @@
     <ClInclude Include="jsonData.h" />
     <ClInclude Include="KeyEvent.h" />
     <ClInclude Include="level.h" />
-    <ClInclude Include="MouseClickEvent.h" />
+    <ClInclude Include="MouseEvents.h" />
     <ClInclude Include="CameraEvents.h" />
     <ClInclude Include="MovementManager.h" />
     <ClInclude Include="Outline.h" />
