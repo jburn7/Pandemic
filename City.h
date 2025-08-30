@@ -24,8 +24,8 @@ public:
 
 	void loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors);
 
-	bool decrementDiseaseCubes(const int decrement); //return true if cubes were above 0 beforehand
-	bool decrementDiseaseCubes(const int decrement, const CityType type);
+	bool decrementDiseaseCubes(); //return true if cubes were above 0 beforehand
+	bool decrementDiseaseCubes(const CityType type);
 	void clearAllCubes();
 	void incrementDiseaseCubes(const int increment);
 	void incrementDiseaseCubes(const int increment, const CityType type);

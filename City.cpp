@@ -171,18 +171,25 @@ void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::
 	}
 }
 
-bool City::decrementDiseaseCubes(const int decrement)
+bool City::decrementDiseaseCubes()
 {
-	return decrementDiseaseCubes(decrement, mType);
+	return decrementDiseaseCubes(mType);
 }
 
-bool City::decrementDiseaseCubes(const int decrement, const CityType type)
+bool City::decrementDiseaseCubes(const CityType type)
 {
 	if(mDiseaseCubes[type] == 0)
 	{
 		return false;
 	}
-	setDiseaseCubes(mDiseaseCubes[type] - decrement);
+
+	if(Game::getInstance()->getBoard().getDiseaseStage(type) == DiseaseStages::Cured)
+	{
+		setDiseaseCubes(mDiseaseCubes[type] - 1);
+		return true;
+	}
+
+	setDiseaseCubes(mDiseaseCubes[type] - 1);
 	return true;
 }
 

@@ -2,6 +2,7 @@
 #include "unit.h"
 #include "UnitEvents.h"
 #include "EventSystem.h"
+#include "UnitEvents.h"
 #include "Vector2Di.h"
 
 void MovementManager::init()
@@ -40,7 +41,7 @@ void MovementManager::update(double timeElapsed)
 		Vector2Di dest = Vector2Di((int)it->second.destination.getX(), (int)it->second.destination.getY());
 		if(pos == dest)
 		{
-			// TODO: fire unit arrived event
+			gpEventSystem->fireEvent(new UnitArriveEvent(it->first, it->second.destination));
 			mMovements.erase(it);
 			continue;
 		}

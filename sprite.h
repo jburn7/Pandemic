@@ -39,5 +39,7 @@ protected:
 	Color mColor;
 	int mAlpha;
 
+	// TODO: I think sprites will want to store an optional list of vertices for outlines, or maybe this belongs in Outline itself?
+
 	GraphicsBuffer *mTexture;
 };

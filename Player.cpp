@@ -2,6 +2,7 @@
 #include "City.h"
 #include "game.h"
 #include "PlayerCardDeck.h"
+#include "CameraEvents.h"
 
 Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s) : Unit(Vector2D(0, 0), s)
 {
@@ -86,6 +87,7 @@ void Player::moveCity(City* const newCity)
 		currentCity->removePlayer(this);
 	}
 	newCity->addPlayer(this);
+	gpEventSystem->fireEvent(new PlaceCameraEvent(newCity->getPosition()));
 	currentCity = newCity;
 }
 

@@ -19,6 +19,8 @@ Board::Board()
 	mInfectionDiscardDeck = nullptr;
 	mInfectionDrawDeck = nullptr;
 	mMaxMovesPerTurn = 0;
+	mMaxNumDiseaseCubes = 0;
+	mMouseOverHighlightWidth = 0;
 	mMovesRemaining = 0;
 	mNumEpidemicsHad = 0;
 	mNumPlayerCardsToDraw = 0;
@@ -28,6 +30,7 @@ Board::Board()
 	mSelectedPawnIndex = 0;
 	mpActiveCard = nullptr;
 	mpActivePawn = nullptr;
+	mpMouseHighlightedUnit = nullptr;
 	mpSelectedPawn = nullptr;
 }
 
@@ -43,6 +46,8 @@ void Board::init()
 	// Initialize variables
 	ColorManager& colorManager = *ColorManager::getInstance();
 	mActiveCardColor = colorManager.color(doc["cityCard"]["highlightColor"].GetString());
+	mMouseOverHighlightColor = colorManager.color(doc["ui"]["mouseOverHighlight"].GetString());
+	mMouseOverHighlightWidth = doc["ui"]["mouseOverHighlightWidth"].GetInt();
 
 	rapidjson::Value &epidemicInfectionCounts = doc["game"]["infectionsAfterEpidemic"];
 	for(auto &v : epidemicInfectionCounts.GetArray())
@@ -121,8 +126,9 @@ void Board::init()
 	for(int i = 0; i <= numTypes; i++)
 	{
 		mDiseaseStages.insert(std::pair(CityType(i), DiseaseStages::Spreading));
-		mDiseaseCubesRemainingByType.insert(std::pair(CityType(i), 0));
+		mDiseaseCubesPlacedByType.insert(std::pair(CityType(i), 0));
 	}
+	mMaxNumDiseaseCubes = doc["game"]["maxNumDiseaseCubes"].GetInt();
 
 	//now that all cities neighbors are loaded, find their neighbors and set the pointers
 	//neighbor corresponds to position in JSON array, and thus position in mCities
@@ -324,7 +330,6 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 		pc->setIsHidden(!showCard);
 		if(pc->getCardType() == PlayerCardType::EPIDEMIC)
 		{
-			// TODO: we might want to do stuff with the card later, but for now just fire an event and forget
 			gpEventSystem->fireEvent(new Event(EventType::EPIDEMIC_EVENT));
 			delete pc;
 		}
@@ -341,8 +346,8 @@ void Board::dealTopPlayerCard(Player *player, bool showCard)
 
 bool Board::decrementDiseaseCubes(City* const city)
 {
-	// TODO: if type is cured, then remove all cubes. This logic should all be inside of city and then decrementDiseaseCubes won't need to accept an int
-	return city->decrementDiseaseCubes(1);
+	// TODO: choose which disease cube type to remove
+	return city->decrementDiseaseCubes();
 }
 
 void Board::decrementDiseaseCubesMove(City *const city)
@@ -402,8 +407,8 @@ void Board::doleInitialDiseaseCubes()
 
 void Board::endGameAndRestart()
 {
-	//TODO: end game as loss
-	std::cout << "TODO: you lost\n";
+	// TODO: hold screen on a lose screen/replay button
+	std::cout << "you lost\n";
 
 	// move all discarded cards to their draw piles
 	PlayerCard* pc = mPlayerDiscardDeck->dealTopCard();
@@ -501,7 +506,7 @@ void Board::setMouseHighlightedUnit(Unit* unit)
 
 	if(unit)
 	{
-		unit->setOutline(Outline(colorManager.orange, colorManager.orange, 4)); // TODO: configurable outline color, outline size
+		unit->setOutline(Outline(mMouseOverHighlightColor, mMouseOverHighlightColor, mMouseOverHighlightWidth));
 	}
 
 	if(mpMouseHighlightedUnit != unit && mpMouseHighlightedUnit != nullptr)
@@ -584,7 +589,6 @@ void Board::handleGuiClick(Vector2D guiPos)
 
 void Board::handleBoardClick(Vector2D basePos)
 {
-	// TODO: move window when pawn moves?
 	// City click
 	//if no active card
 	if(mpActiveCard == nullptr)
@@ -806,7 +810,10 @@ void Board::handleEvent(const Event &theEvent)
 	case EventType::INCREMENT_CUBES_EVENT:
 	{
 		const IncrementCubesEvent& ev = static_cast<const IncrementCubesEvent&>(theEvent);
-		mDiseaseCubesRemainingByType[*ev.mpCityType] += ev.mIncrement;
+		if(mDiseaseCubesPlacedByType[*ev.mpCityType] += ev.mIncrement > mMaxNumDiseaseCubes)
+		{
+			endGameAndRestart();
+		}
 		break;
 	}
 	case EventType::DECREMENT_CUBES_EVENT:
@@ -814,8 +821,8 @@ void Board::handleEvent(const Event &theEvent)
 		const DecrementCubesEvent& ev = static_cast<const DecrementCubesEvent&>(theEvent);
 		const CityType& cityType = *ev.mpCityType;
 
-		mDiseaseCubesRemainingByType[cityType] -= ev.mDecrement;
-		if(mDiseaseCubesRemainingByType[cityType] == 0 && mDiseaseStages[cityType] == DiseaseStages::Cured)
+		mDiseaseCubesPlacedByType[cityType] -= ev.mDecrement;
+		if(mDiseaseCubesPlacedByType[cityType] == 0 && mDiseaseStages[cityType] == DiseaseStages::Cured)
 		{
 			mDiseaseStages[cityType] = DiseaseStages::Eradicated;
 		}
@@ -832,4 +839,9 @@ const int Board::getNumEpidemicsHad()
 const int Board::getMovesRemaining()
 {
 	return mMovesRemaining;
+}
+
+const DiseaseStages Board::getDiseaseStage(const CityType cityType)
+{
+	return mDiseaseStages[cityType];
 }

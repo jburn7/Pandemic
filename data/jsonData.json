@@ -238,6 +238,7 @@
 			4,
 			4
 		],
+		"maxNumDiseaseCubes": 10,
 		"camera": {
 			"boundsWidth": 1200,
 			"boundsHeight": 700,
@@ -286,6 +287,8 @@
 			"color": "dark-orange",
 			"thickness": 5
 		},
+		"mouseOverHighlight": "orange",
+		"mouseOverHighlightWidth":  4,
 		"startString": "",
 		"failedString": "",
 		"completeString": "",

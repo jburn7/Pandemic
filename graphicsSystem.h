@@ -67,6 +67,6 @@ protected:
 	sf::FloatRect mBoardViewport;
 
 private:
-	void drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline);
+	void drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const double theta);
 	void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);
 };

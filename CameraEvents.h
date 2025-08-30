@@ -2,6 +2,19 @@
 #include "event.h"
 #include "Vector2D.h"
 
+class PlaceCameraEvent : public Event
+{
+public:
+	PlaceCameraEvent(const Vector2D position) : Event(EventType::PLACE_CAMERA_EVENT), mPosition(position)
+	{
+	}
+
+	const Vector2D& getPosition() const { return mPosition; }
+
+private:
+	const Vector2D mPosition;
+};
+
 class PanCameraEvent : public Event
 {
 public:

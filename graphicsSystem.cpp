@@ -13,6 +13,7 @@ GraphicsSystem::GraphicsSystem()
 	mHeight = 0;
 	mCameraZoom = 1;
 
+	gpEventSystem->addListener(EventType::PLACE_CAMERA_EVENT, this);
 	gpEventSystem->addListener(EventType::PAN_CAMERA_EVENT, this);
 	gpEventSystem->addListener(EventType::ZOOM_CAMERA_EVENT, this);
 }
@@ -60,8 +61,10 @@ Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsL
 	return Vector2D(worldPos.x, worldPos.y);
 }
 
-// TODO: rotation
-void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline)
+// TODO: somehow read a list of vertices and draw outline through those? Does sfml even support vertex outlines?
+// Yes, ConvexShape supports an outline, so Sprite will need to support a ConvexShape
+// But there are also some non-sprite usages of Outline...
+void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const double theta)
 {
 	sf::RectangleShape boardOutline;
 	boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
@@ -69,6 +72,10 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	boardOutline.setOutlineColor(outline.borderColor.mColor);
 	boardOutline.setOutlineThickness((float)outline.thickness);
 	boardOutline.setFillColor(outline.fillColor.mColor);
+
+	double degrees = theta * 180.0 / 3.1415926;
+	boardOutline.rotate(degrees);
+
 	mDisplay.draw(boardOutline);
 }
 
@@ -80,7 +87,6 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, doubl
 	{
 		temp = sf::Sprite(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
 	}
-	//sf::Sprite temp(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
 	double degrees = theta * 180.0 / 3.1415926;
 	const Vector2D offset(targetLoc.getX(), targetLoc.getY());
 	setPosition(temp, offset);
@@ -99,28 +105,37 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, doubl
 	temp.setColor(sf::Color(sprite.getColor().mColor));
 	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
 
-	drawOutlineForBounds(temp.getGlobalBounds(), outline);
+	drawOutlineForBounds(temp.getGlobalBounds(), outline, theta);
 	mDisplay.draw(temp);
 }
 
-// TODO: rotation
 void GraphicsSystem::drawOutline(const Vector2D& targetLoc, const Vector2D& size, const Outline& outline, double theta)
 {
 	sf::FloatRect bounds(sf::Vector2f(targetLoc.getX(), targetLoc.getY()), sf::Vector2f(size.getX(), size.getY()));
-	drawOutlineForBounds(bounds, outline);
+	drawOutlineForBounds(bounds, outline, theta);
 }
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
 {
-	if(theEvent.getType() == EventType::PAN_CAMERA_EVENT)
+	switch(theEvent.getType())
+	{
+	case EventType::PLACE_CAMERA_EVENT:
+	{
+		mCameraPosition = static_cast<const PlaceCameraEvent&>(theEvent).getPosition();
+		break;
+	}
+	case EventType::PAN_CAMERA_EVENT:
 	{
 		mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
+		break;
 	}
-	else if(theEvent.getType() == EventType::ZOOM_CAMERA_EVENT)
+	case EventType::ZOOM_CAMERA_EVENT:
 	{
-		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
+		const ZoomCameraEvent& ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		mCameraZoom += ev.getDelta();
 		mZoomPosition = sf::Vector2i((int)ev.getZoomLocation().getX(), (int)ev.getZoomLocation().getY());
+		break;
+	}
 	}
 }
 
@@ -181,7 +196,7 @@ void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Fo
 		temp.move(0, (float)temp.getGlobalBounds().height);
 	}
 
-	drawOutlineForBounds(temp.getGlobalBounds(), background);
+	drawOutlineForBounds(temp.getGlobalBounds(), background, 0);
 	mDisplay.draw(temp);
 }
 

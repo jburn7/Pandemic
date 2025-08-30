@@ -24,6 +24,20 @@ public:
 	UnitRemoveEvent(Unit* const unit) : UnitEvent(EventType::UNIT_REMOVE_EVENT, unit) {};
 };
 
+class UnitArriveEvent : public UnitEvent
+{
+public:
+	UnitArriveEvent(Unit* const unit, const Vector2D destination) :
+		UnitEvent(EventType::UNIT_ARRIVE_EVENT, unit),
+		mDestination(destination)
+	{};
+
+	const Vector2D &getDestination() const { return mDestination; }
+
+private:
+	const Vector2D mDestination;
+};
+
 class UnitMoveEvent : public UnitEvent
 {
 public:
@@ -31,10 +45,11 @@ public:
 		UnitEvent(EventType::UNIT_MOVE_EVENT, unit),
 		mDestination(destination),
 		mMilliseconds(milliseconds)
-	{};
+	{
+	};
 
-	const Vector2D &getDestination() const { return mDestination; }
-	const float &getMilliseconds() const { return mMilliseconds; }
+	const Vector2D& getDestination() const { return mDestination; }
+	const float& getMilliseconds() const { return mMilliseconds; }
 
 private:
 	const Vector2D mDestination;
