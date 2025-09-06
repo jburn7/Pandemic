@@ -2,7 +2,7 @@
 #include <vector>
 #include "unit.h"
 #include "EventListener.h"
-#include "uiBox.h"
+#include "textBox.h"
 #include "CityType.h"
 
 class Player;
@@ -54,9 +54,9 @@ private:
 	CityType mType; // typically there are 4 city types corresponding with 4 disease types
 	std::string mName;
 
-	std::map<const CityType, UIBox*> mCubeTexts;
+	std::map<const CityType, TextBox*> mCubeTexts;
 	Vector2D mStartingCubeTextsPosition;
-	UIBox *mNameText;
+	TextBox *mNameText;
 
 	std::vector<City*> mNeighbors;
 	std::vector<Player*> mPlayersHere;

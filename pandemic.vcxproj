@@ -160,7 +160,7 @@
     <ClInclude Include="sprite.h" />
     <ClInclude Include="startEvent.h" />
     <ClInclude Include="ui.h" />
-    <ClInclude Include="uiBox.h" />
+    <ClInclude Include="textBox.h" />
     <ClInclude Include="unit.h" />
     <ClInclude Include="UnitEvents.h" />
     <ClInclude Include="unitManager.h" />
@@ -200,7 +200,7 @@
     <ClCompile Include="quitEvent.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="ui.cpp" />
-    <ClCompile Include="uiBox.cpp" />
+    <ClCompile Include="textBox.cpp" />
     <ClCompile Include="unit.cpp" />
     <ClCompile Include="unitManager.cpp" />
     <ClCompile Include="updateFPSEvent.cpp" />

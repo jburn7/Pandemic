@@ -7,13 +7,13 @@
 template<typename T>
 Deck<T>::Deck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName) : mPosition(pos), mDeckName(deckName)
 {
-	mTextBox = createDeckNameText(doc);
+	mpTextBox = createDeckNameText(doc);
 }
 
 template<typename T>
 Deck<T>::~Deck()
 {
-	mTextBox = NULL;
+	mpTextBox = NULL;
 }
 
 template<typename T>
@@ -93,13 +93,13 @@ Vector2D Deck<T>::getPosition() const
 }
 
 template<typename T>
-UIBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
+TextBox* Deck<T>::createDeckNameText(const rapidjson::Document &doc)
 {
 	ColorManager& colorManager = *ColorManager::getInstance();
 	int deckNameFontSize = doc["deck"]["nameFontSize"].GetInt();
 	int deckNamePadding = doc["deck"]["namePadding"].GetInt();
 	int cardSize = doc["deck"]["cardHeight"].GetInt();
-	UIBox *deckNameText = new UIBox(
+	TextBox *deckNameText = new TextBox(
 		Vector2D(mPosition.getX(), mPosition.getY() + deckNamePadding + cardSize),
 		deckNameFontSize,
 		colorManager.color(doc["ui"]["darkUIColor"].GetString()),

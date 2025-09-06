@@ -74,7 +74,7 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	boardOutline.setFillColor(outline.fillColor.mColor);
 
 	double degrees = theta * 180.0 / 3.1415926;
-	boardOutline.rotate(degrees);
+	boardOutline.rotate((float)degrees);
 
 	mDisplay.draw(boardOutline);
 }

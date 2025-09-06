@@ -21,7 +21,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	for(int i = (int)CityType::BLUE; i < (int)CityType::LAST; i++)
 	{
 		const Color typeColor = Color(typeColors[i]["r"].GetInt(), typeColors[i]["g"].GetInt(), typeColors[i]["b"].GetInt());
-		UIBox *cubeText = new UIBox(
+		TextBox *cubeText = new TextBox(
 			mStartingCubeTextsPosition - Vector2D(doc["diseaseCube"]["width"].GetInt() * (float)i, 0),
 			c["fontSize"].GetInt(),
 			typeColor,
@@ -33,7 +33,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 		setDiseaseCubes(c["initialCubes"].GetInt(), CityType(i));
 	}
 
-	mNameText = new UIBox(
+	mNameText = new TextBox(
 		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
 		c["fontSize"].GetInt(), 
 		color,

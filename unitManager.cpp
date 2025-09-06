@@ -71,17 +71,11 @@ void UnitManager::draw(const GraphicsLayer layer)
 	}
 }
 
-void UnitManager::resetLevel()
-{
-}
-
 void UnitManager::update(double timeElapsed)
 {
-	mLevelEnded = false;
 	for(unsigned int i = 0; i < mUnits.size(); i++)
 	{
-		if(!mLevelEnded)
-			mUnits[i]->update(timeElapsed);
+		mUnits[i]->update(timeElapsed);
 	}
 }
 
@@ -107,11 +101,6 @@ void UnitManager::handleEvent(const Event &theEvent)
 			}
 		}
 	}
-}
-
-void UnitManager::setLevelEnded(bool torf)
-{
-	mLevelEnded = torf;
 }
 
 void UnitManager::cleanup()

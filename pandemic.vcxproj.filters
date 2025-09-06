@@ -81,7 +81,7 @@
     <ClInclude Include="InfectionCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uiBox.h">
+    <ClInclude Include="textBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DiseaseStages.h">
@@ -218,7 +218,7 @@
     <ClCompile Include="City.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="uiBox.cpp">
+    <ClCompile Include="textBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">

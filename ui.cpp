@@ -54,7 +54,6 @@ void UI::draw()
 	int height = graphics.getHeight();
 	const Vector2D screenTopLeft = Vector2D(0, 0);
 
-	// TODO: Convert these to UIBoxes and draw them that way instead
 	graphics.writeText(screenTopLeft + Vector2D(0, 0), mFontSize, *mFont, mUIColor, "FPS: " + std::to_string(mFps));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)mFontSize * 1), mFontSize, *mFont, mUIColor, "Moves remaining: " + std::to_string(Game::getInstance()->getBoard().getMovesRemaining()));
 	graphics.writeText(screenTopLeft + Vector2D(0, (float)mFontSize * 2), mFontSize, *mFont, mUIColor, "Epidemics had: " + std::to_string(Game::getInstance()->getBoard().getNumEpidemicsHad()));

@@ -7,26 +7,30 @@ PlayerInfo::PlayerInfo(Player* player, const Vector2D &position, const float pla
 	mPlayerSpriteScale(playerSpriteScale),
 	mSelectedIndicator(selectedIndicator)
 {
-	rapidjson::Document& doc = JSONData::getInstance()->getJSON();
-
 	mSelected = false;
+
+    mpTextBox = new TextBox(position + Vector2D(0, mpPlayer->mConstantFrame->getHeight() * mPlayerSpriteScale), Game::getInstance()->getUI().getFontSize(), Color(), "Role: TODO");
 }
 
 PlayerInfo::~PlayerInfo()
 {
+	if(mpTextBox)
+	{
+		delete mpTextBox;
+		mpTextBox = nullptr;
+	}
 }
 
 void PlayerInfo::draw()
 {
 	GraphicsSystem& graphics = Game::getInstance()->getGraphics();
-	// TODO: get width and height of text and take max dimensions of that and sprite
 	if(mSelected)
 	{
-		graphics.drawOutline(mPosition + Vector2D((float)mSelectedIndicator.thickness, (float)mSelectedIndicator.thickness), Vector2D((float)mpPlayer->mConstantFrame->getWidth(), (float)mpPlayer->mConstantFrame->getHeight()), mSelectedIndicator);
+		const Vector2D outlineBounds = Vector2D((float)std::max(mpPlayer->mConstantFrame->getWidth(), mpTextBox->getWidth()), (float)std::max(mpPlayer->mConstantFrame->getHeight(), mpTextBox->getHeight()));
+		graphics.drawOutline(mPosition + Vector2D((float)mSelectedIndicator.thickness, (float)mSelectedIndicator.thickness), outlineBounds, mSelectedIndicator);
 	}
 	graphics.draw(mPosition, *mpPlayer->mConstantFrame, 0, Vector2D(mPlayerSpriteScale, mPlayerSpriteScale));
-	Color color = Color();
-	graphics.writeText(mPosition + Vector2D(0, mpPlayer->mConstantFrame->getHeight() * mPlayerSpriteScale), Game::getInstance()->getUI().getFontSize(), Game::getInstance()->getDefaultFont(), color, "Role: TODO");
+	mpTextBox->draw();
 }
 
 void PlayerInfo::setSelected(const bool &selected)

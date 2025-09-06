@@ -2,7 +2,7 @@
 #include "Unit.h"
 
 class City;
-class UIBox;
+class TextBox;
 
 class CityCard : public Unit
 {
@@ -24,5 +24,5 @@ public:
 protected:
 	City *mpCity; //pointer to city that this card corresponds to
 	Sprite *mpColorIndicator;
-	UIBox *mText;
+	TextBox *mText;
 };

@@ -4,12 +4,12 @@
 #include "font.h"
 #include "unit.h"
 
-class UIBox : public Unit
+class TextBox : public Unit
 {
 public:
-	UIBox(const Vector2D pos, const int fontSize, const Color &color, const std::string &text, Font* font = nullptr);
-	UIBox(const UIBox &other);
-	~UIBox();
+	TextBox(const Vector2D pos, const int fontSize, const Color &color, const std::string &text, Font* font = nullptr);
+	TextBox(const TextBox &other);
+	~TextBox();
 
 	bool contains(Vector2D pos);
 
@@ -21,9 +21,13 @@ public:
 	//setters
 	void setText(const std::string &text);
 private:
+	void adjustBoundsForText();
+
 	Font *mFont;
 	float mWidth, mHeight;
 	int mFontSize;
 	std::string mText;
 	Color mColor;
+	// Don't love breaking the library abstraction, but we need a way to readily get the width and height of text, as it is not set directly
+	sf::Text mGraphicsText;
 };

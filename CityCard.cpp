@@ -32,7 +32,7 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 		// Man this is bad...
 		nameText = "Epidemic";
 	}
-	mText = new UIBox(
+	mText = new TextBox(
 		Vector2D(0, 0), 
 		(int)(s->getHeight() * 0.15f), 
 		textColor, 

@@ -25,5 +25,6 @@ private:
 
 	const Outline mSelectedIndicator;
 	Player *const mpPlayer;
+	TextBox* mpTextBox;
 	const float mPlayerSpriteScale;
 };

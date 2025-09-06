@@ -1,8 +1,8 @@
-#include "uiBox.h"
+#include "textBox.h"
 #include "game.h"
 #include "Glyph.h"
 
-UIBox::UIBox(const Vector2D pos, const int fontSize, const Color& color, const std::string &text, Font *font)
+TextBox::TextBox(const Vector2D pos, const int fontSize, const Color& color, const std::string &text, Font *font)
 {
 	mPosition = pos;
 	mFontSize = fontSize;
@@ -19,11 +19,11 @@ UIBox::UIBox(const Vector2D pos, const int fontSize, const Color& color, const s
 
 	setIsGuiLayer(true);
 
-	mWidth = 0;
-	mHeight = 0;
+	mGraphicsText = sf::Text(text, font->mFont, fontSize);
+	adjustBoundsForText();
 }
 
-UIBox::UIBox(const UIBox &other)
+TextBox::TextBox(const TextBox &other)
 {
 	mPosition = other.mPosition;
 	mWidth = other.mWidth;
@@ -34,22 +34,22 @@ UIBox::UIBox(const UIBox &other)
 	mScale = other.mScale;
 }
 
-UIBox::~UIBox()
+TextBox::~TextBox()
 {
 	mFont = nullptr;
 }
 
-bool UIBox::contains(Vector2D pos)
+bool TextBox::contains(Vector2D pos)
 {
 	return pos.getX() > mPosition.getX() && pos.getX() < mPosition.getX() + mWidth && pos.getY() > mPosition.getY() && pos.getY() < mPosition.getY() + mHeight;
 }
 
-void UIBox::draw()
+void TextBox::draw()
 {
 	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D((float)mOutline.thickness, (float)mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline, mScale);
 }
 
-void UIBox::resizeToFitWidth(const float boundsWidth)
+void TextBox::resizeToFitWidth(const float boundsWidth)
 {
 	std::vector<int> whitespaceIndeces;
 	std::vector<float> wordWidths;
@@ -95,7 +95,16 @@ void UIBox::resizeToFitWidth(const float boundsWidth)
 	}
 }
 
-void UIBox::setText(const std::string & text)
+void TextBox::setText(const std::string &text)
 {
 	mText = text;
+	mGraphicsText.setString(text);
+	adjustBoundsForText();
+}
+
+void TextBox::adjustBoundsForText()
+{
+	const sf::FloatRect bounds = mGraphicsText.getGlobalBounds();
+	mWidth = bounds.width;
+	mHeight = bounds.height;
 }

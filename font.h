@@ -8,6 +8,7 @@ class Glyph;
 
 class Font : public Trackable {
 	friend class GraphicsSystem;
+	friend class TextBox;
 public:
 	Font();
 

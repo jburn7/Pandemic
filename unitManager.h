@@ -31,21 +31,14 @@ public:
 	//game flow functions
 	void draw(const GraphicsLayer layer);
 
-	void resetLevel();
-
 	void update(double timeElapsed);
 
 	//event functions
 	virtual void handleEvent(const Event& theEvent);
 
-	//setters
-	void setLevelEnded(bool torf);
-
 	//cleanup functions
 	void cleanup();
 protected:
-	bool mLevelEnded;
-
 	std::vector<Unit*> mUnits;
 	std::map<std::string, Animation*> mUnitAnimations;
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector2D.h"
-#include "uiBox.h"
+#include "textBox.h"
 #include "document.h"
 #include "Trackable.h"
 #include "PlayerCard.h"
@@ -29,8 +29,8 @@ private:
 	friend PlayerCardDeck;
 	friend InfectionCardDeck;
 	Deck(const rapidjson::Document &doc, const Vector2D pos, const std::string &deckName);
-	UIBox* createDeckNameText(const rapidjson::Document &doc);
+	TextBox* createDeckNameText(const rapidjson::Document &doc);
 	const std::string mDeckName;
-	UIBox *mTextBox;
+	TextBox *mpTextBox;
 	std::vector<T*> mCards;
 };

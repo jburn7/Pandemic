@@ -180,7 +180,7 @@ void Board::init()
 
 	mpActiveCard = nullptr;
 	changeActivePawn(0);
-	// Can't use changeSelecedPawn until player's hand is initially set
+	// Can't use changeSelectedPawn until player's hand is initially set
 	mSelectedPawnIndex = 0;
 	mpSelectedPawn = mpActivePawn;
 
@@ -565,6 +565,17 @@ void Board::handleGuiClick(Vector2D guiPos)
 	// TODO: allow for selection of 4-5 cards, which will cure a disease if pawn at city with research station
 	// TODO: build research station
 	// TODO: option list for actions (e.g. card selected, do you charter flight or build research station?)
+	/**
+	* ActionMenu, a Unit on the GUI layer
+	* Instantiate with list of option strings mapped to an option enum, maybe even just an int enum
+	* ActionMenu doesn't care what the option enum is, it just listens for clicks and fires a MenuAction selected event with that enum
+	* Since only one ActionMenu should exist at a time, we shouldn't have to worry about duplicate options across different menus
+	* Board listens for this event, and upon getting one, checks the active menu to map the selection to the right function
+	* e.g. card clicked, city clicked, card+city action menu appears over city with options of CHARTER_FLIGHT = 0 or BUILD_RESEARCH_STATION = 1,
+	* mouse click, action menu checks bounds to determine CHARTER_FLIGHT was clicked, (Board ignores clicks since it knows it has a menu open),
+	* fire MenuActionSelected(0) event, Board gets event and checks card+city menu options to see 0 is a CHARTER_FLIGHT, Board enters charter flight state
+	* Maybe even just keep Board as the sole mouse click listener and if it has a menu, then just delegate that click to the menu manually
+	*/
 
 	// If no active card
 	if(mpActiveCard == nullptr)
