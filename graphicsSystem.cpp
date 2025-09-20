@@ -179,7 +179,7 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 	}
 }
 
-void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, Color &color, const std::string &message, const Outline &background, const Vector2D &scale){
+void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Font &font, const Color &color, const std::string &message, const Outline &background, const Vector2D &scale){
 	sf::Text temp(message, font.mFont);
 	temp.setOrigin(sf::Vector2f(temp.getLocalBounds().left, temp.getLocalBounds().top));
 	setPosition(temp, targetLoc);

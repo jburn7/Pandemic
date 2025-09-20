@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActionMenu.h" />
     <ClInclude Include="DiseaseEvents.h" />
     <ClInclude Include="PawnChangeEvents.h" />
     <ClInclude Include="AIEvents.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="updateFPSEvent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActionMenu.cpp" />
     <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="Board.cpp" />

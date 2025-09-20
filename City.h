@@ -18,9 +18,10 @@ public:
 	virtual void handleEvent(const Event &theEvent);
 
 	void addPlayer(Player *player); //place player pawn at this city, handle any effects on movement
+	void addResearchStation();
 	void removePlayer(Player *player);
 
-	virtual void draw(); //overriding because I need to make sure edges are drawn under city sprites
+	virtual void draw() const override; //overriding because I need to make sure edges are drawn under city sprites
 
 	void loadNeighbors(const std::map<std::string, City*> &cities, const std::vector<std::string> &neighbors);
 
@@ -51,6 +52,7 @@ private:
 	std::map<const CityType, int> mDiseaseCubes;
 	int mOutbreakThreshold; //when num cubes hits this, outbreak occurs
 	bool mOutbroke; //set to true upon outbreak, clear upon receiving outbreak event (meaning that outbreak has resolved). lets cities avoid chain outbreaks
+	bool mHasResearchStation;
 	CityType mType; // typically there are 4 city types corresponding with 4 disease types
 	std::string mName;
 

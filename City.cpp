@@ -44,6 +44,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mNameText->setText(mName);
 	mOutbreakThreshold = c["outbreakThreshold"].GetInt();	
 	mOutbroke = false;
+	mHasResearchStation = false;
 	mType = CityType(type);
 
 	mRadius = c["radius"].GetInt();
@@ -104,6 +105,11 @@ void City::addPlayer(Player *player)
 	//handle movement effects (eg medic clearing cubes on touch after disease has been cured)
 }
 
+void City::addResearchStation()
+{
+	mHasResearchStation = true;
+}
+
 void City::removePlayer(Player *player)
 {
 	mPlayersHere.erase(std::remove(mPlayersHere.begin(), mPlayersHere.end(), player));
@@ -129,7 +135,7 @@ void City::cleanup()
 	mCubeTexts.clear();
 }
 
-void City::draw()
+void City::draw() const
 {
 	//draw city sprite and city info in text
 	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale, mOutline);

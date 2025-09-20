@@ -26,6 +26,7 @@ TextBox::TextBox(const Vector2D pos, const int fontSize, const Color& color, con
 TextBox::TextBox(const TextBox &other)
 {
 	mPosition = other.mPosition;
+	mGraphicsText = other.mGraphicsText;
 	mWidth = other.mWidth;
 	mHeight = other.mHeight;
 	mFontSize = other.mFontSize;
@@ -39,12 +40,12 @@ TextBox::~TextBox()
 	mFont = nullptr;
 }
 
-bool TextBox::contains(Vector2D pos)
+bool TextBox::contains(Vector2D pos) const
 {
 	return pos.getX() > mPosition.getX() && pos.getX() < mPosition.getX() + mWidth && pos.getY() > mPosition.getY() && pos.getY() < mPosition.getY() + mHeight;
 }
 
-void TextBox::draw()
+void TextBox::draw() const
 {
 	Game::getInstance()->getGraphics().writeText(mPosition + Vector2D((float)mOutline.thickness, (float)mOutline.thickness), mFontSize, *mFont, mColor, mText, mOutline, mScale);
 }

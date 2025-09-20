@@ -165,6 +165,9 @@
     <ClInclude Include="event.h">
       <Filter>Header Files\events</Filter>
     </ClInclude>
+    <ClInclude Include="ActionMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="updateFPSEvent.cpp">
       <Filter>Source Files\events</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionMenu.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -59,7 +59,7 @@ CityCard::~CityCard()
 	}
 }
 
-void CityCard::draw()
+void CityCard::draw() const
 {
 	Unit::draw();
 	mText->draw();

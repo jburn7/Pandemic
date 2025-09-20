@@ -10,7 +10,7 @@ public:
 	CityCard(Vector2D pos, Sprite *s, City *city);
 	virtual ~CityCard();
 
-	virtual void draw();
+	virtual void draw() const override;
 
 	virtual std::string debugDescription();
 

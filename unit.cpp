@@ -55,7 +55,7 @@ void Unit::cleanup()
 	}
 }
 
-void Unit::draw()
+void Unit::draw() const
 {
 	if(mAnimation)
 	{
@@ -80,7 +80,7 @@ void Unit::move(const Vector2D &delta)
 	setPosition(mPosition + delta);
 }
 
-bool Unit::contains(Vector2D &loc)
+bool Unit::contains(Vector2D &loc) const
 {
 	return mPosition.getX() < loc.getX() && mPosition.getX() + getWidth() > loc.getX() && mPosition.getY() < loc.getY() && mPosition.getY() + getHeight() > loc.getY();
 }
@@ -181,7 +181,7 @@ bool Unit::getIsGuiLayer()
 	return mIsGuiLayer;
 }
 
-int Unit::getWidth()
+int Unit::getWidth() const
 {
 	if(mAnimation)
 	{
@@ -195,7 +195,7 @@ int Unit::getWidth()
 	return (int)mScale.getX();
 }
 
-int Unit::getHeight()
+int Unit::getHeight() const
 {
 	if(mAnimation)
 	{

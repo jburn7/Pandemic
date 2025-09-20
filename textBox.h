@@ -11,10 +11,10 @@ public:
 	TextBox(const TextBox &other);
 	~TextBox();
 
-	bool contains(Vector2D pos);
+	bool contains(Vector2D pos) const;
 
 	// Can either be manually drawn if another unit owns it or draw itself if it is added to UnitManager
-	virtual void draw();
+	virtual void draw() const override;
 
 	void resizeToFitWidth(const float boundsWidth);
 

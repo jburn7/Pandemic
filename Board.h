@@ -1,7 +1,9 @@
 #pragma once
+#include "ActionMenu.h"
 #include "City.h"
 #include "InfectionCard.h"
 #include "Player.h"
+#include "PlayerInfo.h"
 #include "jsonData.h"
 #include "EventListener.h"
 #include "event.h"
@@ -33,9 +35,11 @@ public:
 
 private:
 	void activatePlayerCard(PlayerCard* card);
+	void addResearchStation(City* city);
 	void cleanup();
 	void changeActivePawn(int newIndex);
 	void changeSelectedPawn(int newIndex);
+	void createActionMenu(const Vector2D &position);
 	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player, bool showCard = true);
 	bool decrementDiseaseCubes(City *const city);
@@ -48,20 +52,27 @@ private:
 	void endGameAndRestart();
 	void endTurn();
 	void flyToCity(City* const city);
+	PlayerCard* getActiveCard(); // Returns null if multiple cards selected
 	void handleGuiClick(Vector2D guiPos);
 	void handleBoardClick(Vector2D basePos);
 	void handleMouseMove(Vector2D basePos, Vector2D guiPos);
 	void incrementSelectedPawn(int increment = 1);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
 	void resetActiveCard();
+	void removeActionMenu();
 	void setMouseHighlightedUnit(Unit* unit);
 	void shuffleDrawPiles();
 
+	// TODO: store all active cards in one vec, and replace mpActiveCard with getActiveCard which returns first element if exists?
+	std::vector<PlayerCard*> mpActiveCards; // Stores the 2nd-last selected cards, i.e. for curing or trading
 	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
 	Player *mpSelectedPawn; // Refers to the players whose cards are being displayed in the hand section. Might not necessarily be active pawn if user wants to flip through each player's cards
 	int mActivePawnIndex; //lets mpActivePawn switch to next pawn in array
 	int mSelectedPawnIndex; //lets mpSelectedPawn switch to next pawn in array
+	City* mpActiveCity; // Tracks pending city for action menu clicks
+
+	ActionMenu* mpActionMenu;
 
 	Unit *mBoardOutline; // just draws an outline between the board and card area, explicitly tracked so that we can check whether mouse clicks fall inside its bounds
 	Unit* mpMouseHighlightedUnit;

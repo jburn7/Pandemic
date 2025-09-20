@@ -1,9 +1,9 @@
-#pragma once
+ #pragma once
 #include "animation.h"
 #include "Outline.h"
 
-#define PI 3.1415926535897932
-#define MAX_Z_LAYERS 4
+constexpr double PI = 3.1415926535897932;
+constexpr int MAX_Z_LAYERS = 4;
 
 //declare any classes that require double dispatch for collision here
 
@@ -23,7 +23,7 @@ public:
 
 	void cleanup();
 
-	virtual void draw();
+	virtual void draw() const;
 
 	virtual void update(double timeElapsed);
 
@@ -32,7 +32,7 @@ public:
 	virtual void move(const Vector2D &delta);
 
 	//collision functions
-	bool contains(Vector2D &loc);
+	bool contains(Vector2D &loc) const;
 
 	//setters
 	void setAnimating(bool torf);
@@ -54,8 +54,8 @@ public:
 	Vector2D &getPosition();
 	bool getIsHidden();
 	bool getIsGuiLayer();
-	int getWidth();
-	int getHeight();
+	int getWidth() const;
+	int getHeight() const;
 	int getZLayer();
 
 	//collision functions, using double dispatch because I despise static casting
