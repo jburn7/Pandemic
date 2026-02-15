@@ -32,6 +32,7 @@ public:
 	void incrementDiseaseCubes(const int increment, const CityType type);
 
 	//getters
+	bool getHasResearchStation();
 	std::string getName();
 
 	std::vector<City*> getNeighbors();

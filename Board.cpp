@@ -131,6 +131,8 @@ void Board::init()
 	}
 	mMaxNumDiseaseCubes = doc["game"]["maxNumDiseaseCubes"].GetInt();
 
+	mNumCardsRequiredForCure = doc["game"]["numCardsRequiredForCure"].GetInt();
+
 	//now that all cities neighbors are loaded, find their neighbors and set the pointers
 	//neighbor corresponds to position in JSON array, and thus position in mCities
 	int cityIndex = 0;
@@ -307,6 +309,17 @@ void Board::createActionMenu(const Vector2D &position)
 	removeActionMenu();
 	mpActionMenu = new ActionMenu(position, {MenuActionType::CHARTER_FLIGHT, MenuActionType::BUILD_RESEARCH_STATION});
 	gpEventSystem->fireEvent(new UnitAddEvent(mpActionMenu));
+}
+
+void Board::cureDisease(const CityType type)
+{
+	for(auto& card : mpActiveCards)
+	{
+		discardPlayerCard(mpActivePawn, card);
+	}
+	mpActiveCards.clear();
+	mDiseaseStages[type] = DiseaseStages::Cured;
+	gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
 }
 
 void Board::dealInitialPlayerCards()
@@ -659,13 +672,37 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 		removeActionMenu();
 	}
 	// City click
-	//if no active card
+	//if no active card or multiple active cards
 	else if(getActiveCard() == nullptr)
 	{
 		//  if pawn's current city was clicked
 		if(mpActivePawn->getCurrentCity()->contains(basePos))
 		{
-			decrementDiseaseCubesMove(mpActivePawn->getCurrentCity());
+			if(mpActivePawn->getCurrentCity()->getHasResearchStation())
+			{
+				if(mpActiveCards.size() == mNumCardsRequiredForCure)
+				{
+					bool allCardsSelectedMatchType = true;
+					const CityType type = mpActiveCards[0]->getCity()->getType();
+					for(auto& card : mpActiveCards)
+					{
+						if(card->getCity()->getType() != type)
+						{
+							allCardsSelectedMatchType = false;
+							break;
+						}
+					}
+
+					if(allCardsSelectedMatchType)
+					{
+						cureDisease(type);
+					}
+				}
+			}
+			else
+			{
+				decrementDiseaseCubesMove(mpActivePawn->getCurrentCity());
+			}
 		}
 		else
 		{

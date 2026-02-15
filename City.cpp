@@ -45,7 +45,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mOutbreakThreshold = c["outbreakThreshold"].GetInt();	
 	mOutbroke = false;
 	mpResearchStation = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("research_station.png"));
-	mHasResearchStation = false;
+	mHasResearchStation = true;
 	mType = CityType(type);
 
 	mRadius = c["radius"].GetInt();
@@ -236,6 +236,11 @@ void City::incrementDiseaseCubes(const int increment, const CityType type)
 	{
 		setDiseaseCubes(mDiseaseCubes[type] + increment);
 	}
+}
+
+bool City::getHasResearchStation()
+{
+	return mHasResearchStation;
 }
 
 std::string City::getName()

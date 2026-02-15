@@ -41,6 +41,7 @@ private:
 	void changeActivePawn(int newIndex);
 	void changeSelectedPawn(int newIndex);
 	void createActionMenu(const Vector2D &position);
+	void cureDisease(const CityType type);
 	void dealInitialPlayerCards();
 	void dealTopPlayerCard(Player *player, bool showCard = true);
 	bool decrementDiseaseCubes(City *const city);
@@ -91,6 +92,7 @@ private:
 	PlayerCardDeck *mPlayerDiscardDeck, *mPlayerDrawDeck;
 	InfectionCardDeck *mInfectionDiscardDeck, *mInfectionDrawDeck;
 
+	int mNumCardsRequiredForCure;
 	int mMaxNumDiseaseCubes;
 	std::map<const CityType, DiseaseStages> mDiseaseStages; // stores info on whether disease at given index is spreading, cured, or eradicated. Will correspond to mDiseaseCubesRemainingByType
 	std::map<const CityType, int> mDiseaseCubesPlacedByType; // stores total number of cubes remaining per each city "color" or type. typically, 4 types
