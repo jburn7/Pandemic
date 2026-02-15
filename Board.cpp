@@ -29,7 +29,6 @@ Board::Board()
 	mPlayerDrawDeck = nullptr;
 	mSelectedPawnIndex = 0;
 	mpActiveCards = std::vector<PlayerCard*>();
-	mpActiveCard = nullptr;
 	mpActivePawn = nullptr;
 	mpMouseHighlightedUnit = nullptr;
 	mpSelectedPawn = nullptr;
@@ -180,7 +179,7 @@ void Board::init()
 	}
 	mPlayerInfos[0]->setSelected(true);
 
-	mpActiveCard = nullptr;
+	mpActiveCards.clear();
 	changeActivePawn(0);
 	// Can't use changeSelectedPawn until player's hand is initially set
 	mSelectedPawnIndex = 0;
@@ -225,8 +224,9 @@ void Board::init()
 
 void Board::activatePlayerCard(PlayerCard* card)
 {
-	mpActiveCard = card;
-	mpActiveCard->setColor(mActiveCardColor);
+	mpActiveCards.clear();
+	mpActiveCards.push_back(card);
+	getActiveCard()->setColor(mActiveCardColor);
 }
 
 void Board::addResearchStation(City* city)
@@ -499,17 +499,17 @@ void Board::endTurn()
 void Board::flyToCity(City* const city)
 {
 	mpActivePawn->moveCity(city);
-	discardPlayerCard(mpActivePawn, mpActiveCard);
+	discardPlayerCard(mpActivePawn, getActiveCard());
 	gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
-	mpActiveCard->setColor(ColorManager::getInstance()->white);
-	mpActiveCard = nullptr;
+	getActiveCard()->setColor(ColorManager::getInstance()->white);
+	mpActiveCards.clear();
 }
 
 PlayerCard* Board::getActiveCard()
 {
 	if(mpActiveCards.size() == 1)
 	{
-		return mpActiveCards[1];
+		return mpActiveCards[0];
 	}
 
 	return nullptr;
@@ -522,10 +522,11 @@ void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 
 void Board::resetActiveCard()
 {
-	if(mpActiveCard)
+	PlayerCard* activeCard = getActiveCard();
+	if(activeCard)
 	{
-		mpActiveCard->setColor(ColorManager::getInstance()->white);
-		mpActiveCard = nullptr;
+		activeCard->setColor(ColorManager::getInstance()->white);
+		mpActiveCards.clear();
 	}
 }
 
@@ -589,9 +590,10 @@ void Board::handleGuiClick(Vector2D guiPos)
 		{
 			// If player has an active card selected and it can be traded to the selected player, then trade it
 			Player *targetPlayer = mPlayerInfos[i]->getPlayer();
-			if(mpActiveCard &&
-			   (mpActivePawn != targetPlayer && mpActivePawn->hasCard(mpActiveCard) && mpActivePawn->tradeCard(mpActiveCard, targetPlayer) ||
-			   (mpActivePawn == targetPlayer && mpActivePawn != mpSelectedPawn && mpSelectedPawn->hasCard(mpActiveCard) && mpSelectedPawn->tradeCard(mpActiveCard, targetPlayer))))
+			PlayerCard* activeCard = getActiveCard();
+			if(activeCard &&
+			   (mpActivePawn != targetPlayer && mpActivePawn->hasCard(activeCard) && mpActivePawn->tradeCard(activeCard, targetPlayer) ||
+			   (mpActivePawn == targetPlayer && mpActivePawn != mpSelectedPawn && mpSelectedPawn->hasCard(activeCard) && mpSelectedPawn->tradeCard(activeCard, targetPlayer))))
 			{
 				resetActiveCard();
 				gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
@@ -608,7 +610,7 @@ void Board::handleGuiClick(Vector2D guiPos)
 	{
 		if(v->contains(guiPos))
 		{
-			if(mpActiveCard == nullptr)
+			if(getActiveCard() == nullptr)
 			{
 				activatePlayerCard(v);
 			}
@@ -654,7 +656,7 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 	}
 	// City click
 	//if no active card
-	else if(mpActiveCard == nullptr)
+	else if(getActiveCard() == nullptr)
 	{
 		//  if pawn's current city was clicked
 		if(mpActivePawn->getCurrentCity()->contains(basePos))
@@ -675,14 +677,14 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 			}
 		}
 	}
-	else if(mpActivePawn->hasCard(mpActiveCard))
+	else if(mpActivePawn->hasCard(getActiveCard()))
 	{
 		bool isPendingClickCharterFlight = mPendingClickType == PendingClickType::CHARTER_FLIGHT;
-		bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity()) && !isPendingClickCharterFlight;
+		bool isCharterFlight = mpActivePawn->isInCity(getActiveCard()->getCity()) && !isPendingClickCharterFlight;
 		// If attempting charter flight, then create action menu because user could also create research station
 		if(isCharterFlight)
 		{
-			mpActiveCity = mpActiveCard->getCity();
+			mpActiveCity = getActiveCard()->getCity();
 			createActionMenu(guiPos);
 			return;
 		}
@@ -694,7 +696,7 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 			City* const city = c.second;
 			if(city->contains(basePos))
 			{
-				if((isPendingClickCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
+				if((isPendingClickCharterFlight || getActiveCard()->getCity() == city) && !mpActivePawn->isInCity(city))
 				{
 					if(isPendingClickCharterFlight)
 					{
@@ -778,7 +780,6 @@ void Board::handleEvent(const Event &theEvent)
 			if(ev.getButton() == MouseButton::LEFT)
 			{
 				// DEBUG: if click lands on a draw/discard pile, then just print its contents for now
-				// TODO: find a way to show this graphically
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
 				std::cout << "\t World coords at " << "(" << basePos.getX() << ", " << basePos.getY() << ")" << std::endl;
 				std::cout << "\t GUI coords at " << "(" << guiPos.getX() << ", " << guiPos.getY() << ")" << std::endl;

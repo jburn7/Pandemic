@@ -66,9 +66,7 @@ private:
 
 	PendingClickType mPendingClickType;
 
-	// TODO: store all active cards in one vec, and replace mpActiveCard with getActiveCard which returns first element if exists?
-	std::vector<PlayerCard*> mpActiveCards; // Stores the 2nd-last selected cards, i.e. for curing or trading
-	PlayerCard *mpActiveCard; //user clicks this card then a city to perform an action, so we store a pointer between those clicks
+	std::vector<PlayerCard*> mpActiveCards;
 	Player *mpActivePawn; //switches after end of each turn. don't worry about null checking this because if it ever equals null then we have bigger problems
 	Player *mpSelectedPawn; // Refers to the players whose cards are being displayed in the hand section. Might not necessarily be active pawn if user wants to flip through each player's cards
 	int mActivePawnIndex; //lets mpActivePawn switch to next pawn in array
