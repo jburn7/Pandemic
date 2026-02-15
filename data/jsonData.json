@@ -266,7 +266,8 @@
 			"menu_tile.png",
 			"menu_tile_simple.png",
 			"pawn.png",
-			"plain_square.png"
+			"plain_square.png",
+			"research_station.png"
 		],
 		"createGraphicsBuffersWithColor": [
 			"default"

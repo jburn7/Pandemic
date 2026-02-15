@@ -229,9 +229,13 @@ void Board::activatePlayerCard(PlayerCard* card)
 	getActiveCard()->setColor(mActiveCardColor);
 }
 
-void Board::addResearchStation(City* city)
+void Board::buildResearchStation(City* const city)
 {
 	city->addResearchStation();
+	discardPlayerCard(mpActivePawn, getActiveCard());
+	gpEventSystem->fireEvent(new Event(EventType::DECREMENT_MOVES_EVENT));
+	getActiveCard()->setColor(ColorManager::getInstance()->white);
+	mpActiveCards.clear();
 }
 
 void Board::cleanup()
@@ -645,7 +649,7 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 		case MenuActionType::BUILD_RESEARCH_STATION:
 			if(mpActiveCity)
 			{
-				addResearchStation(mpActiveCity);
+				buildResearchStation(mpActiveCity);
 				mpActiveCity = nullptr;
 			}
 			break;

@@ -36,7 +36,7 @@ public:
 
 private:
 	void activatePlayerCard(PlayerCard* card);
-	void addResearchStation(City* city);
+	void buildResearchStation(City* const city);
 	void cleanup();
 	void changeActivePawn(int newIndex);
 	void changeSelectedPawn(int newIndex);

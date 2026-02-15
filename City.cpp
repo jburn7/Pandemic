@@ -44,6 +44,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	mNameText->setText(mName);
 	mOutbreakThreshold = c["outbreakThreshold"].GetInt();	
 	mOutbroke = false;
+	mpResearchStation = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("research_station.png"));
 	mHasResearchStation = false;
 	mType = CityType(type);
 
@@ -132,6 +133,11 @@ void City::cleanup()
 			text.second = nullptr;
 		}
 	}
+	if(mpResearchStation)
+	{
+		delete mpResearchStation;
+		mpResearchStation = nullptr;
+	}
 	mCubeTexts.clear();
 }
 
@@ -145,6 +151,10 @@ void City::draw() const
 		{
 			text.second->draw();
 		}
+	}
+	if(mHasResearchStation)
+	{
+		Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX() - mConstantFrame->getWidth() / 4, mPosition.getY() - mConstantFrame->getHeight() / 4), *mpResearchStation, mTheta, mScale * 2.f);
 	}
 	mNameText->draw();
 }

@@ -60,6 +60,8 @@ private:
 	Vector2D mStartingCubeTextsPosition;
 	TextBox *mNameText;
 
+	Sprite* mpResearchStation;
+
 	std::vector<City*> mNeighbors;
 	std::vector<Player*> mPlayersHere;
 	std::vector<Vector2D> pawnPositions; //easily keep track of whee exactly pawns should go in relation to city sprite
