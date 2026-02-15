@@ -185,6 +185,7 @@ void Board::init()
 	// Can't use changeSelectedPawn until player's hand is initially set
 	mSelectedPawnIndex = 0;
 	mpSelectedPawn = mpActivePawn;
+	mPendingClickType = PendingClickType::NONE;
 
 	dealInitialPlayerCards();
 
@@ -301,6 +302,7 @@ void Board::createActionMenu(const Vector2D &position)
 {
 	removeActionMenu();
 	mpActionMenu = new ActionMenu(position, {MenuActionType::CHARTER_FLIGHT, MenuActionType::BUILD_RESEARCH_STATION});
+	gpEventSystem->fireEvent(new UnitAddEvent(mpActionMenu));
 }
 
 void Board::dealInitialPlayerCards()
@@ -520,15 +522,19 @@ void Board::placeInfectionCardOntoDeck(InfectionCard *card)
 
 void Board::resetActiveCard()
 {
-	mpActiveCard->setColor(ColorManager::getInstance()->white);
-	mpActiveCard = nullptr;
+	if(mpActiveCard)
+	{
+		mpActiveCard->setColor(ColorManager::getInstance()->white);
+		mpActiveCard = nullptr;
+	}
 }
 
 void Board::removeActionMenu()
 {
 	if(mpActionMenu)
 	{
-		delete mpActionMenu;
+		// UnitManager will handle delete
+		gpEventSystem->fireEvent(new UnitRemoveEvent(mpActionMenu));
 		mpActionMenu = nullptr;
 	}
 }
@@ -620,17 +626,17 @@ void Board::handleGuiClick(Vector2D guiPos)
 	return;
 }
 
-void Board::handleBoardClick(Vector2D basePos)
+void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 {
 	// Action menu click
 	if(mpActionMenu)
 	{
-		switch(mpActionMenu->handleClick(basePos))
+		switch(mpActionMenu->handleClick(guiPos))
 		{
 		case MenuActionType::CHARTER_FLIGHT:
 			if(mpActiveCity)
 			{
-				flyToCity(mpActiveCity);
+				mPendingClickType = PendingClickType::CHARTER_FLIGHT;
 				mpActiveCity = nullptr;
 			}
 			break;
@@ -671,12 +677,13 @@ void Board::handleBoardClick(Vector2D basePos)
 	}
 	else if(mpActivePawn->hasCard(mpActiveCard))
 	{
-		bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity());
+		bool isPendingClickCharterFlight = mPendingClickType == PendingClickType::CHARTER_FLIGHT;
+		bool isCharterFlight = mpActivePawn->isInCity(mpActiveCard->getCity()) && !isPendingClickCharterFlight;
 		// If attempting charter flight, then create action menu because user could also create research station
 		if(isCharterFlight)
 		{
 			mpActiveCity = mpActiveCard->getCity();
-			createActionMenu(basePos);
+			createActionMenu(guiPos);
 			return;
 		}
 		// Poll each city, if it was clicked
@@ -687,8 +694,13 @@ void Board::handleBoardClick(Vector2D basePos)
 			City* const city = c.second;
 			if(city->contains(basePos))
 			{
-				if((isCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
+				if((isPendingClickCharterFlight || mpActiveCard->getCity() == city) && !mpActivePawn->isInCity(city))
 				{
+					if(isPendingClickCharterFlight)
+					{
+						mPendingClickType = PendingClickType::NONE;
+					}
+
 					flyToCity(city);
 					return;
 				}
@@ -703,6 +715,12 @@ void Board::handleBoardClick(Vector2D basePos)
 
 void Board::handleMouseMove(Vector2D basePos, Vector2D guiPos)
 {
+	if(mpActionMenu && mpActionMenu->contains(guiPos))
+	{
+		setMouseHighlightedUnit(mpActionMenu->getContainingMenuItem(guiPos));
+		return;
+	}
+
 	for(auto const& card : mpSelectedPawn->getHand())
 	{
 		if(card->contains(guiPos))
@@ -764,9 +782,10 @@ void Board::handleEvent(const Event &theEvent)
 				std::cout << "EVENT: Left click at " << "(" << ev.getPosition().getX() << ", " << ev.getPosition().getY() << ")" << std::endl;
 				std::cout << "\t World coords at " << "(" << basePos.getX() << ", " << basePos.getY() << ")" << std::endl;
 				std::cout << "\t GUI coords at " << "(" << guiPos.getX() << ", " << guiPos.getY() << ")" << std::endl;
+				// TODO: might be better to try to resolve clicks by layers, i.e. check gui click return val, and if false then fall back to board
 				if(mBoardOutline->contains(guiPos))
 				{
-					handleBoardClick(basePos);
+					handleBoardClick(basePos, guiPos);
 				}
 				else
 				{

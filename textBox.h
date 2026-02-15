@@ -18,6 +18,9 @@ public:
 
 	void resizeToFitWidth(const float boundsWidth);
 
+	virtual int getWidth() const;
+	virtual int getHeight() const;
+
 	//setters
 	void setText(const std::string &text);
 private:

@@ -54,8 +54,8 @@ public:
 	Vector2D &getPosition();
 	bool getIsHidden();
 	bool getIsGuiLayer();
-	int getWidth() const;
-	int getHeight() const;
+	virtual int getWidth() const;
+	virtual int getHeight() const;
 	int getZLayer();
 
 	//collision functions, using double dispatch because I despise static casting

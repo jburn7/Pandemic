@@ -153,6 +153,7 @@
     <ClInclude Include="CameraEvents.h" />
     <ClInclude Include="MovementManager.h" />
     <ClInclude Include="Outline.h" />
+    <ClInclude Include="PendingClickType.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCard.h" />
     <ClInclude Include="PlayerCardDeck.h" />

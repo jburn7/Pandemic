@@ -2,6 +2,7 @@
 #include "ActionMenu.h"
 #include "City.h"
 #include "InfectionCard.h"
+#include "PendingClickType.h"
 #include "Player.h"
 #include "PlayerInfo.h"
 #include "jsonData.h"
@@ -54,7 +55,7 @@ private:
 	void flyToCity(City* const city);
 	PlayerCard* getActiveCard(); // Returns null if multiple cards selected
 	void handleGuiClick(Vector2D guiPos);
-	void handleBoardClick(Vector2D basePos);
+	void handleBoardClick(Vector2D basePos, Vector2D guiPos);
 	void handleMouseMove(Vector2D basePos, Vector2D guiPos);
 	void incrementSelectedPawn(int increment = 1);
 	void placeInfectionCardOntoDeck(InfectionCard *card);
@@ -62,6 +63,8 @@ private:
 	void removeActionMenu();
 	void setMouseHighlightedUnit(Unit* unit);
 	void shuffleDrawPiles();
+
+	PendingClickType mPendingClickType;
 
 	// TODO: store all active cards in one vec, and replace mpActiveCard with getActiveCard which returns first element if exists?
 	std::vector<PlayerCard*> mpActiveCards; // Stores the 2nd-last selected cards, i.e. for curing or trading

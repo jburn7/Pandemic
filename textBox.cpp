@@ -19,7 +19,7 @@ TextBox::TextBox(const Vector2D pos, const int fontSize, const Color& color, con
 
 	setIsGuiLayer(true);
 
-	mGraphicsText = sf::Text(text, font->mFont, fontSize);
+	mGraphicsText = sf::Text(text, mFont->mFont, fontSize);
 	adjustBoundsForText();
 }
 
@@ -94,6 +94,18 @@ void TextBox::resizeToFitWidth(const float boundsWidth)
 		float ratio = totalWidth / boundsWidth;
 		mFontSize = (int)(mFontSize / ratio);
 	}
+
+	setText(mText);
+}
+
+int TextBox::getWidth() const
+{
+	return (int)mWidth;
+}
+
+int TextBox::getHeight() const
+{
+	return (int)mHeight;
 }
 
 void TextBox::setText(const std::string &text)
@@ -106,6 +118,6 @@ void TextBox::setText(const std::string &text)
 void TextBox::adjustBoundsForText()
 {
 	const sf::FloatRect bounds = mGraphicsText.getGlobalBounds();
-	mWidth = bounds.width;
-	mHeight = bounds.height;
+	mWidth = bounds.width + bounds.left;
+	mHeight = bounds.height + bounds.top;
 }

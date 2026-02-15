@@ -1,4 +1,10 @@
 {
+	"actionMenu": {
+		"outline": {
+			"color": "white",
+			"thickness": 3
+		}
+	},
 	"ai": {
 		"ticksPerPlayerMove": 60000
 	},
@@ -288,13 +294,13 @@
 			"thickness": 5
 		},
 		"mouseOverHighlight": "orange",
-		"mouseOverHighlightWidth":  4,
+		"mouseOverHighlightWidth": 4,
 		"startString": "",
 		"failedString": "",
 		"completeString": "",
 		"replayString": "",
 		"defaultUIPaddingImage": "plain_square.png",
-		"playerDetailsXOffset":  300,
+		"playerDetailsXOffset": 300,
 		"playerInfoOffset": 80
 	},
 	"window": {

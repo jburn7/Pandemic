@@ -22,19 +22,21 @@ struct MenuAction
 
 class ActionMenu : public Unit
 {
-public:
-	// TODO: accept max width, then force child TextBox items into width and recalculate height
-	ActionMenu(const Vector2D& position, const std::initializer_list<const MenuActionType> actions);
+public:	
+	ActionMenu(const Vector2D& position, const std::initializer_list<MenuActionType> actions, const int maxWidth = 0);
 	~ActionMenu();
 
 	virtual void draw() const override;
 
 	MenuActionType handleClick(const Vector2D position);
 
+	Unit* getContainingMenuItem(Vector2D guiPos);
+	virtual int getWidth() const;
+	virtual int getHeight() const;
 private:
 	static std::string sMenuActionNamesByType[];
-	std::vector<const TextBox*> mMenuItems;
-	std::vector<const MenuActionType> mActionTypes;
+	std::vector<TextBox*> mMenuItems;
+	std::vector<MenuActionType> mActionTypes;
 
 	int mWidth;
 	int mHeight;
