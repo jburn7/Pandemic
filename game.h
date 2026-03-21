@@ -40,6 +40,8 @@ public:
 
 	void loop();
 
+	void start();
+
 	//event functions
 	virtual void handleEvent(const Event& theEvent);
 	

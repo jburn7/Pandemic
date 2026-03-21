@@ -4,28 +4,25 @@
 #include "Vector2D.h"
 #include <map>
 
+const double DEFAULT_ACCELERATION_MS = 300;
+
 class MovementCommand
 {
 	friend class MovementManager;
 private:
-	MovementCommand(const Vector2D start, const Vector2D destination, const float milliseconds) : 
-		destination(destination), 
-		distance(absDistance(destination, start)),
-		milliseconds(milliseconds)
-	{
-		// TODO: redo this to take acceleration into account (velocity starts at 0 and increments on updates until it reaches determined velocity)
-		// Maybe for v1 we just ignore acceleration...
-		velocity = Vector2D(0.f, 0.f);
-	}
-
-	static const Vector2D absDistance(const Vector2D end, const Vector2D start)
-	{
-		return (end - start);
-	}
-
+	MovementCommand(const Vector2D start, const Vector2D destination, const int _milliseconds);
+	
+	double acceleration; // 0 to 1, acts as coefficient on velocity for beginning and ending frames, velocity is increased to make up for lost time
+	double decelerationDistance;
 	const Vector2D destination;
 	const Vector2D distance;
-	const float milliseconds;
+	double pixelsLost;
+	const int milliseconds;
+	const double idealConstantPixelsPerMs;
+	const double estimatedLostPixelsPerMs;
+	double timeBeganDecelerating;
+	double timeElapsed;
+	double topSpeedCoefficient;
 	Vector2D velocity;
 };
 
@@ -46,7 +43,7 @@ public:
 
 	virtual void handleEvent(const Event& theEvent);
 
-	void initiateMovement(Unit * const unit, const Vector2D destination, const float milliseconds);
+	void initiateMovement(Unit * const unit, const Vector2D destination, const int milliseconds);
 
 	void update(double timeElapsed);
 

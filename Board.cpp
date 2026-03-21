@@ -281,6 +281,7 @@ void Board::changeActivePawn(int newIndex)
 	mActivePawnIndex = newIndex;
 	mpActivePawn = mPlayers[mActivePawnIndex];
 	gpEventSystem->fireEvent(new ActivePawnChangeEvent(*mpActivePawn));
+	// TODO: center camera on new pawn
 }
 
 void Board::changeSelectedPawn(int newIndex)

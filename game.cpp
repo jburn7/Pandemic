@@ -8,7 +8,7 @@ Game::Game()
 {
 	mUi = NULL;
 	mQuit = mJustReset = false;
-	mGamestate = Gamestate::PLAYING;
+	mGamestate = Gamestate::START;
 }
 
 Game::~Game()
@@ -144,6 +144,8 @@ void Game::init(const std::string &jsonPath)
 	gpEventSystem->addListener(EventType::QUIT_EVENT, this);
 
 	mBoard.init();
+
+	start();
 }
 
 void Game::cleanup()
@@ -172,8 +174,7 @@ void Game::complete()
 
 void Game::loop()
 {
-	//double timePerFrame = 16.7777777777; //should be accurate enough
-	double timePerFrame = 4; //should be accurate enough
+	double timePerFrame = 17;
 	double timeOfLastFrame = 0;
 	int frames = 0;
 	mClock.start();
@@ -185,15 +186,20 @@ void Game::loop()
 		processInput();
 		mCameraManager.update();
 		const double updateTime = mClock.getElapsedTime();
-		update(updateTime, (updateTime - timeOfLastFrame) * 1000);
+		update(updateTime, (updateTime - timeOfLastFrame));
 		render();
 		frames++;
 		double fps = frames / mClock.getElapsedTime() * 1000;
 		gpEventSystem->fireEvent(new UpdateFPSEvent(EventType::UPDATE_FPS_EVENT, (int)fps));
+		timeOfLastFrame = updateTime;
 		fpsTimer.sleepUntilElapsed(timePerFrame);
-		timeOfLastFrame = mClock.getElapsedTime();
 	}
 	mClock.stop();
+}
+
+void Game::start()
+{
+	mGamestate = Gamestate::PLAYING;
 }
 
 void Game::handleEvent(const Event &theEvent)

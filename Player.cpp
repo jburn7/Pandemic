@@ -87,6 +87,7 @@ void Player::moveCity(City* const newCity)
 		currentCity->removePlayer(this);
 	}
 	newCity->addPlayer(this);
+	// TODO: camera pan events. Possibly integrate camera with movement manager?
 	gpEventSystem->fireEvent(new PlaceCameraEvent(newCity->getPosition()));
 	currentCity = newCity;
 }
