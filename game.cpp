@@ -123,6 +123,8 @@ void Game::init(const std::string &jsonPath)
 	//load animations for mUnitManager
 	mUnitManager.setUnitAnimations(loadUnitAnimations(component, tileSize));
 
+	msPerFrame = doc[JSONPATH]["msPerFrame"].GetInt();
+
 	mMovementManager.init();
 	//mLevelManager.init();
 
@@ -174,7 +176,6 @@ void Game::complete()
 
 void Game::loop()
 {
-	double timePerFrame = 17;
 	double timeOfLastFrame = 0;
 	int frames = 0;
 	mClock.start();
@@ -192,7 +193,7 @@ void Game::loop()
 		double fps = frames / mClock.getElapsedTime() * 1000;
 		gpEventSystem->fireEvent(new UpdateFPSEvent(EventType::UPDATE_FPS_EVENT, (int)fps));
 		timeOfLastFrame = updateTime;
-		fpsTimer.sleepUntilElapsed(timePerFrame);
+		fpsTimer.sleepUntilElapsed(msPerFrame);
 	}
 	mClock.stop();
 }
@@ -246,6 +247,11 @@ UI& Game::getUI()
 UnitManager &Game::getUnitManager()
 {
 	return mUnitManager;
+}
+
+const double Game::getMsPerFrame()
+{
+	return msPerFrame;
 }
 
 void Game::processInput()

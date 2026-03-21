@@ -57,6 +57,8 @@ public:
 	//LevelManager &getLevelManager(){ return mLevelManager; }
 	UI &getUI();
 	UnitManager &getUnitManager();
+
+	const double getMsPerFrame();
 protected:
 	Game();
 	~Game();
@@ -86,6 +88,8 @@ protected:
 
 	bool mQuit, mJustReset;
 	Timer mClock;
+
+	double msPerFrame;
 
 	const char *JSONPATH = "game";
 

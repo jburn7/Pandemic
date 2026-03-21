@@ -16,11 +16,7 @@ private:
 	double decelerationDistance;
 	const Vector2D destination;
 	const Vector2D distance;
-	double pixelsLost;
 	const int milliseconds;
-	const double idealConstantPixelsPerMs;
-	const double estimatedLostPixelsPerMs;
-	double timeBeganDecelerating;
 	double timeElapsed;
 	double topSpeedCoefficient;
 	Vector2D velocity;
@@ -48,5 +44,7 @@ public:
 	void update(double timeElapsed);
 
 private:
+	int msPerFrame;
+
 	std::map<Unit* const, MovementCommand> mMovements;
 };
