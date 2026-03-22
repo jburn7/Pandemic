@@ -1,5 +1,6 @@
  #pragma once
 #include "animation.h"
+#include "Shape.h"
 #include "Outline.h"
 
 constexpr double PI = 3.1415926535897932;
@@ -13,11 +14,11 @@ class Unit : public Trackable
 	friend class GraphicsSystem;
 	friend class UI;
 public:
-	Unit(Vector2D pos, Animation *a);
+	Unit(Vector2D pos, Animation *a, const Shape &shape);
 
-	Unit(Vector2D pos, Sprite *s);
+	Unit(Vector2D pos, Sprite *s, const Shape &shape);
 
-	Unit(const Vector2D &pos, int width, int height);
+	Unit(const Vector2D &pos, const Shape &shape);
 
 	virtual ~Unit();
 
@@ -77,12 +78,12 @@ protected:
 	bool mIsHidden;
 	bool mIsGuiLayer; // Probably a better way to do this but I need to draw some items onto a separate "gui" view so they don't scale with the camera. Ideally I would have UnitManeger store them separately instead of iterating through units twice, but we can cross that bridge if it's too slow
 
-	// Outline data
-	Outline mOutline;
-
-	Color mColor;
 	Vector2D mScale;
 	Vector2D mPosition;
-	Animation *mAnimation;
+	
+	Animation* mAnimation;
+	Color mColor;
+	Outline mOutline;
+	Shape shape;
 	Sprite *mConstantFrame; //either sprite* or animation* will == NULL, depending on whether the Unit has an animation sequence or not
 };

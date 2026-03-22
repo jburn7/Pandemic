@@ -159,6 +159,7 @@
     <ClInclude Include="PlayerCardDeck.h" />
     <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="quitEvent.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="startEvent.h" />
     <ClInclude Include="ui.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="PlayerCardDeck.cpp" />
     <ClCompile Include="PlayerInfo.cpp" />
     <ClCompile Include="quitEvent.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="textBox.cpp" />

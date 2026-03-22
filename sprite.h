@@ -34,6 +34,9 @@ public:
 protected:
 	Vector2D mSourceLoc;
 	Vector2D mOrigin; //used to rotate about a specific point/accomodate for certain graphics libraries that are pedantic about rotations cough SFML cough
+	// TODO: I don't think sprites need a width and height. the graphics system reads these values when it draws a sprite,
+	// but they can be passed in via another class instead, like a Shape class
+	// Then Unit can own Shape, and there is never a sprite without a unit so a sprite's width and height can always be resolved
 	int mWidth, mHeight;
 	double mTheta;
 	Color mColor;
