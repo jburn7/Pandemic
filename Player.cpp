@@ -4,7 +4,7 @@
 #include "PlayerCardDeck.h"
 #include "CameraEvents.h"
 
-Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s) : Unit(Vector2D(0, 0), s)
+Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, const GraphicsBuffer& graphicsBuffer) : Unit(Vector2D(0, 0), graphicsBuffer)
 {
 	mHandStart = playerHandLocation;
 	mHandDirection = Vector2D((float)1, (float)0);

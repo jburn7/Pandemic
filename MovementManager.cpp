@@ -102,7 +102,7 @@ void MovementManager::update(double timeElapsed)
 			it->second.acceleration = std::max(offset.getLength() / it->second.decelerationDistance, msPerFrame / DEFAULT_ACCELERATION_MS);
 		}
 		
-		Vector2D desiredDistanceThisFrame = it->second.distance * ((float)timeElapsed / it->second.milliseconds) * it->second.topSpeedCoefficient;
+		Vector2D desiredDistanceThisFrame = it->second.distance * ((float)timeElapsed / it->second.milliseconds) * (float)it->second.topSpeedCoefficient;
 		if(it->second.acceleration > 0)
 		{
 			desiredDistanceThisFrame *= (float)it->second.acceleration;

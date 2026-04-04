@@ -1,6 +1,7 @@
  #pragma once
 #include "animation.h"
 #include "Shape.h"
+#include "sprite.h"
 #include "Outline.h"
 
 constexpr double PI = 3.1415926535897932;
@@ -14,11 +15,15 @@ class Unit : public Trackable
 	friend class GraphicsSystem;
 	friend class UI;
 public:
-	Unit(Vector2D pos, Animation *a, const Shape &shape);
+	Unit(Vector2D pos, Animation *a);
 
-	Unit(Vector2D pos, Sprite *s, const Shape &shape);
+	Unit(Vector2D pos, const GraphicsBuffer& graphicsBuffer);
 
-	Unit(const Vector2D &pos, const Shape &shape);
+	Unit(Vector2D pos, Animation* a, const Shape& shape);
+
+	Unit(Vector2D pos, const GraphicsBuffer& graphicsBuffer, const Shape& shape);
+
+	Unit(const Vector2D &pos, const int width, const int height);
 
 	virtual ~Unit();
 
@@ -70,6 +75,7 @@ protected:
 
 	// We want to abstract the sprite as much as possible, but there are some cases where a direct sprite reference is needed (eg UI pawn info)
 	const Sprite *getSprite() const;
+	const Shape& getShape() const;
 
 	bool mAnimating;
 	double mTheta; //for storing rotation data
@@ -84,6 +90,6 @@ protected:
 	Animation* mAnimation;
 	Color mColor;
 	Outline mOutline;
-	Shape shape;
+	Shape mShape;
 	Sprite *mConstantFrame; //either sprite* or animation* will == NULL, depending on whether the Unit has an animation sequence or not
 };

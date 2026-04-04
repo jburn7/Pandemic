@@ -7,7 +7,7 @@ class TextBox;
 class CityCard : public Unit
 {
 public:
-	CityCard(Vector2D pos, Sprite *s, City *city);
+	CityCard(Vector2D pos, const GraphicsBuffer& graphicsBuffer, City *city);
 	virtual ~CityCard();
 
 	virtual void draw() const override;
@@ -23,6 +23,8 @@ public:
 	City* getCity();
 protected:
 	City *mpCity; //pointer to city that this card corresponds to
+	// TODO: A (major) refactor could be to store Sprite and Shape inside a new Drawable class, further reinventing the SFML wheel
 	Sprite *mpColorIndicator;
+	Shape mColorIndicatorShape;
 	TextBox *mText;
 };

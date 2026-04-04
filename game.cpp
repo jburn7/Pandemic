@@ -24,27 +24,32 @@ void Game::restartGame()
 	mJustReset = true;
 }
 
+/**
+* TODO: If animations are ever needed for this project, then refactor how they are loaded
+* Currently this hash is stored in UnitManager, which hardly makes sense
+* Also the below commented code will not compile since width/height were moved from Sprite to Shape
+*/
 std::map<std::string, Animation*> Game::loadUnitAnimations(rapidjson::Value &a, int tileSize)
 {
 	std::map<std::string, Animation*> animations;
-	for(auto &v : a.GetArray())
-	{
-		//create animation with given time, using the graphicsBuffer that spritesheet equals, add spritesheets based on the row number * tileSize and the numTiles * tileSize
-		//then add it to a map name spritesheet as the key
-		std::vector<Sprite*> sprites;
-		int y = v["rowNumber"].GetInt();
-		for(int i = 0; i < v["numTiles"].GetInt(); i++)
-		{
-			Sprite *sprite = new Sprite(*mGraphicsBufferManager.getGraphicsBuffer(v["spritesheet"].GetString()));
-			sprite->setSourceLoc(i * tileSize, y * tileSize);
-			sprite->setWidth(tileSize);
-			sprite->setHeight(tileSize);
-			sprites.push_back(sprite);
-		}
-		Animation *animation = new Animation(sprites);
-		animation->setSpeed(v["time"].GetInt());
-		animations.insert(std::pair<std::string, Animation*>(v["name"].GetString(), animation));
-	}
+	//for(auto &v : a.GetArray())
+	//{
+	//	//create animation with given time, using the graphicsBuffer that spritesheet equals, add spritesheets based on the row number * tileSize and the numTiles * tileSize
+	//	//then add it to a map name spritesheet as the key
+	//	std::vector<Sprite*> sprites;
+	//	int y = v["rowNumber"].GetInt();
+	//	for(int i = 0; i < v["numTiles"].GetInt(); i++)
+	//	{
+	//		Sprite *sprite = new Sprite(*mGraphicsBufferManager.getGraphicsBuffer(v["spritesheet"].GetString()));
+	//		sprite->setSourceLoc(i * tileSize, y * tileSize);
+	//		sprite->setWidth(tileSize);
+	//		sprite->setHeight(tileSize);
+	//		sprites.push_back(sprite);
+	//	}
+	//	Animation *animation = new Animation(sprites);
+	//	animation->setSpeed(v["time"].GetInt());
+	//	animations.insert(std::pair<std::string, Animation*>(v["name"].GetString(), animation));
+	//}
 
 	return animations;
 }
@@ -249,7 +254,7 @@ UnitManager &Game::getUnitManager()
 	return mUnitManager;
 }
 
-const double Game::getMsPerFrame()
+const int Game::getMsPerFrame()
 {
 	return msPerFrame;
 }

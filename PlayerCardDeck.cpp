@@ -43,7 +43,7 @@ PlayerCard *PlayerCardDeck::dealTopCard()
 	if(mEpidemicIndeces.size() > 0 && mInitialDeckSize - (int)mCards.size() >= mEpidemicIndeces.front())
 	{
 		mEpidemicIndeces.erase(mEpidemicIndeces.begin());
-		return new EpidemicCard(Vector2D(0, 0), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png")));
+		return new EpidemicCard(Vector2D(0, 0), *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
 	}
 	else
 	{

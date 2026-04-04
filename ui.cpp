@@ -23,7 +23,7 @@ UI::UI()
 	mCompleteString = ui["completeString"].GetString();
 	mReplayString = ui["replayString"].GetString();
 
-	mActivePawnSprite = nullptr;
+	mpActivePawn = nullptr;
 
 	gpEventSystem->addListener(EventType::UPDATE_FPS_EVENT, this);
 	gpEventSystem->addListener(EventType::ACTIVE_PAWN_CHANGE_EVENT, this);
@@ -43,7 +43,7 @@ void UI::handleEvent(const Event& theEvent)
 	else if(theEvent.getType() == EventType::ACTIVE_PAWN_CHANGE_EVENT)
 	{
 		const ActivePawnChangeEvent &ev = static_cast<const ActivePawnChangeEvent&>(theEvent);
-		mActivePawnSprite = ev.getPawn().getSprite();
+		mpActivePawn = &ev.getPawn();
 	}
 }
 
@@ -64,11 +64,11 @@ void UI::draw()
 	graphics.writeText(screenTopLeft + Vector2D((float)mPlayerDetailsXOffset, (float)mFontSize * 2), mFontSize, *mFont, mUIColor, "Player Details: ");
 
 	const int activePawnStringWidth = mFont->getWidth(activePawnString, mFontSize);
-	const int spriteHeight = mActivePawnSprite->getHeight();
+	const int spriteHeight = mpActivePawn->getHeight();
 	const int desiredSpriteHeight = mFontSize;
 	const float spriteHeightRatio = (float)desiredSpriteHeight / spriteHeight;
 	const float originAdjust = mFont->getUnderlineSpacing(mFontSize);
-	graphics.draw(screenTopLeft + Vector2D((float)activePawnStringWidth, (float)mFontSize * 3 + originAdjust), *mActivePawnSprite, 0, Vector2D(spriteHeightRatio, spriteHeightRatio));
+	graphics.draw(screenTopLeft + Vector2D((float)activePawnStringWidth, (float)mFontSize * 3 + originAdjust), *mpActivePawn->getSprite(), mpActivePawn->getShape(), 0, Vector2D(spriteHeightRatio, spriteHeightRatio));
 	
 	Gamestate &gamestate = Game::getInstance()->getGamestate();
 	switch(gamestate)

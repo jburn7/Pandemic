@@ -6,17 +6,18 @@
 #include "Player.h"
 #include "UnitEvents.h"
 
-City::City(const std::string &name, const int type, const Vector2D &pos, Sprite *s) : Unit(pos, s)
+City::City(const std::string &name, const int type, const Vector2D &pos, const GraphicsBuffer& graphicsBuffer) : Unit(pos, graphicsBuffer)
 {
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["city"];
+	// TODO: read city width and height from doc and now we don't need s->getWidth/Height()
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
 	const rapidjson::Value &typeColors = c["infoColorByType"].GetArray();
 	const rapidjson::Value &colorObject = typeColors[type];
 	const Color color = Color(colorObject["r"].GetInt(), colorObject["g"].GetInt(), colorObject["b"].GetInt());
 	const ColorManager &colorManager = *ColorManager::getInstance();
 	const int padding = c["infoTextPadding"].GetInt();
-	mStartingCubeTextsPosition = Vector2D(pos.getX(), pos.getY() + s->getHeight());
+	mStartingCubeTextsPosition = Vector2D(pos.getX(), pos.getY() + mShape.getHeight());
 
 	for(int i = (int)CityType::BLUE; i < (int)CityType::LAST; i++)
 	{
@@ -34,7 +35,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 	}
 
 	mNameText = new TextBox(
-		Vector2D(pos.getX() + 3 * s->getWidth() / 4, pos.getY() + s->getHeight()),
+		Vector2D(pos.getX() + 3 * mShape.getWidth() / 4, pos.getY() + mShape.getHeight()),
 		c["fontSize"].GetInt(), 
 		color,
 		"0",
@@ -50,13 +51,11 @@ City::City(const std::string &name, const int type, const Vector2D &pos, Sprite 
 
 	mRadius = c["radius"].GetInt();
 
-	s->setColor(color);
-
 	//calculate potential positions for pawns
-	pawnPositions.push_back(Vector2D(pos.getX(), pos.getY() - s->getHeight()));
-	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth() / 3, pos.getY()));
-	pawnPositions.push_back(Vector2D(pos.getX() + 2 * s->getWidth() / 3, pos.getY()));
-	pawnPositions.push_back(Vector2D(pos.getX() + s->getWidth(), pos.getY() + s->getHeight() / 3));
+	pawnPositions.push_back(Vector2D(pos.getX(), pos.getY() - mShape.getHeight()));
+	pawnPositions.push_back(Vector2D(pos.getX() + mShape.getWidth() / 3, pos.getY()));
+	pawnPositions.push_back(Vector2D(pos.getX() + 2 * mShape.getWidth() / 3, pos.getY()));
+	pawnPositions.push_back(Vector2D(pos.getX() + mShape.getWidth(), pos.getY() + mShape.getHeight() / 3));
 
 	gpEventSystem->addListener(EventType::OUTBREAK_EVENT, this);
 	gpEventSystem->addListener(EventType::ZOOM_CAMERA_EVENT, this);
@@ -144,7 +143,7 @@ void City::cleanup()
 void City::draw() const
 {
 	//draw city sprite and city info in text
-	Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale, mOutline);
+	Unit::draw();
 	for(auto& text : mCubeTexts)
 	{
 		if(!text.second->getIsHidden())
@@ -154,7 +153,7 @@ void City::draw() const
 	}
 	if(mHasResearchStation)
 	{
-		Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX() - mConstantFrame->getWidth() / 4, mPosition.getY() - mConstantFrame->getHeight() / 4), *mpResearchStation, mTheta, mScale * 2.f);
+		Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX() - mShape.getWidth() / 4, mPosition.getY() - mShape.getHeight() / 4), *mpResearchStation, mShape, mTheta, mScale * 2.f);
 	}
 	mNameText->draw();
 }
@@ -166,21 +165,20 @@ void City::loadNeighbors(const std::map<std::string, City*> &cities, const std::
 	for(auto &v : neighbors)
 	{
 		mNeighbors.push_back(cities.at(v));
-		Sprite *s = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("graph_edge.png")); //delete called in unit dtor
+		const GraphicsBuffer& edgeGraphicsBuffer = *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("graph_edge.png");
 		//set width to distance between this and neighbor
 		Vector2D p = getCenter();
 		Vector2D q = cities.at(v)->getCenter();
 		Vector2D pq = p - q;
-		double width = pq.getLength();
-		s->setWidth((int)width);
-		s->setHeight(2);
+		float width = pq.getLength();
+		const Shape edgeShape = Shape((int)width, 2);
 		//then rotate edge to face neighbor
 		double theta = atan((q.getY() - p.getY()) / (q.getX() - p.getX()));
 		if(q.getX() < p.getX())
 		{
 			theta -= PI;
 		}
-		Unit *u = new Unit(getCenter(), s); //delete called in unit manager dtor
+		Unit *u = new Unit(getCenter(), edgeGraphicsBuffer, edgeShape); //delete called in unit manager dtor
 		u->setRotation(theta);
 		u->setZLayer(0); // We definitely want these lines to render below everything else in the game, at least until/if we add a background image
 		gpEventSystem->fireEvent(new UnitAddEvent(u));

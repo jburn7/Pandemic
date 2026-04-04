@@ -4,5 +4,5 @@
 class EpidemicCard : public PlayerCard
 {
 public:
-	EpidemicCard(Vector2D pos, Sprite *s);
+	EpidemicCard(Vector2D pos, const GraphicsBuffer& graphicsBuffer);
 };

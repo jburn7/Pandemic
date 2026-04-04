@@ -15,6 +15,8 @@ enum ShapeType
 */
 class Shape
 {
+public:
+	Shape();
 	/**
 	* vertices must be in sequential cw or ccw order
 	* vertices will be ignored unless type is COMPLEX
@@ -28,16 +30,16 @@ class Shape
 	void setWidth(int w);
 
 	// Getters
-	int getHeight() const;
+	const int getHeight() const;
 	ShapeType getType() const;
-	int getWidth() const;
+	const int getWidth() const;
 
 private:
 	void setVerticesFromType();
 
-	std::vector<Vector2D> vertices;
+	std::vector<Vector2D> mVertices;
 	
-	int height;
-	ShapeType type;
-	int width;
+	int mHeight;
+	ShapeType mType;
+	int mWidth;
 };

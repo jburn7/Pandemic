@@ -11,7 +11,7 @@ enum class PlayerCardType
 class PlayerCard : public CityCard
 {
 public:
-	PlayerCard(Vector2D pos, Sprite *s, City *city);
+	PlayerCard(Vector2D pos, const GraphicsBuffer& graphicsBuffer, City *city);
 	virtual ~PlayerCard();
 	
 	// Getters

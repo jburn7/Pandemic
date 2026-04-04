@@ -18,8 +18,6 @@ public:
 	//setters
 	void setColors(const Color &color);
 	void setSpeed(int newMs);
-	void setWidths(int w); //adjust width of each sprite
-	void setHeights(int h);
 
 	void update(double timeElapsed);
 

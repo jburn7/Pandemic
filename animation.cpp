@@ -64,22 +64,6 @@ void Animation::setSpeed(int newMs)
 	mMsPerFrame = newMs;
 }
 
-void Animation::setWidths(int w)
-{
-	for(auto &v : mFrames)
-	{
-		v->setWidth(w);
-	}
-}
-
-void Animation::setHeights(int h)
-{
-	for(auto &v : mFrames)
-	{
-		v->setHeight(h);
-	}
-}
-
 void Animation::update(double timeElapsed)
 {
 	if(timeElapsed - mTimeOfLastFrame > mMsPerFrame)

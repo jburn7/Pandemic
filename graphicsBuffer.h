@@ -22,9 +22,9 @@ public:
 
 	void setWidth(int w);
 
-	int getHeight();
+	const int getHeight() const;
 
-	int getWidth();
+	const int getWidth() const;
 protected:
 	int mWidth, mHeight;
 

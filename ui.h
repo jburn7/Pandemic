@@ -6,6 +6,7 @@
 #include "font.h"
 #include "color.h"
 #include "sprite.h"
+#include "Player.h"
 
 class UI : public EventListener
 {
@@ -32,7 +33,7 @@ protected:
 	int mPlayerDetailsXOffset;
 	Font *mFont;
 	Color mUIColor;
-	const Sprite *mActivePawnSprite;
+	const Player *mpActivePawn;
 
 	std::string mStartString, mFailedString, mCompleteString, mReplayString;
 };

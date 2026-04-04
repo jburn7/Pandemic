@@ -2,7 +2,7 @@
 #include "game.h"
 #include "ColorManager.h"
 
-CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
+CityCard::CityCard(Vector2D pos, const GraphicsBuffer& graphicsBuffer, City *city) : Unit(pos, graphicsBuffer)
 {
 	mpCity = city;
 
@@ -12,8 +12,7 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	const Color color = ColorManager::getInstance()->color(c["color"].GetString());
 	const Color textColor = ColorManager::getInstance()->color(c["textColor"].GetString());
 	mpColorIndicator = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("blank.png"));
-	mpColorIndicator->setHeight(s->getHeight() / 6);
-	mpColorIndicator->setWidth(s->getWidth());
+	mColorIndicatorShape = Shape(graphicsBuffer.getWidth(), graphicsBuffer.getHeight() / 6);
 	if(city) // Man this is still bad...
 	{
 		const int cityType = (int)city->getType();
@@ -34,11 +33,11 @@ CityCard::CityCard(Vector2D pos, Sprite *s, City *city) : Unit(pos, s)
 	}
 	mText = new TextBox(
 		Vector2D(0, 0), 
-		(int)(s->getHeight() * 0.15f), 
+		(int)(graphicsBuffer.getHeight() * 0.15f), 
 		textColor, 
 		nameText,
 		&Game::getInstance()->getDefaultFont());
-	mText->resizeToFitWidth((float)s->getWidth());
+	mText->resizeToFitWidth((float)graphicsBuffer.getWidth());
 	setPosition(pos);
 	setIsHidden(true); // default not to draw until it has been "drawn" from deck (ha)
 	setIsGuiLayer(true); // For now, all cards will follow camera like this, not sure whether that will change
@@ -63,7 +62,7 @@ void CityCard::draw() const
 {
 	Unit::draw();
 	mText->draw();
-	Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX(), mPosition.getY() + getHeight() - mpColorIndicator->getHeight() * 1.5f), *mpColorIndicator, mTheta, mScale, Outline(Color(), mpColorIndicator->getColor()));
+	Game::getInstance()->getGraphics().draw(Vector2D(mPosition.getX(), mPosition.getY() + getHeight() - mColorIndicatorShape.getHeight() * 1.5f), *mpColorIndicator, mColorIndicatorShape, mTheta, mScale, Outline(Color(), mpColorIndicator->getColor()));
 }
 
 std::string CityCard::debugDescription()

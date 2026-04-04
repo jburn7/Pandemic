@@ -97,7 +97,7 @@ void Board::init()
 			numTypes = type;
 		}
 		std::string cityName = v["name"].GetString();
-		City *city = new City(cityName, type, Vector2D(v["posX"].GetFloat(), v["posY"].GetFloat()), new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city.png"))); //deletes will be called in UnitManager destructor and Unit destructor respectively
+		City *city = new City(cityName, type, Vector2D(v["posX"].GetFloat(), v["posY"].GetFloat()), *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city.png"));
 		city->setScale(1, 1);
 		mCities.insert(CityItem(cityName, city));
 		neighborMap.push_back(std::vector<std::string>());
@@ -107,15 +107,13 @@ void Board::init()
 		}
 
 		// Also generate city card deck here since each card is tied to a city
-		Sprite *cityCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
-		PlayerCard *pc = new PlayerCard(playerDrawLocation, cityCardBackground, city);
+		PlayerCard *pc = new PlayerCard(playerDrawLocation, *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"), city);
 		pc->setZLayer(3);
 		mPlayerDrawDeck->addCard(pc);
 		gpEventSystem->fireEvent(new UnitAddEvent(pc));
 
 		// Also generate infection card deck here since each card is tied to a city
-		Sprite *infectionCardBackground = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"));
-		InfectionCard *infectionCard = new InfectionCard(infectionDrawLocation, infectionCardBackground, city);
+		InfectionCard *infectionCard = new InfectionCard(infectionDrawLocation, *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("city_card.png"), city);
 		infectionCard->setZLayer(3);
 		mInfectionDrawDeck->addCard(infectionCard);
 		gpEventSystem->fireEvent(new UnitAddEvent(infectionCard));
@@ -161,8 +159,7 @@ void Board::init()
 	unsigned int numPlayers = doc["game"]["numPlayers"].GetUint();
 	for(unsigned int i = 0; i < numPlayers; i++)
 	{
-		Sprite* pawnSprite = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString()));
-		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, pawnSprite);
+		Player *p = new Player(mCities.at(mStartingCity), std::vector<PlayerCard*>(), playerHandLocation, *Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer(doc["pawn"]["pawnSprite"].GetString()));
 		if(playerColors.size() > i)
 		{
 			p->setColor(playerColors[i]);
@@ -172,7 +169,7 @@ void Board::init()
 
 		PlayerInfo *playerInfo = new PlayerInfo(
 			p,
-			playerInfoLocation + Vector2D((playerInfoSpriteScale * pawnSprite->getHeight() + doc["ui"]["playerInfoOffset"].GetInt()) * i, 0),
+			playerInfoLocation + Vector2D((playerInfoSpriteScale * p->getHeight() + doc["ui"]["playerInfoOffset"].GetInt()) * i, 0),
 			playerInfoSpriteScale,
 			Outline(colorManager.color(doc["ui"]["selectedHandHighlight"]["color"].GetString()), Color(0, 0, 0), doc["ui"]["selectedHandHighlight"]["thickness"].GetInt()));
 		playerInfo->setIsGuiLayer(true);
@@ -656,6 +653,7 @@ void Board::handleBoardClick(Vector2D basePos, Vector2D guiPos)
 		case MenuActionType::CHARTER_FLIGHT:
 			if(mpActiveCity)
 			{
+				// TODO: this sets the state for the *next* click, but ideally it would immediately perform the selected action
 				mPendingClickType = PendingClickType::CHARTER_FLIGHT;
 				mpActiveCity = nullptr;
 			}
@@ -849,8 +847,8 @@ void Board::handleEvent(const Event &theEvent)
 					}
 				}
 			}
-			break;
 		}
+		break;
 	}
 	case EventType::MOUSE_MOVE_EVENT:
 	{

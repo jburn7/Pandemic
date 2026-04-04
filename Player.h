@@ -10,7 +10,7 @@ class Player : public Unit
 {
 	friend class PlayerInfo;
 public:
-	Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, Sprite *s);
+	Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, const GraphicsBuffer& graphicsBuffer);
 
 	virtual ~Player();
 

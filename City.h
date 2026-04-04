@@ -10,7 +10,7 @@ class Player;
 class City : public Unit, public EventListener
 {
 public:
-	City(const std::string &name, const int type, const Vector2D &pos, Sprite *s);
+	City(const std::string &name, const int type, const Vector2D &pos, const GraphicsBuffer& graphicsBuffer);
 	~City();
 
 	//overriden functions

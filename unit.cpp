@@ -7,6 +7,7 @@ Unit::Unit()
 	mPosition.setY(0);
 	mTheta = 0;
 	mScale = Vector2D(1, 1);
+	mShape = Shape();
 	mAnimation = NULL;
 	mConstantFrame = NULL;
 	mAnimating = false;
@@ -22,18 +23,30 @@ Unit::Unit(Vector2D pos, Animation *a) : Unit()
 	mAnimating = true;
 }
 
-Unit::Unit(Vector2D pos, Sprite *s) : Unit()
+Unit::Unit(Vector2D pos, const GraphicsBuffer& graphicsBuffer) : Unit()
 {
 	mPosition = pos;
-	mConstantFrame = s;
+	mConstantFrame = new Sprite(graphicsBuffer);
 	mAnimating = false;
+	mShape = Shape(graphicsBuffer.getWidth(), graphicsBuffer.getHeight());
+}
+
+Unit::Unit(Vector2D pos, Animation* a, const Shape& shape) : Unit(pos, a)
+{
+	mShape = shape;
+}
+
+Unit::Unit(Vector2D pos, const GraphicsBuffer& graphicsBuffer, const Shape& shape) : Unit(pos, graphicsBuffer)
+{
+	mShape = shape;
 }
 
 Unit::Unit(const Vector2D &pos, int width, int height) : Unit()
 {
 	mPosition = pos;
+	mShape = Shape(width, height);
 	mConstantFrame = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("default"));
-	setScale((float)width, (float)height);
+	//setScale((float)width, (float)height);
 }
 
 Unit::~Unit()
@@ -59,11 +72,11 @@ void Unit::draw() const
 {
 	if(mAnimation)
 	{
-		Game::getInstance()->getGraphics().draw(mPosition, *mAnimation->getCurrentSprite(), mTheta, mScale, mOutline);
+		Game::getInstance()->getGraphics().draw(mPosition, *mAnimation->getCurrentSprite(), mShape, mTheta, mScale, mOutline);
 	}
 	else if(mConstantFrame)
 	{
-		Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mTheta, mScale, mOutline);
+		Game::getInstance()->getGraphics().draw(mPosition, *mConstantFrame, mShape, mTheta, mScale, mOutline);
 	}
 }
 
@@ -183,30 +196,12 @@ bool Unit::getIsGuiLayer()
 
 int Unit::getWidth() const
 {
-	if(mAnimation)
-	{
-		return mAnimation->getCurrentSprite()->getWidth() * (int)mScale.getX();
-	}
-	else if(mConstantFrame)
-	{
-		return mConstantFrame->getWidth() * (int)mScale.getX();
-	}
-
-	return (int)mScale.getX();
+	return mShape.getWidth() * (int)mScale.getX();
 }
 
 int Unit::getHeight() const
 {
-	if(mAnimation)
-	{
-		return mAnimation->getCurrentSprite()->getHeight() * (int)mScale.getY();
-	}
-	else if(mConstantFrame)
-	{
-		return mConstantFrame->getHeight() * (int)mScale.getY();
-	}
-
-	return (int)mScale.getY();
+	return mShape.getHeight() * (int)mScale.getY();
 }
 
 int Unit::getZLayer()
@@ -226,6 +221,11 @@ const Sprite *Unit::getSprite() const
 	}
 
 	return nullptr;
+}
+
+const Shape& Unit::getShape() const
+{
+	return mShape;
 }
 
 void Unit::collide(Unit * o)

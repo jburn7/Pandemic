@@ -58,7 +58,7 @@ public:
 	UI &getUI();
 	UnitManager &getUnitManager();
 
-	const double getMsPerFrame();
+	const int getMsPerFrame();
 protected:
 	Game();
 	~Game();
@@ -89,7 +89,7 @@ protected:
 	bool mQuit, mJustReset;
 	Timer mClock;
 
-	double msPerFrame;
+	int msPerFrame;
 
 	const char *JSONPATH = "game";
 

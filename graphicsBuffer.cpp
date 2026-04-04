@@ -39,12 +39,12 @@ void GraphicsBuffer::setWidth(int w)
 	mWidth = w;
 }
 
-int GraphicsBuffer::getHeight()
+const int GraphicsBuffer::getHeight() const
 {
 	return mHeight;
 }
 
-int GraphicsBuffer::getWidth()
+const int GraphicsBuffer::getWidth() const
 {
 	return mWidth;
 }

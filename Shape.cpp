@@ -1,38 +1,53 @@
 #include "Shape.h"
 
-Shape::Shape(const int width, const int height, const ShapeType type, const std::vector<Vector2D> &vertices) : width(width), height(height), type(type)
+Shape::Shape() : Shape(0, 0)
+{
+}
+
+Shape::Shape(const int width, const int height, const ShapeType type, const std::vector<Vector2D> &vertices) : mWidth(width), mHeight(height), mType(type)
 {
 	setVerticesFromType();
 }
 
 void Shape::setType(const ShapeType type, const std::vector<Vector2D>& vertices)
 {
-	this->type = type;
+	mType = type;
 	setVerticesFromType();
 }
 
 void Shape::setVerticesFromType()
 {
-	switch(type)
+	switch(mType)
 	{
 		case ShapeType::COMPLEX:
 		{
-			if(vertices.size() == 0)
+			if(mVertices.size() == 0)
 			{
-				vertices.push_back(Vector2D(0, 0));
-				vertices.push_back(Vector2D(width, 0));
-				vertices.push_back(Vector2D(width, height));
-				vertices.push_back(Vector2D(0, height));
+				mVertices.push_back(Vector2D(0, 0));
+				mVertices.push_back(Vector2D((float)mWidth, 0));
+				mVertices.push_back(Vector2D((float)mWidth, (float)mHeight));
+				mVertices.push_back(Vector2D(0, (float)mHeight));
 			}
 			else
 			{
-				vertices = vertices;
+				mVertices = {};
 			}
 			break;
 		}
 		default:
 		{
+			mVertices = {};
 			break;
 		}
 	}
+}
+
+const int Shape::getWidth() const
+{
+	return mWidth;
+}
+
+const int Shape::getHeight() const
+{
+	return mHeight;
 }

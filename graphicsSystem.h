@@ -6,6 +6,7 @@
 #include "font.h"
 #include "EventListener.h"
 #include "EventSystem.h"
+#include "Shape.h"
 #include <string>
 #include "document.h"
 #include "Outline.h"
@@ -32,7 +33,7 @@ public:
 
 	Vector2D convertToWorldCoordinates(Vector2D pos, const GraphicsLayer layer);
 
-	void draw(const Vector2D &targetLoc, const Sprite &sprite, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
+	void draw(const Vector2D &targetLoc, const Sprite &sprite, const Shape &shape, double theta = 0, const Vector2D &scale = Vector2D(1, 1), const Outline &outline = Outline());
 
 	void drawOutline(const Vector2D& targetLoc, const Vector2D &size, const Outline& outline, double theta = 0);
 

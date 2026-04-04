@@ -89,13 +89,13 @@ void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Out
 	mDisplay.draw(boardOutline);
 }
 
-void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, double theta, const Vector2D &scale, const Outline &outline)
+void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, const Shape &shape, double theta, const Vector2D &scale, const Outline &outline)
 {
 	sf::Sprite temp;
-	GraphicsBuffer *texture = sprite.getTexture();
+	const GraphicsBuffer *texture = sprite.getTexture();
 	if(texture)
 	{
-		temp = sf::Sprite(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), (int)sprite.getWidth(), (int)sprite.getHeight()));
+		temp = sf::Sprite(sprite.getTexture()->mBitmap, sf::IntRect((int)sprite.getSourceLoc().getX(), (int)sprite.getSourceLoc().getY(), shape.getWidth(), shape.getHeight()));
 	}
 	double degrees = theta * 180.0 / 3.1415926;
 	const Vector2D offset(targetLoc.getX(), targetLoc.getY());
