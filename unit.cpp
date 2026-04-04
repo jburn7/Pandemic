@@ -46,7 +46,6 @@ Unit::Unit(const Vector2D &pos, int width, int height) : Unit()
 	mPosition = pos;
 	mShape = Shape(width, height);
 	mConstantFrame = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("default"));
-	//setScale((float)width, (float)height);
 }
 
 Unit::~Unit()
