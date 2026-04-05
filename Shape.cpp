@@ -42,6 +42,16 @@ void Shape::setVerticesFromType()
 	}
 }
 
+const ShapeType Shape::getType() const
+{
+	return mType;
+}
+
+const std::vector<Vector2D>& Shape::getVertices() const
+{
+	return mVertices;
+}
+
 const int Shape::getWidth() const
 {
 	return mWidth;

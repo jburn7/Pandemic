@@ -31,7 +31,8 @@ public:
 
 	// Getters
 	const int getHeight() const;
-	ShapeType getType() const;
+	const ShapeType getType() const;
+	const std::vector<Vector2D>& getVertices() const;
 	const int getWidth() const;
 
 private:

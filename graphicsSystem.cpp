@@ -1,6 +1,8 @@
 #include "graphicsSystem.h"
 #include "CameraEvents.h"
 #include "SFML\Graphics\RectangleShape.hpp"
+#include "SFML\Graphics\CircleShape.hpp"
+#include "SFML\Graphics\ConvexShape.hpp"
 
 void setPosition(sf::Transformable &trans, const Vector2D &vec)
 {
@@ -61,32 +63,65 @@ Vector2D GraphicsSystem::convertToWorldCoordinates(Vector2D pos, const GraphicsL
 	return Vector2D(worldPos.x, worldPos.y);
 }
 
-// TODO: somehow read a list of vertices and draw outline through those? Does sfml even support vertex outlines?
-// Yes, ConvexShape supports an outline, so Sprite will need to support a ConvexShape
-// But there are also some non-sprite usages of Outline...
-/**
-* Word soup of ideas:
-* 1) new drawOutlineForShape method here, accepts a convex shape
-*	Now who owns that shape? Because there is also drawOutline, so it seems like there are at least two different paths
-* 2) but really the outline itself doesn't need to store the shape. The unit or caller has a shape in mind, and the outline can reference it
-*	Seems like all units need to store a shape which defaults to Rectangle. Outline can accept a const ref to it
-*	It matters less here, but this will work better with a game that has a physics system since the unit can do better collision detection with a shape
-*/
-void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const double theta)
+
+void GraphicsSystem::drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const Shape& shape, const double theta)
 {
-	// So if we read outline.shape here, and have shape be an enum (circle, rectangle, complex) then we can pick the right SF class here
-	// But then that results in an unused vector. Outline would need to store vertices, but for two out of three shapes it is unused
-	sf::RectangleShape boardOutline;
-	boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
-	boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
-	boardOutline.setOutlineColor(outline.borderColor.mColor);
-	boardOutline.setOutlineThickness((float)outline.thickness);
-	boardOutline.setFillColor(outline.fillColor.mColor);
+	switch(shape.getType())
+	{
+		case ShapeType::RECTANGLE:
+		{
+			sf::RectangleShape boardOutline;
+			boardOutline.setSize(sf::Vector2f(bounds.width, bounds.height));
 
-	double degrees = theta * 180.0 / 3.1415926;
-	boardOutline.rotate((float)degrees);
+			boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
+			boardOutline.setOutlineColor(outline.borderColor.mColor);
+			boardOutline.setOutlineThickness((float)outline.thickness);
+			boardOutline.setFillColor(outline.fillColor.mColor);
 
-	mDisplay.draw(boardOutline);
+			double degrees = theta * 180.0 / 3.1415926;
+			boardOutline.rotate((float)degrees);
+
+			mDisplay.draw(boardOutline);
+			break;
+		}
+		case ShapeType::CIRCLE:
+		{
+			sf::CircleShape boardOutline;
+			boardOutline.setRadius(bounds.width / 2);
+
+			boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
+			boardOutline.setOutlineColor(outline.borderColor.mColor);
+			boardOutline.setOutlineThickness((float)outline.thickness);
+			boardOutline.setFillColor(outline.fillColor.mColor);
+
+			double degrees = theta * 180.0 / 3.1415926;
+			boardOutline.rotate((float)degrees);
+
+			mDisplay.draw(boardOutline);
+			break;
+		}
+		case ShapeType::COMPLEX: {
+			const std::vector<Vector2D>& vertices = shape.getVertices();
+			sf::ConvexShape boardOutline(vertices.size());
+
+			for(unsigned int index = 0; index < vertices.size(); index++)
+			{
+				boardOutline.setPoint(index, sf::Vector2f(vertices[index].getX(), vertices[index].getY()));
+			}
+
+			boardOutline.setPosition(sf::Vector2f(bounds.left, bounds.top));
+			boardOutline.setOutlineColor(outline.borderColor.mColor);
+			boardOutline.setOutlineThickness((float)outline.thickness);
+			boardOutline.setFillColor(outline.fillColor.mColor);
+
+			double degrees = theta * 180.0 / 3.1415926;
+			boardOutline.rotate((float)degrees);
+
+			mDisplay.draw(boardOutline);
+			break;
+		}
+	}
+
 }
 
 void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, const Shape &shape, double theta, const Vector2D &scale, const Outline &outline)
@@ -116,17 +151,15 @@ void GraphicsSystem::draw(const Vector2D &targetLoc, const Sprite &sprite, const
 	temp.setColor(sf::Color(temp.getColor().r, temp.getColor().g, temp.getColor().b, (sf::Uint8)sprite.getTransparency()));
 
 	// Outline drawn here
-	drawOutlineForBounds(temp.getGlobalBounds(), outline, theta);
+	drawOutlineForBounds(temp.getGlobalBounds(), outline, shape, theta);
 	mDisplay.draw(temp);
 }
 
-// So with option one above, we would just pass the outline, probably no need for separate functions anymore
-// This function really doesn't need to exist. Everywhere it's used, the caller can just tell its outline that it is a rectangle outline
 void GraphicsSystem::drawOutline(const Vector2D& targetLoc, const Vector2D& size, const Outline& outline, double theta)
 {
 	// Outline drawn here, called in just a couple of places by units that have subunits and no sprite
 	sf::FloatRect bounds(sf::Vector2f(targetLoc.getX(), targetLoc.getY()), sf::Vector2f(size.getX(), size.getY()));
-	drawOutlineForBounds(bounds, outline, theta);
+	drawOutlineForBounds(bounds, outline, Shape((int)size.getX(), (int)size.getY()), theta);
 }
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
@@ -211,7 +244,7 @@ void GraphicsSystem::writeText(const Vector2D &targetLoc, const int fontSize, Fo
 	}
 
 	// Outline drawn here
-	drawOutlineForBounds(temp.getGlobalBounds(), background, 0);
+	drawOutlineForBounds(temp.getGlobalBounds(), background, Shape((int)temp.getGlobalBounds().width, (int)temp.getGlobalBounds().height), 0);
 	mDisplay.draw(temp);
 }
 

@@ -47,6 +47,7 @@ City::City(const std::string &name, const int type, const Vector2D &pos, const G
 	mOutbroke = false;
 	mpResearchStation = new Sprite(*Game::getInstance()->getGraphicsBufferManager().getGraphicsBuffer("research_station.png"));
 	mHasResearchStation = true;
+	mShape = Shape(graphicsBuffer.getWidth(), graphicsBuffer.getHeight(), ShapeType::CIRCLE);
 	mType = CityType(type);
 
 	mRadius = c["radius"].GetInt();
