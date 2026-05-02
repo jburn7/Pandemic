@@ -87,11 +87,6 @@ void Unit::update(double timeElapsed)
 	}
 }
 
-void Unit::move(const Vector2D &delta)
-{
-	setPosition(mPosition + delta);
-}
-
 bool Unit::contains(Vector2D &loc) const
 {
 	return mPosition.getX() < loc.getX() && mPosition.getX() + getWidth() > loc.getX() && mPosition.getY() < loc.getY() && mPosition.getY() + getHeight() > loc.getY();
@@ -122,11 +117,6 @@ void Unit::setIsHidden(const bool isHidden)
 void Unit::setIsGuiLayer(const bool isGui)
 {
 	mIsGuiLayer = isGui;
-}
-
-void Unit::setPosition(Vector2D pos)
-{
-	mPosition = pos;
 }
 
 void Unit::setSprite(Sprite *s)
@@ -176,11 +166,6 @@ void Unit::clearOutline()
 Vector2D Unit::getCenter()
 {
 	return Vector2D(mPosition.getX() + getWidth() / 2, mPosition.getY() + getHeight() / 2);
-}
-
-Vector2D &Unit::getPosition()
-{
-	return mPosition;
 }
 
 bool Unit::getIsHidden()

@@ -2,6 +2,7 @@
 #include "ColorManager.h"
 #include "game.h"
 #include "EventSystem.h"
+#include "MoveableEvents.h"
 #include <random>
 
 template<typename T>
@@ -19,7 +20,7 @@ Deck<T>::~Deck()
 template<typename T>
 void Deck<T>::addCard(T * card, bool toBack)
 {
-	gpEventSystem->fireEvent(new UnitMoveEvent(card, mPosition, 1000));
+	gpEventSystem->fireEvent(new MoveableMoveEvent(card, mPosition, 1000));
 	if(mCards.size() > 0)
 	{
 		mCards[mCards.size() - 1]->setIsHidden(true);

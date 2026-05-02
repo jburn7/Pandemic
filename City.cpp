@@ -3,14 +3,13 @@
 #include "ColorManager.h"
 #include "DiseaseEvents.h"
 #include "game.h"
+#include "MoveableEvents.h"
 #include "Player.h"
-#include "UnitEvents.h"
 
 City::City(const std::string &name, const int type, const Vector2D &pos, const GraphicsBuffer& graphicsBuffer) : Unit(pos, graphicsBuffer)
 {
 	rapidjson::Document &doc = JSONData::getInstance()->getJSON();
 	rapidjson::Value &c = doc["city"];
-	// TODO: read city width and height from doc and now we don't need s->getWidth/Height()
 	GraphicsBufferManager *graphics = &Game::getInstance()->getGraphicsBufferManager();
 	const rapidjson::Value &typeColors = c["infoColorByType"].GetArray();
 	const rapidjson::Value &colorObject = typeColors[type];
@@ -84,6 +83,7 @@ void City::handleEvent(const Event &theEvent)
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		const double delta = ev.getDelta();
+		// TODO: really the goal is that any text-based unit needs to listen to the Zoom event directly
 		for(auto& cubeText : mCubeTexts)
 		{
 			cubeText.second->adjustScale(delta);
@@ -100,7 +100,7 @@ void City::addPlayer(Player *player)
 {
 	mPlayersHere.push_back(player);
 	//set player position off to side of city based on number of players
-	gpEventSystem->fireEvent(new UnitMoveEvent(player, pawnPositions.front(), 1500));
+	gpEventSystem->fireEvent(new MoveableMoveEvent(player, pawnPositions.front(), 1500));
 	pawnPositions.erase(pawnPositions.begin());
 
 	//handle movement effects (eg medic clearing cubes on touch after disease has been cured)
@@ -302,7 +302,7 @@ void City::setDiseaseCubes(const int cubes, const CityType type)
 		if(v.second > 0)
 		{
 			mCubeTexts[v.first]->setIsHidden(false);
-			gpEventSystem->fireEvent(new UnitMoveEvent(mCubeTexts[v.first], mStartingCubeTextsPosition - Vector2D(30 * (float)numDifferentDiseaseCubes, 0), 0));
+			gpEventSystem->fireEvent(new MoveableMoveEvent(mCubeTexts[v.first], mStartingCubeTextsPosition - Vector2D(30 * (float)numDifferentDiseaseCubes, 0), 0));
 			numDifferentDiseaseCubes++;
 		}
 		else

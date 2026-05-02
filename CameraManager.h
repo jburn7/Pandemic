@@ -1,8 +1,9 @@
 #pragma once
-#include "Trackable.h"
+#include "Camera.h"
 #include "event.h"
 #include "EventSystem.h"
 #include "EventListener.h"
+#include "Moveable.h"
 #include "Vector2D.h"
 
 class CameraManager : public EventListener
@@ -19,13 +20,14 @@ public:
 	virtual void handleEvent(const Event& theEvent);
 
 	// Getters
-	const Vector2D getOffset();
+	Camera& getCamera();
 
 private:
 	bool mCameraPanLeft, mCameraPanRight, mCameraPanUp, mCameraPanDown; // If we want to get fancy we could move these into two enums or something
 
 	float mPanSpeed, mMaxPanSpeed, mPanAcceleration;
-	float mZoomAmount, mMaxZoom, mMinZoom, mCurrentZoom;
+	float mZoomPerTick, mMaxZoom, mMinZoom;
 	Vector2D mBounds; // Abs val of how far panning can stray from origin
-	Vector2D mCenter;
+
+	Camera mCamera;
 };

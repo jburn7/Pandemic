@@ -1,5 +1,6 @@
  #pragma once
 #include "animation.h"
+#include "Moveable.h"
 #include "Shape.h"
 #include "sprite.h"
 #include "Outline.h"
@@ -9,7 +10,9 @@ constexpr int MAX_Z_LAYERS = 4;
 
 //declare any classes that require double dispatch for collision here
 
-class Unit : public Trackable
+// TODO: I think we can keep public Trackable here and instead use compositon for Moveable
+// And then in the overall MovementManager collection, we can still store a hash of Moveables and just pass the reference to both the Unit and CameraManager's moveables (or make them pointers)
+class Unit : public Moveable
 {
 	friend class UnitManager;
 	friend class GraphicsSystem;
@@ -35,8 +38,6 @@ public:
 
 	virtual std::string debugDescription() { return ""; }
 
-	virtual void move(const Vector2D &delta);
-
 	//collision functions
 	bool contains(Vector2D &loc) const;
 
@@ -45,7 +46,6 @@ public:
 	void setColor(const Color &color);
 	void setIsHidden(const bool isHidden);
 	void setIsGuiLayer(const bool isGui);
-	void setPosition(Vector2D pos);
 	void setSprite(Sprite *s);
 	void setRotation(double theta);
 	void adjustScale(double delta);
@@ -57,7 +57,6 @@ public:
 
 	//getters
 	Vector2D getCenter();
-	Vector2D &getPosition();
 	bool getIsHidden();
 	bool getIsGuiLayer();
 	virtual int getWidth() const;
@@ -85,7 +84,6 @@ protected:
 	bool mIsGuiLayer; // Probably a better way to do this but I need to draw some items onto a separate "gui" view so they don't scale with the camera. Ideally I would have UnitManeger store them separately instead of iterating through units twice, but we can cross that bridge if it's too slow
 
 	Vector2D mScale;
-	Vector2D mPosition;
 	
 	Animation* mAnimation;
 	Color mColor;

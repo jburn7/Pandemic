@@ -2,6 +2,7 @@
 #include "SFML\Graphics\RenderWindow.hpp"
 #include "SFML\Graphics\Sprite.hpp"
 #include "SFML\Graphics\Text.hpp"
+#include "Moveable.h"
 #include "sprite.h"
 #include "font.h"
 #include "EventListener.h"
@@ -54,20 +55,14 @@ public:
 	int getHeight();
 
 	int getWidth();
-
-	const Vector2D &getTopLeft() const;
 protected:
 	int mWidth, mHeight;
 
-	Vector2D mCameraPosition;
-	sf::Vector2i oldOffsetCoords;
-	sf::Vector2i mZoomPosition;
-	double mCameraZoom;
-	Vector2D mTopLeft; // For consistent UI drawing after camera has panned
 	sf::RenderWindow mDisplay;
+	sf::View mBaseView;
 	sf::FloatRect mBoardViewport;
 
 private:
 	void drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const Shape& shape, const double theta);
-	void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);
+	void updateBaseView(sf::Vector2i center, const Moveable& camera, sf::RenderWindow& window, float zoom);
 };

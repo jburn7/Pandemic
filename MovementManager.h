@@ -1,6 +1,6 @@
 #pragma once
 #include "EventListener.h"
-#include "unit.h"
+#include "Moveable.h"
 #include "Vector2D.h"
 #include <map>
 
@@ -23,7 +23,8 @@ private:
 };
 
 /*
-* This class will be responsible for providing "animated" movements of all Units. I could have just made units know where they want to go/how fast to go there
+* This class will be responsible for providing "animated" movements of all Moveables (mainly units, also Camera).
+* I could have just made units know where they want to go/how fast to go there
 * on their own, but I like the idea of a centralized system that I can tell "move X to Y,Z in S seconds". When that movement is done, this will fire an event
 * saying so. And then units can listen to that event and decide what to do once they know that they've arrived where they were going.
 * The biggest drawback here might be that I will need to static cast the unit if another system wants to listen to that Unit's arrival, e.g. if the Board wants to know when a card makes its way to the discard pile so that it can keep the game state in sync with the animation state or something. But that can probably be remedied by an internal list that the Board keeps track of and then it matches the Unit pointer in the event to the items in that list to determine what exactly it was that finished moving.
@@ -39,12 +40,12 @@ public:
 
 	virtual void handleEvent(const Event& theEvent);
 
-	void initiateMovement(Unit * const unit, const Vector2D destination, const int milliseconds);
+	void initiateMovement(Moveable* const moveable, const Vector2D destination, const int milliseconds);
 
 	void update(double timeElapsed);
 
 private:
 	int msPerFrame;
 
-	std::map<Unit* const, MovementCommand> mMovements;
+	std::map<Moveable* const, MovementCommand> mMovements;
 };

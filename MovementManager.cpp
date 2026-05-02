@@ -1,7 +1,6 @@
 #include "game.h"
 #include "MovementManager.h"
-#include "unit.h"
-#include "UnitEvents.h"
+#include "MoveableEvents.h"
 #include "EventSystem.h"
 #include "Vector2Di.h"
 
@@ -47,27 +46,27 @@ MovementCommand::MovementCommand(const Vector2D start, const Vector2D destinatio
 void MovementManager::init()
 {
 	msPerFrame = Game::getInstance()->getMsPerFrame();
-	gpEventSystem->addListener(EventType::UNIT_MOVE_EVENT, this);
+	gpEventSystem->addListener(EventType::MOVEABLE_MOVE_EVENT, this);
 }
 
 void MovementManager::handleEvent(const Event& theEvent)
 {
-	if(theEvent.getType() == EventType::UNIT_MOVE_EVENT)
+	if(theEvent.getType() == EventType::MOVEABLE_MOVE_EVENT)
 	{
-		const UnitMoveEvent &ev = static_cast<const UnitMoveEvent&>(theEvent);
-		initiateMovement(ev.getUnit(), ev.getDestination(), ev.getMilliseconds());
+		const MoveableMoveEvent &ev = static_cast<const MoveableMoveEvent&>(theEvent);
+		initiateMovement(ev.getMoveable(), ev.getDestination(), ev.getMilliseconds());
 	}
 }
 
-void MovementManager::initiateMovement(Unit* const unit, const Vector2D destination, const int milliseconds)
+void MovementManager::initiateMovement(Moveable* const moveable, const Vector2D destination, const int milliseconds)
 {
-	auto existing = mMovements.find(unit);
+	auto existing = mMovements.find(moveable);
 	if(existing != mMovements.end())
 	{
 		mMovements.erase(existing);
 	}
 
-	mMovements.insert(std::pair(unit, MovementCommand(unit->getPosition(), destination, milliseconds)));
+	mMovements.insert(std::pair(moveable, MovementCommand(moveable->getPosition(), destination, milliseconds)));
 }
 
 void MovementManager::update(double timeElapsed)
@@ -81,7 +80,7 @@ void MovementManager::update(double timeElapsed)
 		Vector2Di dest = Vector2Di((int)it->second.destination.getX(), (int)it->second.destination.getY());
 		if(pos == dest)
 		{
-			gpEventSystem->fireEvent(new UnitArriveEvent(it->first, it->second.destination));
+			gpEventSystem->fireEvent(new MoveableArriveEvent(it->first, it->second.destination));
 			mMovements.erase(it);
 			continue;
 		}
@@ -117,6 +116,14 @@ void MovementManager::update(double timeElapsed)
 			it->second.velocity = desiredDistanceThisFrame;
 		}
 
+		// TODO: if the moveable is the active pawn, we want to pan the camera by the same velocity
+		// But is it better to make the camera panning independent? What if we want to pan the camera to a specific city?
+		// Then we'll either want to reuse this code somewhere else,
+		// or have the Movement manager listen to a MoveCamera event and perform this same code to move it
+		// The most engineered solution is to make a Moveable class, which Moveable will inherit
+		// But then we also need a full class to represent the camera, rather than graphicsSystem handling a Vector for the camera position
+		// Moveable needs to store positon and declare the move() method
+		// More hacky solutions: have MovementManager store an explicit mCameraMovementCommand pointer, which it will allocate upon receiving a MoveCameraCommand event and cleanup once it determines the camera made it
 		it->first->move(it->second.velocity);
 	}
 }

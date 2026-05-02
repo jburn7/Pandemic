@@ -11,7 +11,6 @@ enum ShapeType
 
 /**
 * Stores the "physical" properties of a Unit. width, height, shape (rectangle, circle, complex) etc.
-* TODO: can this also store origin and rotation from Sprite?
 */
 class Shape
 {

@@ -1,6 +1,20 @@
 #pragma once
+#include "Camera.h"
 #include "event.h"
 #include "Vector2D.h"
+
+class UpdateCameraEvent: public Event 
+{
+public:
+	UpdateCameraEvent(const Camera& camera) : Event(EventType::UPDATE_CAMERA_EVENT), mCamera(camera)
+	{
+	}
+
+	const Camera& getCamera() const { return mCamera; }
+
+private:
+	const Camera& mCamera;
+};
 
 class PlaceCameraEvent : public Event
 {

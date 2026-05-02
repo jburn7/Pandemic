@@ -7,9 +7,8 @@ CameraManager::CameraManager()
 {
 	mCameraPanLeft = mCameraPanRight = mCameraPanUp = mCameraPanDown = false;
 	mPanSpeed = mMaxPanSpeed = mPanAcceleration = 0.f;
-	mZoomAmount = mMaxZoom = mMinZoom = mCurrentZoom = 0.f;
+	mZoomPerTick = mMaxZoom = mMinZoom = 0.f;
 	mBounds = Vector2D();
-	mCenter = Vector2D();
 }
 
 void CameraManager::init(const Vector2D bounds, const float panSpeed, const float panAcceleration, const float zoomAmount, const float maxZoom, const float minZoom)
@@ -18,12 +17,11 @@ void CameraManager::init(const Vector2D bounds, const float panSpeed, const floa
 	mMaxPanSpeed = panSpeed;
 	mPanSpeed = 0;
 	mPanAcceleration = panAcceleration;
-	mZoomAmount = zoomAmount;
+	mZoomPerTick = zoomAmount;
 	mMaxZoom = maxZoom;
 	mMinZoom = minZoom;
-	mCurrentZoom = 1;
 	mBounds = bounds;
-	mCenter = Vector2D(0, 0);
+	mCamera.setPosition(Vector2D(0, 0));
 
 	gpEventSystem->addListener(EventType::KEY_PRESSED_EVENT, this);
 	gpEventSystem->addListener(EventType::KEY_RELEASED_EVENT, this);
@@ -34,38 +32,38 @@ void CameraManager::update()
 {
 	if(mCameraPanRight)
 	{
-		const Vector2D delta = Vector2D(std::min(mPanSpeed, std::abs(mBounds.getX() - mCenter.getX())), 0);
-		if(mCenter.getX() + delta.getX() <= mBounds.getX())
+		const Vector2D delta = Vector2D(std::min(mPanSpeed, std::abs(mBounds.getX() - mCamera.getPosition().getX())), 0);
+		if(mCamera.getPosition().getX() + delta.getX() <= mBounds.getX())
 		{
 			gpEventSystem->fireEvent(new PanCameraEvent(delta));
-			mCenter += delta;
+			mCamera.move(delta);
 		}
 	}
 	if(mCameraPanLeft)
 	{
-		const Vector2D delta = Vector2D(std::min(-mPanSpeed, std::abs(mCenter.getX() - mBounds.getX())), 0);
-		if(mCenter.getX() + delta.getX() >= -mBounds.getX())
+		const Vector2D delta = Vector2D(std::min(-mPanSpeed, std::abs(mCamera.getPosition().getX() - mBounds.getX())), 0);
+		if(mCamera.getPosition().getX() + delta.getX() >= -mBounds.getX())
 		{
 			gpEventSystem->fireEvent(new PanCameraEvent(delta));
-			mCenter += delta;
+			mCamera.move(delta);
 		}
 	}
 	if(mCameraPanUp)
 	{
-		const Vector2D delta = Vector2D(0, std::min(-mPanSpeed, std::abs(mCenter.getY() - mBounds.getY())));
-		if(mCenter.getY() + delta.getY() >= -mBounds.getY())
+		const Vector2D delta = Vector2D(0, std::min(-mPanSpeed, std::abs(mCamera.getPosition().getY() - mBounds.getY())));
+		if(mCamera.getPosition().getY() + delta.getY() >= -mBounds.getY())
 		{
 			gpEventSystem->fireEvent(new PanCameraEvent(delta));
-			mCenter += delta;
+			mCamera.move(delta);
 		}
 	}
 	if(mCameraPanDown)
 	{
-		const Vector2D delta = Vector2D(0, std::min(mPanSpeed, std::abs(mBounds.getY() - mCenter.getY())));
-		if(mCenter.getY() + delta.getY() <= mBounds.getY())
+		const Vector2D delta = Vector2D(0, std::min(mPanSpeed, std::abs(mBounds.getY() - mCamera.getPosition().getY())));
+		if(mCamera.getPosition().getY() + delta.getY() <= mBounds.getY())
 		{
 			gpEventSystem->fireEvent(new PanCameraEvent(delta));
-			mCenter += delta;
+			mCamera.move(delta);
 		}
 	}
 
@@ -73,6 +71,7 @@ void CameraManager::update()
 	{
 		mPanSpeed += mPanAcceleration;
 		mPanSpeed = std::min(mPanSpeed, mMaxPanSpeed);
+		gpEventSystem->fireEvent(new UpdateCameraEvent(mCamera));
 	}
 	else
 	{
@@ -140,17 +139,18 @@ void CameraManager::handleEvent(const Event &theEvent)
 			switch(ev.getDirection())
 			{
 			case MouseWheel::DOWN:
-				if(mCurrentZoom < mMaxZoom)
+				if(mCamera.mZoom < mMaxZoom)
 				{
-					gpEventSystem->fireEvent(new ZoomCameraEvent(mZoomAmount, zoomLocation));
-					mCurrentZoom = std::min(mCurrentZoom + mZoomAmount, mMaxZoom);
+					// TODO: why did these reverse?
+					gpEventSystem->fireEvent(new ZoomCameraEvent(mZoomPerTick, zoomLocation));
+					mCamera.mZoom = std::min(mCamera.mZoom + mZoomPerTick, mMaxZoom);
 				}
 				break;
 			case MouseWheel::UP:
-				if(mCurrentZoom > mMinZoom)
+				if(mCamera.mZoom > mMinZoom)
 				{
-					gpEventSystem->fireEvent(new ZoomCameraEvent(-mZoomAmount, zoomLocation));
-					mCurrentZoom = std::max(mCurrentZoom - mZoomAmount, mMinZoom);
+					gpEventSystem->fireEvent(new ZoomCameraEvent(-mZoomPerTick, zoomLocation));
+					mCamera.mZoom = std::max(mCamera.mZoom - mZoomPerTick, mMinZoom);
 				}
 				break;
 			}
@@ -158,7 +158,7 @@ void CameraManager::handleEvent(const Event &theEvent)
 	}
 }
 
-const Vector2D CameraManager::getOffset()
+Camera& CameraManager::getCamera()
 {
-	return mCenter;
+	return mCamera;
 }

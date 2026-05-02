@@ -13,10 +13,10 @@ GraphicsSystem::GraphicsSystem()
 {
 	mWidth = 0;
 	mHeight = 0;
-	mCameraZoom = 1;
 
 	gpEventSystem->addListener(EventType::PLACE_CAMERA_EVENT, this);
 	gpEventSystem->addListener(EventType::PAN_CAMERA_EVENT, this);
+	gpEventSystem->addListener(EventType::UPDATE_CAMERA_EVENT, this);
 	gpEventSystem->addListener(EventType::ZOOM_CAMERA_EVENT, this);
 }
 
@@ -31,9 +31,6 @@ void GraphicsSystem::init(const rapidjson::Document &doc, int w, int h, const st
 	mDisplay.create(sf::VideoMode(w, h, 32), sf::String(title));
 	mWidth = w;
 	mHeight = h;
- 	mCameraPosition = Vector2D((float)mWidth / 2, (float)mHeight / 2);
-	mZoomPosition = sf::Vector2i((int)mCameraPosition.getX(), (int)mCameraPosition.getY());
-	oldOffsetCoords = sf::Vector2i(0, 0);
 	sf::View view = sf::View(sf::Vector2f((float)mWidth / 2.f, (float)mHeight / 2.f), sf::Vector2f((float)mWidth, (float)mHeight));
 	mBoardViewport = sf::FloatRect(
 		doc["window"]["boardViewport"]["startX"].GetFloat(),
@@ -164,23 +161,34 @@ void GraphicsSystem::drawOutline(const Vector2D& targetLoc, const Vector2D& size
 
 void GraphicsSystem::handleEvent(const Event &theEvent)
 {
+	// TODO: for all three of these events, we need to pass through the CameraManager (or just read it from game instance)
+	// And then call zoomCamera/updateView/whatever that name ends up being
 	switch(theEvent.getType())
 	{
-	case EventType::PLACE_CAMERA_EVENT:
+	case EventType::UPDATE_CAMERA_EVENT:
 	{
-		mCameraPosition = static_cast<const PlaceCameraEvent&>(theEvent).getPosition();
+		const Camera& camera = static_cast<const UpdateCameraEvent&>(theEvent).getCamera();
+		updateBaseView(sf::Vector2i((int)(camera.getPosition().getX()), (int)(camera.getPosition().getY())), camera, mDisplay, camera.getZoom());
 		break;
 	}
-	case EventType::PAN_CAMERA_EVENT:
-	{
-		mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
-		break;
-	}
+	//case EventType::PLACE_CAMERA_EVENT:
+	//{
+	//	mCameraPosition = static_cast<const PlaceCameraEvent&>(theEvent).getPosition();
+	//	break;
+	//}
+	//case EventType::PAN_CAMERA_EVENT:
+	//{
+	//	mCameraPosition += static_cast<const PanCameraEvent&>(theEvent).getDelta();
+	//	break;
+	//}
 	case EventType::ZOOM_CAMERA_EVENT:
 	{
 		const ZoomCameraEvent& ev = static_cast<const ZoomCameraEvent&>(theEvent);
-		mCameraZoom += ev.getDelta();
-		mZoomPosition = sf::Vector2i((int)ev.getZoomLocation().getX(), (int)ev.getZoomLocation().getY());
+
+		// TODO: full plan is to have all camera events store a Camera ref
+		// Camera will need to store zoom in addition to moveable
+		// And then on any camera event, we update based on camera pos and zooms
+		//mZoomPosition = sf::Vector2i((int)ev.getZoomLocation().getX(), (int)ev.getZoomLocation().getY());
 		break;
 	}
 	}
@@ -191,21 +199,20 @@ void GraphicsSystem::flip()
 	mDisplay.display();
 }
 
-void GraphicsSystem::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom)
+void GraphicsSystem::updateBaseView(sf::Vector2i center, const Moveable& camera, sf::RenderWindow& window, float zoom)
 {
-	sf::Vector2f vec = sf::Vector2f((float)pixel.x, (float)pixel.y);
-	sf::View view(sf::Vector2f(mCameraPosition.getX(), mCameraPosition.getY()), sf::Vector2f((float)mWidth, (float)mHeight));
-	view.setViewport(mBoardViewport);
-	window.setView(view);
-	oldOffsetCoords = pixel;
-	const sf::Vector2f beforeCoord{window.mapPixelToCoords(pixel)};
-	view.zoom(zoom);
-	window.setView(view);
-	const sf::Vector2f afterCoord{window.mapPixelToCoords(pixel)};
+	sf::Vector2f vec = sf::Vector2f((float)center.x, (float)center.y);
+	mBaseView = sf::View(sf::Vector2f(camera.getPosition().getX(), camera.getPosition().getY()), sf::Vector2f((float)mWidth, (float)mHeight));
+	mBaseView.setViewport(mBoardViewport);
+	window.setView(mBaseView);
+	const sf::Vector2f beforeCoord{window.mapPixelToCoords(center)};
+	mBaseView.zoom(zoom);
+	window.setView(mBaseView);
+	const sf::Vector2f afterCoord{window.mapPixelToCoords(center)};
 	const sf::Vector2f offsetCoords{beforeCoord - afterCoord};
 
-	view.move(offsetCoords);
-	window.setView(view);
+	mBaseView.move(offsetCoords);
+	// mDisplay will set final view during update()
 }
 
 void GraphicsSystem::update(const GraphicsLayer layer)
@@ -214,9 +221,7 @@ void GraphicsSystem::update(const GraphicsLayer layer)
 	{
 	case GraphicsLayer::BASE_VIEW:
 	{
-		zoomViewAt(mZoomPosition, mDisplay, (float)mCameraZoom);
-		sf::View view = mDisplay.getView();
-		mTopLeft = Vector2D(view.getCenter().x - mWidth / 2, view.getCenter().y - mHeight / 2);
+		mDisplay.setView(mBaseView);
 	}
 		break;
 	case GraphicsLayer::GUI_VIEW:
@@ -266,9 +271,4 @@ int GraphicsSystem::getHeight()
 int GraphicsSystem::getWidth()
 {
 	return mWidth;
-}
-
-const Vector2D & GraphicsSystem::getTopLeft() const 
-{
-	return mTopLeft;
 }

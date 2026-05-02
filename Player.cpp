@@ -3,6 +3,9 @@
 #include "game.h"
 #include "PlayerCardDeck.h"
 #include "CameraEvents.h"
+#include "MoveableEvents.h"
+
+const int PAWN_MOVE_MS = 1500; // TODO: static initialization from JSON
 
 Player::Player(City *city, std::vector<PlayerCard*> cards, const Vector2D &playerHandLocation, const GraphicsBuffer& graphicsBuffer) : Unit(Vector2D(0, 0), graphicsBuffer)
 {
@@ -87,8 +90,7 @@ void Player::moveCity(City* const newCity)
 		currentCity->removePlayer(this);
 	}
 	newCity->addPlayer(this);
-	// TODO: camera pan events. Possibly integrate camera with movement manager?
-	gpEventSystem->fireEvent(new PlaceCameraEvent(newCity->getPosition()));
+	gpEventSystem->fireEvent(new CameraMoveEvent(newCity->getPosition(), PAWN_MOVE_MS));
 	currentCity = newCity;
 }
 
@@ -105,5 +107,5 @@ std::vector<PlayerCard*>& Player::getHand()
 void Player::positionCard(int index, PlayerCard *pc)
 {
 	const Vector2D offset = Vector2D(0, 0);
-	gpEventSystem->fireEvent(new UnitMoveEvent(pc, offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index), 1500));
+	gpEventSystem->fireEvent(new MoveableMoveEvent(pc, offset + mHandStart + Vector2D(mHandDirection.getX() * (pc->getWidth() + 10) * index, mHandDirection.getY() * (pc->getHeight() + 10) * index), PAWN_MOVE_MS));
 }
