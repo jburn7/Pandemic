@@ -3,12 +3,13 @@
 
 class Camera : public Moveable
 {
-	friend class CameraManager;
 public:
 	Camera();
 
 	// Setters
 	virtual void setPosition(Vector2D pos);
+
+	void setZoom(const float zoom, const Vector2D& position);
 
 	// Getters
 	const float getZoom() const;

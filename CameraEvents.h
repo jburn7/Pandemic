@@ -16,41 +16,16 @@ private:
 	const Camera& mCamera;
 };
 
-class PlaceCameraEvent : public Event
-{
-public:
-	PlaceCameraEvent(const Vector2D position) : Event(EventType::PLACE_CAMERA_EVENT), mPosition(position)
-	{
-	}
-
-	const Vector2D& getPosition() const { return mPosition; }
-
-private:
-	const Vector2D mPosition;
-};
-
-class PanCameraEvent : public Event
-{
-public:
-	PanCameraEvent(const Vector2D delta) : Event(EventType::PAN_CAMERA_EVENT)
-	{
-		mDelta = delta;
-	}
-
-	const Vector2D &getDelta() const { return mDelta; }
-
-private:
-	Vector2D mDelta;
-};
-
 class ZoomCameraEvent : public Event
 {
 public:
-	ZoomCameraEvent(const double delta, const Vector2D zoomLocation) : Event(EventType::ZOOM_CAMERA_EVENT)
+	ZoomCameraEvent(const double delta, const Vector2D zoomLocation, Camera& camera) : Event(EventType::ZOOM_CAMERA_EVENT), mCamera(camera)
 	{
 		mDelta = delta;
 		mZoomLocation = zoomLocation;
 	}
+
+	Camera& getCamera() const { return mCamera; }
 
 	double getDelta() const { return mDelta; }
 
@@ -58,4 +33,6 @@ public:
 private:
 	double mDelta;
 	Vector2D mZoomLocation;
+
+	Camera& mCamera; // Cannot make const, as the graphics system needs to adjust camera position after zooming
 };
