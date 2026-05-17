@@ -13,6 +13,12 @@ void Camera::setPosition(Vector2D pos)
 	gpEventSystem->fireEvent(new UpdateCameraEvent(*this));
 }
 
+void Camera::setZoom(const float zoom, const Vector2D& position)
+{
+	gpEventSystem->fireEvent(new ZoomCameraEvent(zoom - mZoom, position, *this));
+	mZoom = zoom;
+}
+
 const float Camera::getZoom() const
 {
 	return mZoom;

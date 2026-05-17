@@ -83,7 +83,6 @@ void City::handleEvent(const Event &theEvent)
 	{
 		const ZoomCameraEvent &ev = static_cast<const ZoomCameraEvent&>(theEvent);
 		const double delta = ev.getDelta();
-		// TODO: really the goal is that any text-based unit needs to listen to the Zoom event directly
 		for(auto& cubeText : mCubeTexts)
 		{
 			cubeText.second->adjustScale(delta);

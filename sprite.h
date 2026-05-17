@@ -38,7 +38,5 @@ protected:
 	int mAlpha;
 
 	const GraphicsBuffer* mTexture;
-	// TODO: maybe Sprite accepts a shape in its ctor? Then by default it can reference its owner's shape, or in the case of CityCard which owns a second sprite, a separate Shape can be supplied
-	// This also allows Sprites to set their own default shape based on graphics buffer width/height
 	Unit const* mpUnit;
 };

@@ -12,6 +12,8 @@
 #include "document.h"
 #include "Outline.h"
 
+class Camera;
+
 enum class GraphicsLayer
 {
 	BASE_VIEW,
@@ -64,5 +66,6 @@ protected:
 
 private:
 	void drawOutlineForBounds(const sf::FloatRect &bounds, const Outline &outline, const Shape& shape, const double theta);
-	void updateBaseView(sf::Vector2i center, const Moveable& camera, sf::RenderWindow& window, float zoom);
+	void moveBaseView(const Moveable& camera);
+	void zoomBaseView(const sf::Vector2f mouseGuiPosition, Camera& camera, sf::RenderWindow& window, float zoomDelta);
 };

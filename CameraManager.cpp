@@ -35,7 +35,6 @@ void CameraManager::update()
 		const Vector2D delta = Vector2D(std::min(mPanSpeed, std::abs(mBounds.getX() - mCamera.getPosition().getX())), 0);
 		if(mCamera.getPosition().getX() + delta.getX() <= mBounds.getX())
 		{
-			gpEventSystem->fireEvent(new PanCameraEvent(delta));
 			mCamera.move(delta);
 		}
 	}
@@ -44,7 +43,6 @@ void CameraManager::update()
 		const Vector2D delta = Vector2D(std::min(-mPanSpeed, std::abs(mCamera.getPosition().getX() - mBounds.getX())), 0);
 		if(mCamera.getPosition().getX() + delta.getX() >= -mBounds.getX())
 		{
-			gpEventSystem->fireEvent(new PanCameraEvent(delta));
 			mCamera.move(delta);
 		}
 	}
@@ -53,7 +51,6 @@ void CameraManager::update()
 		const Vector2D delta = Vector2D(0, std::min(-mPanSpeed, std::abs(mCamera.getPosition().getY() - mBounds.getY())));
 		if(mCamera.getPosition().getY() + delta.getY() >= -mBounds.getY())
 		{
-			gpEventSystem->fireEvent(new PanCameraEvent(delta));
 			mCamera.move(delta);
 		}
 	}
@@ -62,7 +59,6 @@ void CameraManager::update()
 		const Vector2D delta = Vector2D(0, std::min(mPanSpeed, std::abs(mBounds.getY() - mCamera.getPosition().getY())));
 		if(mCamera.getPosition().getY() + delta.getY() <= mBounds.getY())
 		{
-			gpEventSystem->fireEvent(new PanCameraEvent(delta));
 			mCamera.move(delta);
 		}
 	}
@@ -139,18 +135,15 @@ void CameraManager::handleEvent(const Event &theEvent)
 			switch(ev.getDirection())
 			{
 			case MouseWheel::DOWN:
-				if(mCamera.mZoom < mMaxZoom)
+				if(mCamera.getZoom() < mMaxZoom)
 				{
-					// TODO: why did these reverse?
-					gpEventSystem->fireEvent(new ZoomCameraEvent(mZoomPerTick, zoomLocation));
-					mCamera.mZoom = std::min(mCamera.mZoom + mZoomPerTick, mMaxZoom);
+					mCamera.setZoom(std::min(mCamera.getZoom() + mZoomPerTick, mMaxZoom), zoomLocation);
 				}
 				break;
 			case MouseWheel::UP:
-				if(mCamera.mZoom > mMinZoom)
+				if(mCamera.getZoom() > mMinZoom)
 				{
-					gpEventSystem->fireEvent(new ZoomCameraEvent(-mZoomPerTick, zoomLocation));
-					mCamera.mZoom = std::max(mCamera.mZoom - mZoomPerTick, mMinZoom);
+					mCamera.setZoom(std::max(mCamera.getZoom() - mZoomPerTick, mMinZoom), zoomLocation);
 				}
 				break;
 			}
