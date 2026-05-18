@@ -10,8 +10,6 @@ constexpr int MAX_Z_LAYERS = 4;
 
 //declare any classes that require double dispatch for collision here
 
-// TODO: I think we can keep public Trackable here and instead use compositon for Moveable
-// And then in the overall MovementManager collection, we can still store a hash of Moveables and just pass the reference to both the Unit and CameraManager's moveables (or make them pointers)
 class Unit : public Moveable
 {
 	friend class UnitManager;

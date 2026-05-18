@@ -171,7 +171,7 @@ void GraphicsSystem::handleEvent(const Event &theEvent)
 	{
 		const ZoomCameraEvent& zoomCameraEvent = static_cast<const ZoomCameraEvent&>(theEvent);
 		Camera& camera = zoomCameraEvent.getCamera();
-		zoomBaseView(sf::Vector2f(zoomCameraEvent.getZoomLocation().getX(), zoomCameraEvent.getZoomLocation().getY()), camera, mDisplay, (float)zoomCameraEvent.getDelta());
+		zoomBaseView(sf::Vector2f(zoomCameraEvent.getZoomLocation().getX(), zoomCameraEvent.getZoomLocation().getY()), camera, mDisplay, (float)zoomCameraEvent.getDelta(), zoomCameraEvent.getZoom());
 		break;
 	}
 	}
@@ -189,14 +189,29 @@ void GraphicsSystem::moveBaseView(const Moveable& camera)
 	// mDisplay will set final view during update()
 }
 
-void GraphicsSystem::zoomBaseView(const sf::Vector2f mouseGuiPosition, Camera& camera, sf::RenderWindow& window, float zoomDelta)
+void GraphicsSystem::zoomBaseView(const sf::Vector2f mouseGuiPosition, Moveable& camera, sf::RenderWindow& window, const float zoomDelta, const float zoom)
 {
-	mBaseView.zoom(1 + zoomDelta);
+	// Recalculate view from old zoom to map mouse coords
+	mBaseView = sf::View(sf::Vector2f(camera.getPosition().getX(), camera.getPosition().getY()), sf::Vector2f((float)mWidth, (float)mHeight));
+	mBaseView.setViewport(mBoardViewport);
+	mBaseView.zoom(zoom - zoomDelta);
 	window.setView(mBaseView);
-	const sf::Vector2f guiCenter = sf::Vector2f((float)window.getSize().x / 2, (float)window.getSize().y / 2);
-	const sf::Vector2f mouseGuiOffset{(guiCenter - mouseGuiPosition) * (zoomDelta * 2)};  // Pretty much works, but why?
-	mBaseView.move(mouseGuiOffset);
-	camera.move(Vector2D(mouseGuiOffset.x, mouseGuiOffset.y));
+
+	const sf::Vector2f previousMouseWorldPosition = window.mapPixelToCoords(sf::Vector2i((int)mouseGuiPosition.x, (int)mouseGuiPosition.y));
+
+	// Now calculate new view from new zoom
+	mBaseView = sf::View(sf::Vector2f(camera.getPosition().getX(), camera.getPosition().getY()), sf::Vector2f((float)mWidth, (float)mHeight));
+	mBaseView.setViewport(mBoardViewport);
+	mBaseView.zoom(zoom);
+	window.setView(mBaseView);
+
+	const sf::Vector2f newMouseWorldPosition = window.mapPixelToCoords(sf::Vector2i((int)mouseGuiPosition.x, (int)mouseGuiPosition.y));
+
+	const sf::Vector2f mouseWorldOffset{previousMouseWorldPosition - newMouseWorldPosition};
+
+	// TODO: clip new position to camera panning bounds
+	mBaseView.move(mouseWorldOffset);
+	camera.move(Vector2D(mouseWorldOffset.x, mouseWorldOffset.y));
 
 	// mDisplay will set final view during update()
 }

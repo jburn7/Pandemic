@@ -19,8 +19,9 @@ private:
 class ZoomCameraEvent : public Event
 {
 public:
-	ZoomCameraEvent(const double delta, const Vector2D zoomLocation, Camera& camera) : Event(EventType::ZOOM_CAMERA_EVENT), mCamera(camera)
+	ZoomCameraEvent(const double delta, const float zoom, const Vector2D zoomLocation, Camera& camera) : Event(EventType::ZOOM_CAMERA_EVENT), mCamera(camera)
 	{
+		mZoom = zoom;
 		mDelta = delta;
 		mZoomLocation = zoomLocation;
 	}
@@ -29,8 +30,11 @@ public:
 
 	double getDelta() const { return mDelta; }
 
+	float getZoom() const { return mZoom; }
+
 	Vector2D getZoomLocation() const { return mZoomLocation; }
 private:
+	float mZoom;
 	double mDelta;
 	Vector2D mZoomLocation;
 

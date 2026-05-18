@@ -249,10 +249,10 @@
 		"maxNumDiseaseCubes": 10,
 		"camera": {
 			"boundsWidth": 1200,
-			"boundsHeight": 700,
+			"boundsHeight": 900,
 			"panSpeed": 7,
 			"panAcceleration": 0.8,
-			"zoomAmount": 0.05,
+			"zoomAmount": 0.25,
 			"maxZoom": 2,
 			"minZoom": 1
 		},

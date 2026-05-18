@@ -15,7 +15,7 @@ void Camera::setPosition(Vector2D pos)
 
 void Camera::setZoom(const float zoom, const Vector2D& position)
 {
-	gpEventSystem->fireEvent(new ZoomCameraEvent(zoom - mZoom, position, *this));
+	gpEventSystem->fireEvent(new ZoomCameraEvent(zoom - mZoom, zoom, position, *this));
 	mZoom = zoom;
 }
 
