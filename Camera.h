@@ -15,12 +15,13 @@ public:
 	// Read pan/zoom states and tell graphics system to react accordingly
 	void update();
 
+	// Overrides
+	virtual void setPosition(Vector2D pos) override;
+
 	//event functions
 	virtual void handleEvent(const Event& theEvent);
 
 	// Setters
-	virtual void setPosition(Vector2D pos);
-
 	void setZoom(const float zoom, const Vector2D& position);
 
 	// Getters

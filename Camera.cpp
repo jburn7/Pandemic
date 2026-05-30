@@ -76,6 +76,13 @@ void Camera::update()
 	}
 }
 
+void Camera::setPosition(Vector2D pos) {
+	pos.clampToBounds(mBounds);
+
+	Moveable::setPosition(pos);
+	gpEventSystem->fireEvent(new UpdateCameraEvent(*this));
+}
+
 void Camera::handleEvent(const Event& theEvent)
 {
 	const Gamestate gameState = Game::getInstance()->getGamestate();
@@ -150,12 +157,6 @@ void Camera::handleEvent(const Event& theEvent)
 			}
 		}
 	}
-}
-
-void Camera::setPosition(Vector2D pos)
-{
-	Moveable::setPosition(pos);
-	gpEventSystem->fireEvent(new UpdateCameraEvent(*this));
 }
 
 void Camera::setZoom(const float zoom, const Vector2D& position)

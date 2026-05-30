@@ -209,7 +209,6 @@ void GraphicsSystem::zoomBaseView(const sf::Vector2f mouseGuiPosition, Moveable&
 
 	const sf::Vector2f mouseWorldOffset{previousMouseWorldPosition - newMouseWorldPosition};
 
-	// TODO: clip new position to camera panning bounds
 	mBaseView.move(mouseWorldOffset);
 	camera.move(Vector2D(mouseWorldOffset.x, mouseWorldOffset.y));
 
