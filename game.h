@@ -1,8 +1,8 @@
 #pragma once
+#include "Camera.h"
 #include "graphicsSystem.h"
 #include "unitManager.h"
 #include "graphicsBufferManager.h"
-#include "CameraManager.h"
 #include "inputSystem.h"
 #include "AISystem.h"
 #include "Timer.h"
@@ -47,7 +47,7 @@ public:
 	
 	//getters
 	Board &getBoard(){ return mBoard; }
-	CameraManager &getCameraManager() { return mCameraManager; }
+	Camera &getCamera() { return mCamera; }
 	Font &getDefaultFont(){ return mFont; }
 	Gamestate &getGamestate(){ return mGamestate; }
 	GraphicsBufferManager &getGraphicsBufferManager();
@@ -74,7 +74,7 @@ protected:
 	void render();
 
 	AISystem mAISystem;
-	CameraManager mCameraManager;
+	Camera mCamera;
 	GraphicsBufferManager mGraphicsBufferManager;
 	InputSystem mInputSystem;
 	GraphicsSystem mGraphics;

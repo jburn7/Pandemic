@@ -49,7 +49,7 @@ class CameraMoveEvent : public MoveableMoveEvent
 {
 public:
 	CameraMoveEvent(const Vector2D destination, const int milliseconds) :
-		MoveableMoveEvent(&Game::getInstance()->getCameraManager().getCamera(), destination, milliseconds),
+		MoveableMoveEvent(&Game::getInstance()->getCamera(), destination, milliseconds),
 		mDestination(destination),
 		mMilliseconds(milliseconds)
 	{

@@ -135,7 +135,7 @@ void Game::init(const std::string &jsonPath)
 
 	// Init camera with json values for bounds/speed
 	component = doc[JSONPATH]["camera"];
-	mCameraManager.init(
+	mCamera.init(
 		Vector2D(component["boundsWidth"].GetFloat(), component["boundsHeight"].GetFloat()),
 		component["panSpeed"].GetFloat(), 
 		component["panAcceleration"].GetFloat(),
@@ -190,7 +190,7 @@ void Game::loop()
 		fpsTimer.start();
 		gpEventSystem->dispatchAllEvents();
 		processInput();
-		mCameraManager.update();
+		mCamera.update();
 		const double updateTime = mClock.getElapsedTime();
 		update(updateTime, (updateTime - timeOfLastFrame));
 		render();
